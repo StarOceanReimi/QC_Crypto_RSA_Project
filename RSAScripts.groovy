@@ -86,13 +86,6 @@ def start = 0
 
 for(wordEntry in encoded_dict) {
     def word = wordEntry.key
-    if(encode("secret").toString() == word) {
-        println word
-        println str
-        
-        println "Hey"
-    }
-
     def index = str.indexOf(word)
     if (index != -1) {
         founded.add([encoded_dict[word], [index, word.length()]])
