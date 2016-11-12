@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.math.BigInteger;
+import java.util.Random;
 
 public class QuadraticSieve{
   public static int[] primesLessThanErastothenes(int b){
@@ -47,38 +49,41 @@ public class QuadraticSieve{
     int start = (int)Math.sqrt(n);
     //Interval should be large enough to find pi(B)+1 b-smooth numbers
     int interval = 30;
-    ArrayList[] b_smooth_candidates = new ArrayList[interval];
+    ArrayList[] b_smooth_candidates = new ArrayList[interval];//Contains the prime factorization of the number start+index i
     for(int i=0;i<interval;i++){
       b_smooth_candidates[i] = new ArrayList();
     }
-    int[] primes = primesLessThanErastothenes(b);
-    ArrayList factorbase = new ArrayList();
+    int[] primes = primesLessThanErastothenes(b);//Find all primes less than B bound
+    ArrayList factorbase = new ArrayList();//Reduce the prime factorbase
     for(int i=2;i<primes.length;i++){
       if(primes[i] == 0){
         if(legendre(n,i) == 1){
           factorbase.add(i);
-          System.out.println(i);
+          //System.out.println(i);
         }
       }
     }
+    //For every prime in the prime factorbase
     for(int p=0;p<factorbase.size();p++){
       int prime = (int)factorbase.get(p);
       int x=-1;
       int x2=-1;
+      //Find the initial value(solution)
       for(int i=0;i<b_smooth_candidates.length;i++){
         if(Math.pow((start+i),2)%prime == n%prime){
           x = i;
-          for(int j=i+1;j<prime;j++){
+          for(int j=i+1;j<prime;j++){//Check for a second solution within a distance of the prime from first solution
             if(Math.pow((start+j),2)%prime == n%prime)
               x2 = j;
           }
           break;
         }
       }
+      //Sieve the candidate b-smooth numbers
       for(int i=x;i<b_smooth_candidates.length;i+=prime){
         b_smooth_candidates[i].add(prime);
       }
-      if(x2!=-1){        
+      if(x2!=-1){       
         for(int i=x2;i<b_smooth_candidates.length;i+=prime){
           b_smooth_candidates[i].add(prime);
         }
