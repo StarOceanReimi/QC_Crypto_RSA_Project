@@ -42,9 +42,10 @@ public class QuadraticSieve{
   }
   
   public static void main(String[] args){
-    int n = 62113;
+    int n = 87463;
     int b = 37;
     int start = (int)Math.sqrt(n);
+    //Interval should be large enough to find pi(B)+1 b-smooth numbers
     int interval = 30;
     ArrayList[] b_smooth_candidates = new ArrayList[interval];
     for(int i=0;i<interval;i++){
@@ -63,14 +64,24 @@ public class QuadraticSieve{
     for(int p=0;p<factorbase.size();p++){
       int prime = (int)factorbase.get(p);
       int x=-1;
+      int x2=-1;
       for(int i=0;i<b_smooth_candidates.length;i++){
         if(Math.pow((start+i),2)%prime == n%prime){
           x = i;
+          for(int j=i+1;j<prime;j++){
+            if(Math.pow((start+j),2)%prime == n%prime)
+              x2 = j;
+          }
           break;
         }
       }
       for(int i=x;i<b_smooth_candidates.length;i+=prime){
         b_smooth_candidates[i].add(prime);
+      }
+      if(x2!=-1){        
+        for(int i=x2;i<b_smooth_candidates.length;i+=prime){
+          b_smooth_candidates[i].add(prime);
+        }
       }
     }
     for(int i = 0;i<b_smooth_candidates.length;i++){
