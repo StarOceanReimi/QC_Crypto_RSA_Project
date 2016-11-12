@@ -6,8 +6,10 @@
 
 package cracking.algorithms;
 
+import cracking.Main;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.expMod;
+import static cracking.algorithms.MathOp.gcd;
 import static cracking.utils.Util.intToBigInteger;
 import static cracking.utils.Util.randomBigInteger;
 import java.math.BigInteger;
@@ -19,8 +21,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -28,6 +32,49 @@ import java.util.function.Supplier;
  * @author Li
  */
 public class Primes {
+    
+    public static class RandomPrimeGenerator {
+
+        private static final BigInteger PRIME_PRODUCT = BigInteger.valueOf((long)2*3*5*7*11*13*17*19*23*29*31*37*41*43*47);
+        private static final Function<BigInteger, BigInteger> ODD_FUNC = b-> {
+            if(b.and(ONE).equals(ONE)) b = b.add(TWO);
+            else b = b.add(ONE);
+            while(!gcd(b, PRIME_PRODUCT).equals(ONE)) {
+                b = b.add(TWO);
+            }
+            return b;
+        };
+                
+        private static Random RAND = new Random();
+
+        public Iterator<BigInteger> gen() {
+            return gen(RAND.nextInt());
+        }
+        
+        public Iterator<BigInteger> gen(final int bits) {
+            return gen(bits, ODD_FUNC);
+        }
+        
+        public Iterator<BigInteger> gen(final int bits, Function<BigInteger, BigInteger> func) {
+            return new Iterator<BigInteger>() {
+
+                @Override
+                public boolean hasNext() {
+                    return true;
+                }
+
+                @Override
+                public BigInteger next() {
+                    BigInteger random = randomBigInteger(bits);
+                    if(random.and(ONE).equals(ZERO)) random.add(ONE);
+                    while(true) {
+                        if(millerRabinTest(random)) return random;
+                        random = func.apply(random);
+                    }
+                }
+            };
+        }
+    }
     
     public static class EratosthenesPrimeGenerator {
         
@@ -137,7 +184,7 @@ public class Primes {
         }
         final BigInteger exp = d;
         final int trial = s;
-        Supplier<Boolean> test = ()-> {
+        Supplier<Boolean> test = ()-> { 
             BigInteger randomRoot = randomBigInteger(TWO, n.subtract(TWO));
             BigInteger x = expMod(randomRoot, exp, n);
             if(x.equals(ONE) || x.equals(N_MINUS_ONE)) return true;
@@ -155,6 +202,14 @@ public class Primes {
     
     
     public static void main(String[] args) {
-        System.out.println(millerRabinTest(BigInteger.valueOf(65535)));
+        RandomPrimeGenerator randomGen = new RandomPrimeGenerator();
+        BigInteger b1 = randomGen.gen(40).next();
+        BigInteger b2 = randomGen.gen(35).next();
+        System.out.println(b1);
+        System.out.println(b2);
+        BigInteger N = b1.multiply(b2);
+        System.out.println(N);
+        System.out.println(N.bitLength());
+
     }
 }

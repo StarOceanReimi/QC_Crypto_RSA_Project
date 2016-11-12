@@ -18,7 +18,7 @@ import java.util.Random;
  */
 public class Util {
     
-    private static Random RAND = new Random();
+    private final static Random RAND = new Random();
     
     public static void error(String msg, Object... args) {
         throw new RuntimeException(String.format(msg, args));
@@ -28,6 +28,12 @@ public class Util {
         for(int integer : integers)
             if(integer <= 0)
                 error("number must be positive, but %d", integer);
+    }
+    
+    public static void mustNonNegative(BigInteger... integers) {
+        for(BigInteger integer : integers)
+            if(integer.compareTo(ZERO) < 0)
+                error("number must be non-negative, but %s", integer.toString());
     }
     
     public static void mustPositive(BigInteger... integers) {
@@ -44,7 +50,7 @@ public class Util {
     
     public static BigInteger randomBigInteger(int bits) {
         mustPositive(bits);
-        if(bits == 1) RAND.nextInt(2);
+        if(bits == 1) return BigInteger.valueOf(RAND.nextInt(2));
         BigInteger ret = ONE;
         for(int i=1; i<bits; i++) {
             ret = ret.shiftLeft(1);
