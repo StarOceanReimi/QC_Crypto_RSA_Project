@@ -18,22 +18,22 @@ public class pollard_p_minus_one{
       }
       //end of generate a
       
-      if(gcd(n,a).compareTo(BigInteger.valueOf(1)) >0){
+      if(gcd(n,a).compareTo(BigInteger.valueOf(1)) >0){//If there exists a common factor between n and a, meaning a is a multiple of one of the prime factors of n
         System.out.println("Found Factor:"+gcd(n,a));
         return;
       }
       else{
         BigInteger r = BigInteger.valueOf(2);
         BigInteger a_r = a;
-        while(r.compareTo(n) <0){
+        while(r.compareTo(n) <0){//Repeat this process until r = n, in which case the program must terminate(i.e. failed to find a factor)
           a_r = a_r.pow(r.intValue());
           BigInteger d = gcd(n,a_r.subtract(BigInteger.valueOf(1)));
           if(d.equals(n))
-            break;
-          else if(d.compareTo(BigInteger.valueOf(1)) > 0){
+            break;//Failed to find a factor, Need to run function again with a different a
+          else if(d.compareTo(BigInteger.valueOf(1)) > 0){//gcd(a^(r!)-1, n) = d <-- Prime factor of n
             System.out.println("Found factor:"+d);
             return;
-          }else if(d.compareTo(BigInteger.valueOf(1)) == 0)
+          }else if(d.compareTo(BigInteger.valueOf(1)) == 0)//gcd(a^(r!)-1, n) = 1, so try gcd(a^(r+1)!, n)
             r = r.add(BigInteger.valueOf(1));
         }
       }

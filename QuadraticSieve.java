@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.math.BigInteger;
 import java.util.Random;
+import java.util.HashMap;
 
 public class QuadraticSieve{
   public static int[] primesLessThanErastothenes(int b){
@@ -65,7 +66,7 @@ public class QuadraticSieve{
       return -1*legendre(q,p);
     else return legendre(q,p);
   }  
-  public static int legendre_eulers(int p,int q){
+  public static int eulers_criterion(int p,int q){
     return (int)(Math.pow(p,(q-1)/2)%q);
   }
   //Babylonian Squareroot Method(approximate) for large integers
@@ -78,16 +79,18 @@ public class QuadraticSieve{
     return x;
   }
   
-  public static void main(String[] args){
+  public static void main(String[] args){  
+    BigInteger ONE = BigInteger.ONE;
+    BigInteger ZERO = BigInteger.ZERO;
+    //BigInteger n = new BigInteger("613054310726032886180943888436325837702226698886723435429939101863");
     BigInteger n = new BigInteger("62113");
-    //int b = (int)Math.pow(2,30)-1;
     int b = 37;
-    int interval = 300;//Interval should be large enough to find pi(B)+1 b-smooth numbers
-    BigInteger start = sqrt(n,110);//Begin at the sqrt(n)
-    ArrayList[] b_smooth_candidates = new ArrayList[interval];//Contains the prime factorization of the number start+index i
-    for(int i=0;i<interval;i++){
-      b_smooth_candidates[i] = new ArrayList();
-    }
+    //int b = 100;
+    //BigInteger interval = new BigInteger("1000000000");//Interval should be large enough to find pi(B)+1 b-smooth numbers
+    BigInteger interval = new BigInteger("100");
+    //BigInteger start = new BigInteger("782977848170708394135693691175755");
+    BigInteger start = sqrt(n,1100);
+    HashMap<BigInteger, ArrayList<Integer>> b_smooth_candidates = new HashMap<BigInteger, ArrayList<Integer>>();
     int[] primes = primesLessThanErastothenes(b);//Find all primes less than B bound
     ArrayList factorbase = new ArrayList();//Reduce the prime factorbase
     for(int i=2;i<primes.length;i++){
@@ -101,14 +104,14 @@ public class QuadraticSieve{
     //For every prime in the prime factorbase
     for(int p=0;p<factorbase.size();p++){
       int prime = (int)factorbase.get(p);
-      int x=-1;
-      int x2=-1;
+      int x = -1;
+      int x2 = -1;
       //Find the initial value(solution)
-      for(int i=0;i<b_smooth_candidates.length;i++){
+      for(int i = 0;i<interval.intValue();i++){
         if(start.add(BigInteger.valueOf(i)).modPow(BigInteger.valueOf(2),BigInteger.valueOf(prime)).compareTo(n.mod(BigInteger.valueOf(prime))) == 0){
         //if(Math.pow((start+i),2)%prime == n%prime){
           x = i;
-          for(int j=i+1;j<prime;j++){//Check for a second solution within a distance of the prime from first solution
+          for(int j = i+1;j<prime;j++){//Check for a second solution within a distance of the prime from first solution
             if(start.add(BigInteger.valueOf(j)).modPow(BigInteger.valueOf(2),BigInteger.valueOf(prime)).compareTo(n.mod(BigInteger.valueOf(prime))) == 0)
             //if(Math.pow((start+j),2)%prime == n%prime)
               x2 = j;
@@ -119,17 +122,41 @@ public class QuadraticSieve{
       //Sieve the candidate b-smooth numbers
       if(x == -1)
         throw new RuntimeException("Should've found at least one solution given a quadratic residue");
-      for(int i=x;i<b_smooth_candidates.length;i+=prime){
-        b_smooth_candidates[i].add(prime);
+      for(long i = x;i<interval.longValue();i+=prime){
+        BigInteger num = start.add(BigInteger.valueOf(i));
+        if(b_smooth_candidates.containsKey(num)){
+          ArrayList t = b_smooth_candidates.get(num);
+          t.add(prime);
+          b_smooth_candidates.put(num,t);
+          t = null;
+        }
+        else{
+          ArrayList t = new ArrayList<Integer>();
+          t.add(prime);
+          b_smooth_candidates.put(num,t);
+          t = null;
+        }
       }
-      if(x2!=-1){       
-        for(int i=x2;i<b_smooth_candidates.length;i+=prime){
-          b_smooth_candidates[i].add(prime);
+      if(x2 != -1){
+        for(long i = x2;i<interval.longValue();i+=prime){
+          BigInteger num = start.add(BigInteger.valueOf(i));
+          if(b_smooth_candidates.containsKey(num)){
+            ArrayList t = b_smooth_candidates.get(num);
+            t.add(prime);
+            b_smooth_candidates.put(num,t);
+            t = null;
+          }
+          else{
+            ArrayList t = new ArrayList<Integer>();
+            t.add(prime);
+            b_smooth_candidates.put(num,t);
+            t = null;
+          }          
         }
       }
     }
-    for(int i = 0;i<b_smooth_candidates.length;i++){
-      System.out.println(start.add(BigInteger.valueOf(i))+": "+b_smooth_candidates[i]);
+    for(BigInteger i:b_smooth_candidates.keySet()){
+      System.out.println(i+" "+b_smooth_candidates.get(i));
     }
   }
 }
