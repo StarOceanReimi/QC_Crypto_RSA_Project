@@ -79,9 +79,9 @@ public class QuadraticSieve{
   }
   
   public static void main(String[] args){
-    BigInteger n = new BigInteger("87463");
+    BigInteger n = new BigInteger("62113");
     //int b = (int)Math.pow(2,30)-1;
-    int b = 10000;
+    int b = 37;
     int interval = 300;//Interval should be large enough to find pi(B)+1 b-smooth numbers
     BigInteger start = sqrt(n,110);//Begin at the sqrt(n)
     ArrayList[] b_smooth_candidates = new ArrayList[interval];//Contains the prime factorization of the number start+index i
@@ -105,16 +105,20 @@ public class QuadraticSieve{
       int x2=-1;
       //Find the initial value(solution)
       for(int i=0;i<b_smooth_candidates.length;i++){
-        if(Math.pow((start+i),2)%prime == n%prime){
+        if(start.add(BigInteger.valueOf(i)).modPow(BigInteger.valueOf(2),BigInteger.valueOf(prime)).compareTo(n.mod(BigInteger.valueOf(prime))) == 0){
+        //if(Math.pow((start+i),2)%prime == n%prime){
           x = i;
           for(int j=i+1;j<prime;j++){//Check for a second solution within a distance of the prime from first solution
-            if(Math.pow((start+j),2)%prime == n%prime)
+            if(start.add(BigInteger.valueOf(j)).modPow(BigInteger.valueOf(2),BigInteger.valueOf(prime)).compareTo(n.mod(BigInteger.valueOf(prime))) == 0)
+            //if(Math.pow((start+j),2)%prime == n%prime)
               x2 = j;
           }
           break;
         }
       }
       //Sieve the candidate b-smooth numbers
+      if(x == -1)
+        throw new RuntimeException("Should've found at least one solution given a quadratic residue");
       for(int i=x;i<b_smooth_candidates.length;i+=prime){
         b_smooth_candidates[i].add(prime);
       }
@@ -125,7 +129,7 @@ public class QuadraticSieve{
       }
     }
     for(int i = 0;i<b_smooth_candidates.length;i++){
-      System.out.println(start+i+": "+b_smooth_candidates[i]);
+      System.out.println(start.add(BigInteger.valueOf(i))+": "+b_smooth_candidates[i]);
     }
   }
 }
