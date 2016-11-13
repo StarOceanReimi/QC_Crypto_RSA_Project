@@ -86,7 +86,7 @@ public class QuadraticSieve{
     BigInteger n = new BigInteger("62113");
     int b = 37;
     //int b = 100;
-    //BigInteger interval = new BigInteger("1000000000");//Interval should be large enough to find pi(B)+1 b-smooth numbers
+    //BigInteger interval = new BigInteger("1000000");//Interval should be large enough to find pi(B)+1 b-smooth numbers
     BigInteger interval = new BigInteger("100");
     //BigInteger start = new BigInteger("782977848170708394135693691175755");
     BigInteger start = sqrt(n,1100);
@@ -128,13 +128,11 @@ public class QuadraticSieve{
           ArrayList t = b_smooth_candidates.get(num);
           t.add(prime);
           b_smooth_candidates.put(num,t);
-          t = null;
         }
         else{
           ArrayList t = new ArrayList<Integer>();
           t.add(prime);
           b_smooth_candidates.put(num,t);
-          t = null;
         }
       }
       if(x2 != -1){
@@ -144,19 +142,27 @@ public class QuadraticSieve{
             ArrayList t = b_smooth_candidates.get(num);
             t.add(prime);
             b_smooth_candidates.put(num,t);
-            t = null;
           }
           else{
             ArrayList t = new ArrayList<Integer>();
             t.add(prime);
             b_smooth_candidates.put(num,t);
-            t = null;
           }          
         }
       }
     }
     for(BigInteger i:b_smooth_candidates.keySet()){
-      System.out.println(i+" "+b_smooth_candidates.get(i));
+      BigInteger candidate = i.pow(2);
+      candidate = candidate.subtract(n);
+      ArrayList<Integer> factors = b_smooth_candidates.get(i);
+      for(int f: factors){
+        BigInteger pfactor = BigInteger.valueOf(f);
+        while(candidate.mod(pfactor).compareTo(ZERO) == 0){
+          candidate = candidate.divide(pfactor);
+        }
+      }
+      if(candidate.compareTo(ONE) == 0)
+        System.out.println(i+" "+factors);
     }
   }
 }
