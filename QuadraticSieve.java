@@ -14,6 +14,32 @@ public class QuadraticSieve{
     }
     return primes;
   }
+  public static int legendre(BigInteger p,BigInteger q){
+    if(p.mod(q).equals(BigInteger.ZERO))
+      return 0;
+    if(p.compareTo(q) >= 0)
+      return legendre(p.mod(q),q);
+    if(p.compareTo(BigInteger.ONE) == 0)
+      return 1;
+    if(p.compareTo(BigInteger.valueOf(-1)) == 0){
+      if(q.mod(BigInteger.valueOf(4)).compareTo(BigInteger.ONE) == 0)
+        return 1;
+      if(q.mod(BigInteger.valueOf(4)).compareTo(BigInteger.valueOf(3)) == 0)
+        return -1;
+    }
+    if(p.compareTo(BigInteger.valueOf(2)) == 0){
+      BigInteger x = q.mod(BigInteger.valueOf(8));
+      if(x.compareTo(BigInteger.ONE) == 0 || x.compareTo(BigInteger.valueOf(7)) == 0)
+        return 1;
+      if(x.compareTo(BigInteger.valueOf(3)) == 0 || x.compareTo(BigInteger.valueOf(5)) == 0)
+        return -1;
+    }
+    if(p.mod(BigInteger.valueOf(2)).compareTo(BigInteger.ZERO) == 0)
+      return legendre(BigInteger.valueOf(2),q)*legendre(p.divide(BigInteger.valueOf(2)),q);
+    if(p.mod(BigInteger.valueOf(4)).compareTo(BigInteger.valueOf(3)) == 0 && q.mod(BigInteger.valueOf(4)).compareTo(BigInteger.valueOf(3)) == 0)
+      return -1*legendre(q,p);
+    else return legendre(q,p);
+  }
   public static int legendre(int p, int q){ 
     if(p%q == 0)
       return 0;
@@ -42,13 +68,22 @@ public class QuadraticSieve{
   public static int legendre_eulers(int p,int q){
     return (int)(Math.pow(p,(q-1)/2)%q);
   }
+  //Babylonian Squareroot Method(approximate) for large integers
+  public static BigInteger sqrt(BigInteger n,int sig_figs){
+    BigInteger x = new BigInteger(n.bitLength()/2,new Random());
+    for(int i=0;i<sig_figs;i++){
+      x = x.add(n.divide(x));
+      x = x.divide(BigInteger.valueOf(2));
+    }
+    return x;
+  }
   
   public static void main(String[] args){
-    int n = 87463;
-    int b = 37;
-    int start = (int)Math.sqrt(n);
-    //Interval should be large enough to find pi(B)+1 b-smooth numbers
-    int interval = 30;
+    BigInteger n = new BigInteger("87463");
+    //int b = (int)Math.pow(2,30)-1;
+    int b = 10000;
+    int interval = 300;//Interval should be large enough to find pi(B)+1 b-smooth numbers
+    BigInteger start = sqrt(n,110);//Begin at the sqrt(n)
     ArrayList[] b_smooth_candidates = new ArrayList[interval];//Contains the prime factorization of the number start+index i
     for(int i=0;i<interval;i++){
       b_smooth_candidates[i] = new ArrayList();
@@ -57,7 +92,7 @@ public class QuadraticSieve{
     ArrayList factorbase = new ArrayList();//Reduce the prime factorbase
     for(int i=2;i<primes.length;i++){
       if(primes[i] == 0){
-        if(legendre(n,i) == 1){
+        if(legendre(n,BigInteger.valueOf(i)) == 1){
           factorbase.add(i);
           //System.out.println(i);
         }
@@ -92,6 +127,5 @@ public class QuadraticSieve{
     for(int i = 0;i<b_smooth_candidates.length;i++){
       System.out.println(start+i+": "+b_smooth_candidates[i]);
     }
-    
   }
 }
