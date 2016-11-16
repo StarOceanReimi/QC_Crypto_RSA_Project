@@ -6,7 +6,6 @@
 
 package cracking.algorithms;
 
-import cracking.Main;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.expMod;
 import static cracking.algorithms.MathOp.gcd;
@@ -118,6 +117,7 @@ public class Primes {
                     while(ret.equals(ZERO)) {
                         if(!table.containsKey(q)) {
                             ret = q;
+                            c = c.add(ONE);
                             List<BigInteger> factors = new LinkedList<>();
                             factors.add(q);
                             table.put(q.pow(2), factors);

@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
+import java.util.Arrays;
 import java.util.function.Function;
 
 /**
@@ -98,38 +99,91 @@ public class MathOp {
     }
     
     
-    final static BigInteger three = BigInteger.valueOf(3);
-    final static BigInteger five = BigInteger.valueOf(5);
-    final static BigInteger four = BigInteger.valueOf(4);
-    final static BigInteger seven = BigInteger.valueOf(7);
+    public static BigInteger[] shanksTonelli(BigInteger a, BigInteger p) {
+        if(p.equals(TWO)) { return new BigInteger[] { ONE }; }
+        if(legendreSymbol(a, p) == -1) return null; //No solution
+        int numOfSolution = p.equals(TWO) ? 1 : 2;
+        BigInteger[] solutions = new BigInteger[numOfSolution];
+        BigInteger P_MINUS_ONE = p.subtract(ONE);
+        BigInteger e = ZERO, s = P_MINUS_ONE;
+        while(s.and(ONE).equals(ZERO)) {
+            s = s.shiftRight(1);
+            e = e.add(ONE);
+        }
+        BigInteger n = THREE;
+        while(true) {
+            if(legendreSymbol(n, p) == -1) break;
+            n = n.add(ONE);
+        }
+        BigInteger x = expMod(a, s.add(ONE).divide(TWO), p),
+                   b = expMod(a, s, p),
+                   g = expMod(n, s, p),
+                   r = e.mod(p);
+        
+        while(true) {
+            BigInteger m = ZERO;
+            while(true) {
+                if(b.equals(ONE)) {
+                    m = ZERO;
+                    break;
+                }
+                if(expMod(b, TWO.pow(m.intValue()), p).equals(ONE)) break;
+                m = m.add(ONE);
+            }
+            
+            if(m.equals(ZERO)) {
+                solutions[0] = x;
+                if(solutions.length > 1) {
+                    solutions[1] = p.subtract(x);
+                }
+                return solutions;
+            }
+            BigInteger gPow = TWO.pow(r.subtract(m).intValue());
+            BigInteger gPow_1 = TWO.pow(r.subtract(m).subtract(ONE).intValue());
+            BigInteger newG = expMod(g, gPow, p);
+            x = expMod(g, gPow_1, p).multiply(x).mod(p);
+            b = expMod(g, gPow, p).multiply(b).mod(p);
+            g = newG;
+            r = m;
+        }
+    }
+    
+    final static BigInteger MINUS_ONE = ZERO.subtract(ONE);
+    final static BigInteger THREE = BigInteger.valueOf(3);
+    final static BigInteger FIVE = BigInteger.valueOf(5);
+    final static BigInteger FOUR = BigInteger.valueOf(4);
+    final static BigInteger SEVEN = BigInteger.valueOf(7);
+    
     
     public static int legendreSymbol(BigInteger a, BigInteger p) {
         
         if(p.and(ONE).equals(ZERO))
             error("p has to be odd, but %s", p);
-        if(a.mod(p).equals(ZERO))
-            error("a cant congruent to 0 mod p");
+        
+        if(a.mod(p).equals(ZERO)) return 0;
+        
+        if(a.equals(ONE)) return 1;
         
         if(a.equals(p.subtract(ONE)) || a.equals(ZERO.subtract(ONE))) {
             return p.subtract(ONE).divide(TWO).mod(TWO).equals(ZERO) ? 1 : -1;
         }
         
-        if(a.equals(three) && !p.equals(three)) {
+        if(a.equals(THREE) && !p.equals(THREE)) {
             BigInteger qr = p.mod(BigInteger.valueOf(12));
             if(qr.equals(ONE) || qr.equals(BigInteger.valueOf(11))) return 1;
-            if(qr.equals(five) || qr.equals(seven)) return -1;
+            if(qr.equals(FIVE) || qr.equals(SEVEN)) return -1;
         }
         
-        if(a.equals(five) && !p.equals(five)) {
-            BigInteger qr = p.mod(BigInteger.valueOf(5));
-            if(qr.equals(ONE) || qr.equals(four)) return 1;
-            if(qr.equals(TWO) || qr.equals(three)) return -1;
+        if(a.equals(FIVE) && !p.equals(FIVE)) {
+            BigInteger qr = p.mod(FIVE);
+            if(qr.equals(ONE) || qr.equals(FOUR)) return 1;
+            if(qr.equals(TWO) || qr.equals(THREE)) return -1;
         }
         
         if(a.equals(TWO)) {
             BigInteger qr = p.mod(BigInteger.valueOf(8));
-            if(qr.equals(ONE) || qr.equals(seven)) return 1;
-            if(qr.equals(three) || qr.equals(five)) return -1;
+            if(qr.equals(ONE) || qr.equals(SEVEN)) return 1;
+            if(qr.equals(THREE) || qr.equals(FIVE)) return -1;
         }
 
         if(a.and(ONE).equals(ZERO)) {
@@ -138,7 +192,7 @@ public class MathOp {
         
         if(a.compareTo(p) < 0) {
             int sign = 1;
-            if(a.mod(four).equals(three) && p.mod(four).equals(three))
+            if(a.mod(FOUR).equals(THREE) && p.mod(FOUR).equals(THREE))
                 sign = -1;
             return sign*legendreSymbol(p, a);
         } else {

@@ -6,12 +6,13 @@
 
 package cracking.algorithms;
 
+import cracking.Main;
+import static cracking.algorithms.MathOp.MINUS_ONE;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.expMod;
 import static cracking.algorithms.MathOp.gcd;
 import static cracking.algorithms.MathOp.modInverse;
 import static cracking.algorithms.MathOp.newtonSqrt;
-import static cracking.algorithms.Matrix.gaussianElimilationF2;
 import cracking.algorithms.Primes.EratosthenesPrimeGenerator;
 import static cracking.utils.Util.error;
 import java.math.BigDecimal;
@@ -26,8 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import static java.util.stream.IntStream.range;
 
 /**
  *
@@ -82,7 +83,7 @@ public class Factorization {
         BigInteger[] roots = new BigInteger[degree];
         BigInteger modular = n.mod(p);
         int i = 0;
-        int cnt = 0;
+        int cnt = p.equals(TWO) ? 1 : 0;
         while (true) {
             try {
                 BigDecimal root = newtonSqrt(p.multiply(valueOf(i)).add(modular)).setScale(0);
@@ -122,7 +123,13 @@ public class Factorization {
         
         for(BigInteger p : factorBase) {
             try {
-                BigInteger[] roots = findRoot(N, p, 2);
+                
+                BigInteger[] roots = null;
+                if(p.equals(TWO))
+                    roots = new BigInteger[] { ONE };
+                else 
+                    roots = MathOp.shanksTonelli(N, p);
+                
                 for(BigInteger r : roots) {
                     try {
                         BigInteger s = smallestMatch(from, to, p, r);
@@ -170,6 +177,11 @@ public class Factorization {
         List<BigInteger> primes = sieve.get(x);
         if(primes == null) error("x[%s] is not in sieves.", x);
         BigInteger qx = x.pow(2).subtract(N);
+        if(qx.compareTo(ZERO) < 0) {
+            factors.put(MINUS_ONE, 1);
+            qx = qx.abs();
+        }
+        
         for(BigInteger p : primes) {
             while(qx.mod(p).equals(ZERO)) {
                 if(factors.containsKey(p)) factors.put(p, factors.get(p)+1);
@@ -198,7 +210,8 @@ public class Factorization {
         Map<BigInteger, TreeMap<BigInteger, Integer>> mathched = new TreeMap<>();
         for(BigInteger k : sieve.keySet()) {
             TreeMap<BigInteger, Integer> factors = getPrimeFactors(k, N, sieve);
-            if(factors.lastKey().compareTo(primeUpperBound) <= 0) {
+            if(factors.lastKey().compareTo(primeUpperBound) <= 0 &&
+               factors.firstKey().compareTo(MINUS_ONE) >= 0) {
                 mathched.put(k, factors);
             }
         }
@@ -207,41 +220,53 @@ public class Factorization {
     
     
     
-    public static void main(String[] args) {
-        BigInteger B = valueOf(2000);
+    public static void main(String[] args) throws InterruptedException {
+        BigInteger B = valueOf(15000);
 //        int piOfB = 4000;
 //        BigInteger N = Main.TARGET;
-//        BigInteger N = new BigInteger("6275815110957813119593022531213");
-        final BigInteger N = new BigInteger("19438380807575007722167");
-        
-        long b1 = 17900041427L;
-        long b2 = 1085940548621L;
+        BigInteger N = new BigInteger("6275815110957813119593022531213");
+//        final BigInteger N = new BigInteger("19438380807575007722167");
+//        
+//        long b1 = 17900041427L;
+//        long b2 = 1085940548621L;
         
         LinkedList<BigInteger> fb = factorBase(B, N);
-        
+        BigInteger M = valueOf(100_000);
         BigInteger N_SQRT = newtonSqrt(N).setScale(0, 2).toBigInteger();
-        BigInteger RANGE  = N_SQRT.add(valueOf(800000));
-        
-        
-        
-        Map<BigInteger, List<BigInteger>> sieve = factorSieve(N, N_SQRT, RANGE, fb);
+        BigInteger BEGIN = N_SQRT.subtract(M);
+        BigInteger END  = N_SQRT.add(M);
+//        
+//        
+        Map<BigInteger, List<BigInteger>> sieve = factorSieve(N, BEGIN, END, fb);
         Map<BigInteger, TreeMap<BigInteger,Integer>> factorsList = largePrimeVarious(N, fb.getLast(), sieve);
         System.out.println(fb.size());
         System.out.println(sieve.size());
         System.out.println(factorsList.size());
-        final Iterator<BigInteger> xIter = factorsList.keySet().iterator();
-        BigInteger[] xIndecies = range(0, factorsList.size()).mapToObj(i->xIter.next()).toArray(BigInteger[]::new);
+//        
+//        factorsList.forEach((k, v)->{ System.out.println(k+","+v);});
+
+//        for(int i=0; i<times; i++)
+//            aInt.incrementAndGet();
         
-        int[][] matrix = new int[fb.size()][];
-        for(int i=0; i<matrix.length; i++) {
-            matrix[i] = expVector(i, factorsList.get(xIndecies[i]), fb);
-        }
-        Function<BigInteger, BigInteger> Qx = (x)->x.pow(2).subtract(N);
-        
-        int[][] result = gaussianElimilationF2(matrix, 1);
-        for(int[] row : result) {
-            System.out.println(Arrays.toString(row));
-        }
+//        for(int i=0; i<4; i++)
+//            new Thread(()->{
+//                for(int j=0; j<smallTimes; j++)
+//                    aInt.incrementAndGet();
+//            }).start();
+                
+//        final Iterator<BigInteger> xIter = factorsList.keySet().iterator();
+//        BigInteger[] xIndecies = range(0, factorsList.size()).mapToObj(i->xIter.next()).toArray(BigInteger[]::new);
+//        
+//        int[][] matrix = new int[fb.size()][];
+//        for(int i=0; i<matrix.length; i++) {
+//            matrix[i] = expVector(i, factorsList.get(xIndecies[i]), fb);
+//        }
+//        Function<BigInteger, BigInteger> Qx = (x)->x.pow(2).subtract(N);
+//        
+//        int[][] result = gaussianElimilationF2(matrix, 1);
+//        for(int[] row : result) {
+//            System.out.println(Arrays.toString(row));
+//        }
         
 //        List<Integer> result = Matrix.searchZeroVector(matrix);
 //        BigInteger xResult = ONE, qxResult = ONE;

@@ -12,12 +12,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.BiConsumer;
-import java.util.function.IntFunction;
 import java.util.function.ObjIntConsumer;
 import static java.util.stream.Collectors.toList;
-import java.util.stream.IntStream;
 import static java.util.stream.IntStream.range;
 
 /**
@@ -117,16 +114,84 @@ public class Matrix {
                     matrix[restRow][j] ^= matrix[pivot][j];
             }
         }
-
         return elimilated;
     }
     
+    public static int[][] transpose(int[][] matrix) {
+        int[][] newMatrix = new int[matrix.length][];
+        for(int r=0; r<matrix[0].length; r++) {
+            newMatrix[r] = new int[matrix.length];
+            Arrays.fill(newMatrix[r], 0);
+        }
+        for(int r=0; r<matrix.length; r++) {
+            for(int c=0; c<matrix[r].length; c++) {
+                newMatrix[c][r] = matrix[r][c];
+            }
+        }
+        return newMatrix;
+    }
+    
+    public static int[] cloneCol(int[][] matrix, int col) {
+        int[] column = new int[matrix.length];
+        for(int r=0; r<matrix.length; r++)
+            column[r] = matrix[r][col];
+        return column;
+    }
+    
+    public static int[][] identity(int N) {
+        int[][] identityM = new int[N][N];
+        for(int i=0; i<N; i++)
+            for(int j=0; j<N; j++)
+                if(i==j) identityM[i][j] = 1;
+                else identityM[i][j] = 0;
+        return identityM;
+    }
+    
+    public static int[][] nullspace(int[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        int[][] elimilated = new int[matrix.length][];
+        int[] marker = range(0, rows).map(i->0).toArray();
+        int[][] identity = identity(marker.length);
+        int newRow = 0;
+        for(int c=0; c<cols; c++) {
+            final int col = c;
+            ObjIntConsumer<LinkedList> lead1Test = (L, row)-> { if(matrix[row][col] != 0 && marker[row]==0) L.add(row); };
+            LinkedList<Integer> leftMost1Rows = range(0, rows).collect(LinkedList::new, lead1Test, List::addAll);
+            if(leftMost1Rows.isEmpty()) continue;
+            int pivot = leftMost1Rows.pollFirst();
+            marker[pivot] = 1;
+            elimilated[newRow++] = matrix[pivot].clone();
+            while(!leftMost1Rows.isEmpty()) {
+                int restRow = leftMost1Rows.pollFirst();
+                for(int j=0; j<cols; j++) {
+                    matrix[restRow][j] ^= matrix[pivot][j];
+                    identity[restRow][j] ^= identity[pivot][j];
+                }
+            }
+        }
+        List<int[]> nullSpace = new LinkedList<>();
+        for(int r=elimilated.length-1; r>=0; r--) {
+            if(elimilated[r] == null)
+                nullSpace.add(identity[r].clone());
+        }
+        return (int[][]) nullSpace.toArray(new int[0][0]);
+    }
+    
+    
+    
     public static void main(String[] args) {
-        int N = 4000;
-        Random rand = new Random();
-        IntFunction<int[]> bitsGen = i->range(0, i).map(j->rand.nextInt(2)).toArray();
-        int[][] bitsMatrix = range(0, N).mapToObj(i->bitsGen.apply(N)).toArray(int[][]::new);
-        gaussianElimilationF2(bitsMatrix);
+//        int N = 5;
+//        Random rand = new Random();
+//        IntFunction<int[]> bitsGen = i->range(0, i).map(j->rand.nextInt(2)).toArray();
+//        int[][] bitsMatrix = range(0, N).mapToObj(i->bitsGen.apply(N)).toArray(int[][]::new);
         
+        int[][] bitsMatrix = {{1,0,1,0}, {1,1,1,0}, {0,1,0,1}, {1,1,1,1}, {0,0,0,1}};
+        
+        Arrays.stream(bitsMatrix).forEach((row)->System.out.println(Arrays.toString(row)));
+        System.out.println("-----");
+        Arrays.stream(nullspace(bitsMatrix)).forEach((row)->System.out.println(Arrays.toString(row)));
+        System.out.println("-----");
+        Arrays.stream(bitsMatrix).forEach((row)->System.out.println(Arrays.toString(row)));
     }
 }

@@ -7,9 +7,6 @@
 package cracking;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  *
@@ -21,10 +18,17 @@ public class Main {
     
     
     public static void main(String[] args) {
+//        BigInteger N = TARGET;
+//        LinkedList<BigInteger> fb = Factorization.factorBase(BigInteger.valueOf(50000), N);
+//        int numberPerLine = 20;
+//        int i = 0;
+//        for(BigInteger p : fb) {
+//            if(++i % numberPerLine == 0) System.out.println();
+//            System.out.print(p + " ");
+//        }
+//        System.out.println();
+//        System.out.println(Arrays.toString(MathOp.shanksTonelli(BigInteger.valueOf(4), BigInteger.valueOf(7))));
         
-        List<Integer> list = IntStream.range(0, 100).collect(ArrayList::new, List::add, List::addAll);
-        System.out.println(list);
-        
-        
+                
     }
 }
