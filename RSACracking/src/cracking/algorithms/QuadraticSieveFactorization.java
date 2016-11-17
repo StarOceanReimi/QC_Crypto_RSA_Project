@@ -130,7 +130,7 @@ public class QuadraticSieveFactorization {
                 System.out.println(ex);
             }
         }
-        //group.destroy();
+        group.destroy();
     }
 
     class SievingStrategy implements Runnable {
