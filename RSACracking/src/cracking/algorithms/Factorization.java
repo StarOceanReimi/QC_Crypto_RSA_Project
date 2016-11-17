@@ -231,7 +231,7 @@ public class Factorization {
 //        long b2 = 1085940548621L;
         
         LinkedList<BigInteger> fb = factorBase(B, N);
-        BigInteger M = valueOf(100_000);
+        BigInteger M = valueOf(8_000_000);
         BigInteger N_SQRT = newtonSqrt(N).setScale(0, 2).toBigInteger();
         BigInteger BEGIN = N_SQRT.subtract(M);
         BigInteger END  = N_SQRT.add(M);
@@ -240,7 +240,6 @@ public class Factorization {
         Map<BigInteger, List<BigInteger>> sieve = factorSieve(N, BEGIN, END, fb);
         Map<BigInteger, TreeMap<BigInteger,Integer>> factorsList = largePrimeVarious(N, fb.getLast(), sieve);
         System.out.println(fb.size());
-        System.out.println(sieve.size());
         System.out.println(factorsList.size());
 //        
 //        factorsList.forEach((k, v)->{ System.out.println(k+","+v);});

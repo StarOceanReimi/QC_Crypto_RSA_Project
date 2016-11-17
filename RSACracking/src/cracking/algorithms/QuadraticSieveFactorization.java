@@ -6,17 +6,18 @@
 
 package cracking.algorithms;
 
+import cracking.Main;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.shanksTonelli;
 import static cracking.utils.Util.mustPositive;
-import static java.lang.Math.exp;
-import static java.lang.Math.sqrt;
-import static java.lang.Math.log;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
 import static java.math.BigInteger.valueOf;
 import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -41,7 +42,7 @@ public class QuadraticSieveFactorization {
     private BigInteger[]  sieve;
     private List[]        sieveFactors;
     private BigInteger[]  sieveRemaing;
-    private Set<Integer> smoothIndices;
+    private Set<Integer>  smoothIndices;
     
     private int[][]      expVectors;
 
@@ -53,9 +54,7 @@ public class QuadraticSieveFactorization {
         mustPositive(limit.subtract(M));
         this.M = M.intValue();
     }
-    
-    
-    
+
     public List<BigInteger> factorize(BigInteger N) {
         process(N);
         return factors;
@@ -68,18 +67,24 @@ public class QuadraticSieveFactorization {
     }
 
     private void pickingUpperBoundOfFactorbase(double N) {
-        //B = valueOf((long)exp(0.5*sqrt(log(N)*log(log(N))))).divide(valueOf(8));
-        B = valueOf(15000);
+        //System.out.println(valueOf((long)exp(0.5*sqrt(log(N)*log(log(N))))));
+        B = valueOf(15_000);
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, FileNotFoundException, IOException {
+//        BigInteger N = Main.TARGET;
         BigInteger N = new BigInteger("6275815110957813119593022531213");
         BigInteger SQRT_N = MathOp.newtonSqrt(N).toBigInteger();
-        BigInteger M = valueOf(100_000);
+        BigInteger M = valueOf(8_000_000);
         QuadraticSieveFactorization qsf = new QuadraticSieveFactorization(SQRT_N.subtract(M), SQRT_N.add(M));
         qsf.factorize(N);
-        System.out.println(qsf.smoothIndices.size()+"/"+qsf.factorbase.size());
-        qsf.smoothIndices.forEach(index->System.out.println(qsf.sieve[index]+","+qsf.sieveFactors[index]));
+        File file = new File("d:/test.txt");
+        if(!file.exists())
+            file.createNewFile();
+        
+        PrintStream fileStream = new PrintStream(file);
+        fileStream.println(qsf.smoothIndices.size()+"/"+qsf.factorbase.size());
+        qsf.smoothIndices.forEach(index->fileStream.println(qsf.sieve[index]+","+qsf.sieveFactors[index]));
         
     }
 
@@ -165,6 +170,7 @@ public class QuadraticSieveFactorization {
                     resetPos();
                     findInitialCandidate(sol, p);
                     populateAllCandidates(p);
+                    if(smoothIndices.size() > factorbase.size()) return;
                 }
             }
         }
@@ -188,6 +194,7 @@ public class QuadraticSieveFactorization {
             
             while (startValue.compareTo(end) < 0) {
                 if(pos >= M) break;
+                if(smoothIndices.size() > factorbase.size()) return;
                 sieve[pos] = startValue;
                 if(sieveFactors[pos] == null) {
                     sieveFactors[pos] = new LinkedList();
@@ -200,10 +207,10 @@ public class QuadraticSieveFactorization {
                 while (qx.mod(p).equals(ZERO)) {
                     qx = qx.divide(p);
                 }
+                sieveRemaing[pos] = qx;
                 if(qx.equals(ONE) || qx.equals(ZERO.subtract(ONE))) {
                     smoothIndices.add(pos);
                 }
-                sieveRemaing[pos] = qx;
                 startValue = startValue.add(p);
                 pos += p.intValue();
             }
