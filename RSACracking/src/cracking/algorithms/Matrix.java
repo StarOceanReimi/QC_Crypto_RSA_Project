@@ -148,13 +148,17 @@ public class Matrix {
     }
     
     public static int[][] nullspace(int[][] matrix) {
+        return nullspace(matrix, 0);
+    }
+    
+    public static int[][] nullspace(int[][] matrix, int startColumn) {
         int rows = matrix.length;
         int cols = matrix[0].length;
         int[][] elimilated = new int[matrix.length][];
         int[] marker = range(0, rows).map(i->0).toArray();
-        int[][] identity = identity(marker.length);
+        int[][] identity = identity(rows);
         int newRow = 0;
-        for(int c=0; c<cols; c++) {
+        for(int c=startColumn; c<cols; c++) {
             final int col = c;
             ObjIntConsumer<LinkedList> lead1Test = (L, row)-> { if(matrix[row][col] != 0 && marker[row]==0) L.add(row); };
             LinkedList<Integer> leftMost1Rows = range(0, rows).collect(LinkedList::new, lead1Test, List::addAll);
@@ -164,8 +168,10 @@ public class Matrix {
             elimilated[newRow++] = matrix[pivot].clone();
             while(!leftMost1Rows.isEmpty()) {
                 int restRow = leftMost1Rows.pollFirst();
-                for(int j=0; j<cols; j++) {
+                for(int j=startColumn; j<cols; j++) {
                     matrix[restRow][j] ^= matrix[pivot][j];
+                }
+                for(int j=0; j<identity[restRow].length; j++) {
                     identity[restRow][j] ^= identity[pivot][j];
                 }
             }
@@ -186,11 +192,12 @@ public class Matrix {
 //        IntFunction<int[]> bitsGen = i->range(0, i).map(j->rand.nextInt(2)).toArray();
 //        int[][] bitsMatrix = range(0, N).mapToObj(i->bitsGen.apply(N)).toArray(int[][]::new);
         
-        int[][] bitsMatrix = {{1,0,1,0}, {1,1,1,0}, {0,1,0,1}, {1,1,1,1}, {0,0,0,1}};
+        
+        int[][] bitsMatrix = {{15,1,0,1,0}, {16,1,1,1,0}, {17,0,1,0,1}, {18,1,1,1,1}, {19,0,0,0,1}};
         
         Arrays.stream(bitsMatrix).forEach((row)->System.out.println(Arrays.toString(row)));
         System.out.println("-----");
-        Arrays.stream(nullspace(bitsMatrix)).forEach((row)->System.out.println(Arrays.toString(row)));
+        Arrays.stream(nullspace(bitsMatrix,1)).forEach((row)->System.out.println(Arrays.toString(row)));
         System.out.println("-----");
         Arrays.stream(bitsMatrix).forEach((row)->System.out.println(Arrays.toString(row)));
     }

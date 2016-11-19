@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Random;
 import java.net.*;
 
 public class Master {
@@ -15,9 +14,10 @@ public class Master {
     private ThreadGroup clientGroup;
 
     private int port = 5506;
-    private static final Random RAND = new Random();
 
-    private LinkedList<Job> taskQueue;
+    private final LinkedList<Job> taskQueue;
+    
+    private volatile boolean serverDown = false;
 
     public Master(BigInteger start, BigInteger end) {
         this.start = start;
@@ -55,7 +55,7 @@ public class Master {
         while(true) {
             try {
                 Socket clientSock = serverSock.accept();
-                if(taskQueue.isEmpty()) break; 
+                if(taskQueue.isEmpty()) { serverDown = true; break; }
                 new Thread(clientGroup, new ClientHandler(clientSock)).start();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -75,6 +75,8 @@ public class Master {
 
         ClientHandler(Socket sock) throws IOException {
             clientSock = sock;
+            //must initialize ObjectOutputStream before ObjecctInputStream
+            //Otherwise, deadlock..
             output = new ObjectOutputStream(clientSock.getOutputStream());
             input  = new ObjectInputStream(clientSock.getInputStream());
         }
@@ -104,16 +106,21 @@ public class Master {
             }
         }
 
-        void collectResult() {
+        void collectResult(Job job) {
             try {
                 Result result = (Result)input.readObject();
                 System.out.println(result);
             } catch(IOException | ClassNotFoundException ex) {
                 ex.printStackTrace();
+                System.out.println("Error occur in collectResult job.");
+                synchronized(taskQueue) {
+                    taskQueue.offer(job);
+                }
             }
         }
 
         void shutdownServer() {
+            if(serverDown) return;
             try { new Socket(InetAddress.getLocalHost(), port); }
             catch (IOException ex) {  }
         }
@@ -137,17 +144,15 @@ public class Master {
                 Job job = take();
                 if(job == null) break;
                 if(!assignJob(job)) continue;
-                collectResult();
+                collectResult(job);
             }
             done();
         }
     }
 
-
-
     public static void main(String[] args) {
-        BigInteger S = BigInteger.valueOf(10_000_000);
-        BigInteger E = BigInteger.valueOf(20_000_000);
+        BigInteger S = BigInteger.valueOf(100_000_000);
+        BigInteger E = BigInteger.valueOf(200_000_000);
         Master master = new Master(S, E);
         master.makeAssignment(8);
         master.listening();

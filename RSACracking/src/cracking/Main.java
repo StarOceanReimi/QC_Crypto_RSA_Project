@@ -14,7 +14,7 @@ import java.math.BigInteger;
  */
 public class Main {
 
-    public static BigInteger TARGET = new BigInteger("495960937377360604920383605744987602701101399399359259262820733407167");
+    public static BigInteger TARGET = new BigInteger("613054310726032886180943888436325837702226698886723435429939101863");
     
     
     public static void main(String[] args) {

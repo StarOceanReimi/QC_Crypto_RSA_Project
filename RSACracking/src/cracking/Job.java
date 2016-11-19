@@ -6,9 +6,9 @@ import static java.lang.String.format;
 
 public class Job implements Serializable {
 
-    private BigInteger start;
-    private BigInteger end;
-    private int pos;
+    private final BigInteger start;
+    private final BigInteger end;
+    private final int pos;
 
     public Job(BigInteger begin, BigInteger start, BigInteger end) {
         this.start = start;

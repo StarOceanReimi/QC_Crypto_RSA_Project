@@ -35,7 +35,7 @@ public class Primes {
     public static class RandomPrimeGenerator {
 
         private static final BigInteger PRIME_PRODUCT = BigInteger.valueOf((long)2*3*5*7*11*13*17*19*23*29*31*37*41*43*47);
-        private static final Function<BigInteger, BigInteger> ODD_FUNC = b-> {
+        public static final Function<BigInteger, BigInteger> ODD_FUNC = b-> {
             if(b.and(ONE).equals(ONE)) b = b.add(TWO);
             else b = b.add(ONE);
             while(!gcd(b, PRIME_PRODUCT).equals(ONE)) {
@@ -203,8 +203,8 @@ public class Primes {
     
     public static void main(String[] args) {
         RandomPrimeGenerator randomGen = new RandomPrimeGenerator();
-        BigInteger b1 = randomGen.gen(40).next();
-        BigInteger b2 = randomGen.gen(35).next();
+        BigInteger b1 = randomGen.gen(20).next();
+        BigInteger b2 = randomGen.gen(30).next();
         System.out.println(b1);
         System.out.println(b2);
         BigInteger N = b1.multiply(b2);

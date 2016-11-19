@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
-import java.util.Arrays;
 import java.util.function.Function;
 
 /**
@@ -156,6 +155,8 @@ public class MathOp {
     
     
     public static int legendreSymbol(BigInteger a, BigInteger p) {
+        
+        if(p.equals(TWO)) { return a.and(ONE).equals(ZERO) ? 0 : 1; }
         
         if(p.and(ONE).equals(ZERO))
             error("p has to be odd, but %s", p);

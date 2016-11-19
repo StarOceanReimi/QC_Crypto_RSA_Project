@@ -6,20 +6,22 @@
 
 package cracking.algorithms;
 
-import cracking.Main;
 import static cracking.algorithms.MathOp.MINUS_ONE;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.expMod;
 import static cracking.algorithms.MathOp.gcd;
+import static cracking.algorithms.MathOp.legendreSymbol;
 import static cracking.algorithms.MathOp.modInverse;
 import static cracking.algorithms.MathOp.newtonSqrt;
 import cracking.algorithms.Primes.EratosthenesPrimeGenerator;
 import static cracking.utils.Util.error;
+import static java.lang.Math.log;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.valueOf;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,8 +29,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import static javax.swing.text.html.HTML.Attribute.N;
 
 /**
  *
@@ -52,9 +54,9 @@ public class Factorization {
         return expMod(a, p.subtract(ONE).divide(TWO), p).equals(ONE);
     }
     
-    public static LinkedList<BigInteger> factorBase(int piB, BigInteger N) {
+    public static List<BigInteger> factorBase(int piB, BigInteger N) {
         Iterator<BigInteger> gen = new EratosthenesPrimeGenerator().gen();
-        LinkedList<BigInteger> factorBase = new LinkedList<>();
+        List<BigInteger> factorBase = new ArrayList<>();
         while(piB-- > 0) {
             BigInteger p = gen.next();
             if(eulerCriterion(N, p)) factorBase.add(p);
@@ -62,14 +64,15 @@ public class Factorization {
         return factorBase;
     }
     
-    public static LinkedList<BigInteger> factorBase(BigInteger B, BigInteger N) {
+    public static List<BigInteger> factorBase(BigInteger B, BigInteger N) {
         Iterator<BigInteger> gen = new EratosthenesPrimeGenerator().gen();
-        LinkedList<BigInteger> factorBase = new LinkedList<>();
+        List<BigInteger> factorBase = new ArrayList<>();
         while(true) {
             BigInteger p = gen.next();
             if(p.compareTo(B) > 0) break;
-            if(eulerCriterion(N, p)) factorBase.add(p);
+            if(legendreSymbol(N, p) == 1) factorBase.add(p);
         }
+        System.gc();
         return factorBase;
     }
     
@@ -128,7 +131,7 @@ public class Factorization {
                 if(p.equals(TWO))
                     roots = new BigInteger[] { ONE };
                 else 
-                    roots = MathOp.shanksTonelli(N, p);
+                    roots = findRoot(N, p, 2);
                 
                 for(BigInteger r : roots) {
                     try {
@@ -221,26 +224,44 @@ public class Factorization {
     
     
     public static void main(String[] args) throws InterruptedException {
-        BigInteger B = valueOf(15000);
+        BigInteger N = new BigInteger("6275815110957813119593022531213");        
+//        BigInteger smooth = valueOf(2505157706368382L).pow(2).subtract(N);
+//        List<BigInteger> fb = Factorization.factorBase(valueOf(15000), N);
+//        Map<BigInteger, Integer> factors = new HashMap<>();
+//        double smoothLog = log(smooth.doubleValue());
+//        for(BigInteger p : fb) {
+//            if(smooth.mod(p).equals(ZERO)) {
+//                smoothLog -= log(p.doubleValue());
+//            }
+//            while(smooth.mod(p).equals(ZERO)) {
+//                smooth = smooth.divide(p);
+//            }
+//        }
+//        
+//        System.out.println(smoothLog);
+//        System.out.println(smooth);
+        
+        BigInteger B = valueOf(350_000);
 //        int piOfB = 4000;
 //        BigInteger N = Main.TARGET;
-        BigInteger N = new BigInteger("6275815110957813119593022531213");
+//        BigInteger N = new BigInteger("6275815110957813119593022531213");
 //        final BigInteger N = new BigInteger("19438380807575007722167");
 //        
 //        long b1 = 17900041427L;
 //        long b2 = 1085940548621L;
         
-        LinkedList<BigInteger> fb = factorBase(B, N);
-        BigInteger M = valueOf(8_000_000);
-        BigInteger N_SQRT = newtonSqrt(N).setScale(0, 2).toBigInteger();
-        BigInteger BEGIN = N_SQRT.subtract(M);
-        BigInteger END  = N_SQRT.add(M);
-//        
-//        
-        Map<BigInteger, List<BigInteger>> sieve = factorSieve(N, BEGIN, END, fb);
-        Map<BigInteger, TreeMap<BigInteger,Integer>> factorsList = largePrimeVarious(N, fb.getLast(), sieve);
+        List<BigInteger> fb = factorBase(B, N);
         System.out.println(fb.size());
-        System.out.println(factorsList.size());
+//        BigInteger M = valueOf(8_000_000);
+//        BigInteger N_SQRT = newtonSqrt(N).setScale(0, 2).toBigInteger();
+//        BigInteger BEGIN = N_SQRT.subtract(M);
+//        BigInteger END  = N_SQRT.add(M);
+//        
+//        
+//        Map<BigInteger, List<BigInteger>> sieve = factorSieve(N, BEGIN, END, fb);
+//        Map<BigInteger, TreeMap<BigInteger,Integer>> factorsList = largePrimeVarious(N, fb.get(fb.size()-1), sieve);
+//        System.out.println(fb.size());
+//        System.out.println(factorsList.size());
 //        
 //        factorsList.forEach((k, v)->{ System.out.println(k+","+v);});
 

@@ -4,6 +4,8 @@ import java.net.Socket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Slave {
 
@@ -32,6 +34,10 @@ public class Slave {
 
     private Result process(Job job) {
         System.out.println(job);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+        }
         return new Result("test");
     }
 
@@ -66,7 +72,7 @@ public class Slave {
         String address = "localhost";
         Slave worker = new Slave(address, port);
         worker.work();
-
+        
     }
 
 }
