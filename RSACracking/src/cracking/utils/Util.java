@@ -62,4 +62,22 @@ public class Util {
     public static BigInteger intToBigInteger(int n) {
         return BigInteger.valueOf(n);
     }
+    
+    public static BigInteger[][] splitRange(int pieces, BigInteger from, BigInteger to) {
+        BigInteger chunk = to.subtract(from);
+        mustPositive(chunk);
+        BigInteger portion = chunk.divide(BigInteger.valueOf(pieces));
+        BigInteger[][] ranges = new BigInteger[pieces][];
+        for(int i=0; i<pieces; i++) {
+            BigInteger[] range = new BigInteger[2];
+            range[0] = from;
+            from = from.add(portion);
+            if(i == pieces-1) {
+                from = from.max(to);
+            }
+            range[1] = from;
+            ranges[i] = range;
+        }
+        return ranges;
+    }
 }

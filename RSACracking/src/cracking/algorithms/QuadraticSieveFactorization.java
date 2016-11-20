@@ -6,22 +6,21 @@
 
 package cracking.algorithms;
 
-import cracking.Main;
+import static cracking.algorithms.Factorization.henselLifting;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.gcd;
+import static cracking.algorithms.MathOp.newtonSqrt;
 import static cracking.algorithms.MathOp.shanksTonelli;
+import static cracking.algorithms.Primes.RandomPrimeGenerator.ODD_FUNC;
 import static cracking.utils.Util.mustPositive;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import static java.lang.Math.exp;
 import static java.lang.Math.log;
-import static java.lang.Math.sqrt;
-import static java.lang.String.format;
-import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.valueOf;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -48,6 +48,12 @@ public class QuadraticSieveFactorization {
     private final BigInteger endPosition;
     
     private List<BigInteger> factorbase;
+    private double[]     logPValues;
+    
+    private int[]        sieve;
+    private BigInteger[][] solutions;
+    
+    
     
     private Double[]  sieveRemaing;
 
@@ -75,10 +81,12 @@ public class QuadraticSieveFactorization {
     private void process(BigInteger N) {
         pickingUpperBoundOfFactorbase(N.doubleValue());
         buildFactorbase(N);
+//        multiPloyInit(N);
+        
         buildSieve(N);
-        buildExpVectors(N);
-        findNullSpace();
-        calculateFactor(N);
+//        buildExpVectors(N);
+//        findNullSpace();
+//        calculateFactor(N);
     }
 
     private void buildExpVectors(BigInteger N) {
@@ -118,20 +126,30 @@ public class QuadraticSieveFactorization {
 //        BigInteger N = new BigInteger("30940085241669403305401996108077375566839");
 
         BigInteger N = new BigInteger("6275815110957813119593022531213");        
+        
         BigInteger SQRT_N = MathOp.newtonSqrt(N).toBigInteger();
         BigInteger M = valueOf(8_000_000);
         BigInteger begin = SQRT_N.subtract(M);
         QuadraticSieveFactorization qsf = new QuadraticSieveFactorization(begin, SQRT_N.add(M));
         List<BigInteger> factors = qsf.factorize(N);
-        System.out.println(format("%d/%d", qsf.smoothIndices.size(), qsf.factorbase.size()));
-        System.out.println(factors.get(0).multiply(factors.get(1)));
-        for(BigInteger p : factors) {
-            System.out.println(Primes.millerRabinTest(p));
-        }
+//        System.out.println(format("%d/%d", qsf.smoothIndices.size(), qsf.factorbase.size()));
+//        System.out.println(factors.get(0).multiply(factors.get(1)));
+//        for(BigInteger p : factors) {
+//            System.out.println(Primes.millerRabinTest(p));
+//        }
     }
 
     private void buildFactorbase(BigInteger N) {
         factorbase = Factorization.factorBase(B, N);
+        sieve = new int[B.intValue()];
+        logPValues = new double[factorbase.size()];
+        solutions = new BigInteger[factorbase.size()][];
+        for(int i=0; i<factorbase.size(); i++) {
+            BigInteger p = factorbase.get(i);
+            logPValues[i] = log(p.doubleValue());
+            if(p.equals(TWO)) solutions[i] = new BigInteger[]{ ONE };
+            else solutions[i] = shanksTonelli(N, p);
+        }
     }
 
     private BigInteger[][] splitRangeInto(int pieces) {
@@ -148,7 +166,7 @@ public class QuadraticSieveFactorization {
     }
     
     private void buildSieve(BigInteger N) {
-        int numberOfProcessor = 8;
+        int numberOfProcessor = 1;
         sieveRemaing = new Double[M];
         smoothIndices = ConcurrentHashMap.newKeySet(factorbase.size()+1);
         multiThreadSieving(N, numberOfProcessor);
@@ -213,6 +231,7 @@ public class QuadraticSieveFactorization {
 
     private boolean enoughSmoothFactors() {
         return false;
+//        return smoothIndices.size() > factorbase.size();
     }
     
     private Map<BigInteger, Integer> factorQx(BigInteger qx) {
@@ -224,6 +243,30 @@ public class QuadraticSieveFactorization {
             }
         }
         return fMap;
+    }
+
+    private void multiPloyInit(BigInteger N) {
+        BigInteger TWO_N = newtonSqrt(N.multiply(TWO)).toBigInteger();
+        BigInteger startQ = newtonSqrt(TWO_N.divide(valueOf(M))).toBigInteger();
+        
+        BigInteger q = startQ;
+        while(true) {
+            if(q.and(ONE).equals(ZERO)) q = q.add(ONE);
+            while(!Primes.millerRabinTest(q)) {
+                q = ODD_FUNC.apply(q);
+            }
+            if(MathOp.legendreSymbol(N, q) == 1) break;
+            q = ODD_FUNC.apply(q);
+        }
+
+        BigInteger a = q.pow(2);
+        BigInteger[] sols = henselLifting(N, q);
+        Predicate<BigInteger> valid = x->x.pow(2).subtract(N).mod(a).equals(ZERO);
+        BigInteger b = valid.test(sols[0]) ? sols[0] : sols[1];
+        for(BigInteger[] roots : solutions) {
+            BigInteger r1 = roots[0];
+            System.out.println(Arrays.toString(r1.subtract(b).divideAndRemainder(a)));
+        }
     }
 
     class SievingStrategy implements Runnable {
@@ -246,21 +289,19 @@ public class QuadraticSieveFactorization {
 
         void sieving() {
             final Iterator<BigInteger> iter = factorbase.iterator();
+            int i=0;
             while(iter.hasNext()) {
                 BigInteger p = iter.next();
-                BigInteger[] sols;
-                if(p.equals(TWO)) {
-                    sols = new BigInteger[] { ONE };
-                } else {
-                    sols = shanksTonelli(N, p);
-                }
+                BigInteger[] sols = solutions[i];
                 for(BigInteger sol : sols) {
                     resetPos();
                     findInitialCandidate(sol, p);
-                    populateAllCandidates(p);
+                    populateAllCandidates(p, i);
                     if(enoughSmoothFactors()) return;
                 }
+                i++;
             }
+            
         }
         
         @Override
@@ -271,6 +312,7 @@ public class QuadraticSieveFactorization {
         private void findInitialCandidate(BigInteger sol, BigInteger p) {
             for(BigInteger x=start; x.compareTo(end) < 0; x=x.add(ONE)) {
                 if(x.mod(p).equals(sol)) {
+                    System.out.println(pos+","+p);
                     return;
                 }
                 pos++;
@@ -292,17 +334,17 @@ public class QuadraticSieveFactorization {
                 }
         */
             
-        private void populateAllCandidates(BigInteger p) {
+        private void populateAllCandidates(BigInteger p, int index) {
             BigInteger startValue = start.add(valueOf(pos).subtract(start.subtract(startPosition)));
 
             while (startValue.compareTo(end) < 0) {
                 if(pos >= M) break;
                 Double qxBits = sieveRemaing[pos];
                 if(qxBits == null) {
-                    BigInteger qx = startValue.pow(2).subtract(N).abs();
+                    BigInteger qx = Qx.apply(startValue, N).abs();
                     qxBits = log(qx.doubleValue());
                 }
-                qxBits -= log(p.doubleValue());
+                qxBits -= logPValues[index];
                 sieveRemaing[pos] = qxBits;
                 double t = Math.round(qxBits);
                 if(t < 2 && t > -2) {

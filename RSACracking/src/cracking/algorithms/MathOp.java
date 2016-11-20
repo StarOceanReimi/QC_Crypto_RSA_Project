@@ -22,6 +22,11 @@ import java.util.function.Function;
 public class MathOp {
     
     public static final BigInteger TWO = BigInteger.valueOf(2);
+    public final static BigInteger MINUS_ONE = ZERO.subtract(ONE);
+    public final static BigInteger THREE = BigInteger.valueOf(3);
+    public final static BigInteger FIVE = BigInteger.valueOf(5);
+    public final static BigInteger FOUR = BigInteger.valueOf(4);
+    public final static BigInteger SEVEN = BigInteger.valueOf(7);
     
     public static BigInteger gcd(BigInteger a, BigInteger b) {
         mustPositive(a, b);
@@ -146,13 +151,6 @@ public class MathOp {
             r = m;
         }
     }
-    
-    final static BigInteger MINUS_ONE = ZERO.subtract(ONE);
-    final static BigInteger THREE = BigInteger.valueOf(3);
-    final static BigInteger FIVE = BigInteger.valueOf(5);
-    final static BigInteger FOUR = BigInteger.valueOf(4);
-    final static BigInteger SEVEN = BigInteger.valueOf(7);
-    
     
     public static int legendreSymbol(BigInteger a, BigInteger p) {
         

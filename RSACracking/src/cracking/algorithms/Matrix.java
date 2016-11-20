@@ -5,8 +5,10 @@
  */
 package cracking.algorithms;
 
+import cracking.utils.Util;
 import static cracking.utils.Util.error;
 import java.lang.reflect.Array;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -191,14 +193,17 @@ public class Matrix {
 //        Random rand = new Random();
 //        IntFunction<int[]> bitsGen = i->range(0, i).map(j->rand.nextInt(2)).toArray();
 //        int[][] bitsMatrix = range(0, N).mapToObj(i->bitsGen.apply(N)).toArray(int[][]::new);
+
+        BigInteger[][] ranges = Util.splitRange(8, BigInteger.valueOf(100_000_000), BigInteger.valueOf(500_000_009));
+        Arrays.stream(ranges).forEach(row->System.out.println(Arrays.toString(row)));
         
         
-        int[][] bitsMatrix = {{15,1,0,1,0}, {16,1,1,1,0}, {17,0,1,0,1}, {18,1,1,1,1}, {19,0,0,0,1}};
-        
-        Arrays.stream(bitsMatrix).forEach((row)->System.out.println(Arrays.toString(row)));
-        System.out.println("-----");
-        Arrays.stream(nullspace(bitsMatrix,1)).forEach((row)->System.out.println(Arrays.toString(row)));
-        System.out.println("-----");
-        Arrays.stream(bitsMatrix).forEach((row)->System.out.println(Arrays.toString(row)));
+//        int[][] bitsMatrix = {{15,1,0,1,0}, {16,1,1,1,0}, {17,0,1,0,1}, {18,1,1,1,1}, {19,0,0,0,1}};
+//        
+//        Arrays.stream(bitsMatrix).forEach((row)->System.out.println(Arrays.toString(row)));
+//        System.out.println("-----");
+//        Arrays.stream(nullspace(bitsMatrix,1)).forEach((row)->System.out.println(Arrays.toString(row)));
+//        System.out.println("-----");
+//        Arrays.stream(bitsMatrix).forEach((row)->System.out.println(Arrays.toString(row)));
     }
 }

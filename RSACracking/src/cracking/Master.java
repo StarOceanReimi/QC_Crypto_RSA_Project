@@ -10,6 +10,8 @@ public class Master {
     
     private BigInteger start;
     private BigInteger end;
+    private BigInteger N;
+    private int B;
 
     private ThreadGroup clientGroup;
 
@@ -19,9 +21,11 @@ public class Master {
     
     private volatile boolean serverDown = false;
 
-    public Master(BigInteger start, BigInteger end) {
+    public Master(BigInteger N, int B, BigInteger start, BigInteger end) {
         this.start = start;
         this.end   = end;
+        this.N     = N;
+        this.B     = B;
         this.taskQueue = new LinkedList<>();
         this.clientGroup = new ThreadGroup("ClinetThreads");
     }
@@ -32,7 +36,7 @@ public class Master {
         BigInteger init  = start;
         for(int i=0; i<pieces; i++) {
             BigInteger temp = init.add(chunk);
-            taskQueue.add(new Job(start, init, temp));
+            taskQueue.add(new Job(N, B, init, temp));
             init = temp;
         }
     }
@@ -110,6 +114,7 @@ public class Master {
             try {
                 Result result = (Result)input.readObject();
                 System.out.println(result);
+                System.out.println(result.getBSmooth().length);
             } catch(IOException | ClassNotFoundException ex) {
                 ex.printStackTrace();
                 System.out.println("Error occur in collectResult job.");
@@ -151,9 +156,9 @@ public class Master {
     }
 
     public static void main(String[] args) {
-        BigInteger S = BigInteger.valueOf(100_000_000);
-        BigInteger E = BigInteger.valueOf(200_000_000);
-        Master master = new Master(S, E);
+        BigInteger S = BigInteger.valueOf(1_000_000_000);
+        BigInteger E = BigInteger.valueOf(2_000_000_000);
+        Master master = new Master(Main.TARGET, 1_000_000, S, E);
         master.makeAssignment(8);
         master.listening();
     }

@@ -73,6 +73,75 @@ public class Primes {
                 }
             };
         }
+        
+        public Iterator<BigInteger> gen(final BigInteger start) {
+            return new Iterator<BigInteger>() {
+
+                @Override
+                public boolean hasNext() {
+                    return true;
+                }
+
+                @Override
+                public BigInteger next() {
+                    BigInteger init = start;
+                    if(init.and(ONE).equals(ZERO)) init.add(ONE);
+                    while(true) {
+                        if(millerRabinTest(init)) return init;
+                        init = ODD_FUNC.apply(init);
+                    }
+                }
+            };
+        }
+        
+    }
+    
+    public static class PrimitiveEratosPrimeGenerator {
+        
+        
+        public PrimitiveEratosPrimeGenerator() {
+        }
+        
+        public Iterator<Integer> gen() {
+            
+            return new Iterator<Integer>() {
+                int q = 2;
+                HashMap<Integer, List<Integer>> dict = new HashMap<>();
+                
+                @Override
+                public boolean hasNext() {
+                    return true;
+                }
+
+                @Override
+                public Integer next() {
+                    int prime = 0;
+                    while(prime == 0) {
+                        if(!dict.containsKey(q)) {
+                            prime = q;
+                            List<Integer> factors = new LinkedList<>();
+                            factors.add(q);
+                            dict.put(q*q, factors);
+                        } else {
+                            for(int f : dict.get(q)) {
+                                List<Integer> factors = dict.get(q+f);
+                                if(factors == null) {
+                                    factors = new LinkedList<>();
+                                    dict.put(q+f, factors);
+                                }
+                                factors.add(f);
+                            }
+                            dict.remove(q);
+                            
+                        }
+                        q += 1;
+                    }
+                    return prime;
+                }
+            };
+     
+        }
+        
     }
     
     public static class EratosthenesPrimeGenerator {

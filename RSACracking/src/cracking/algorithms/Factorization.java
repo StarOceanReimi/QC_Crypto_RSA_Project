@@ -13,9 +13,9 @@ import static cracking.algorithms.MathOp.gcd;
 import static cracking.algorithms.MathOp.legendreSymbol;
 import static cracking.algorithms.MathOp.modInverse;
 import static cracking.algorithms.MathOp.newtonSqrt;
+import static cracking.algorithms.MathOp.shanksTonelli;
 import cracking.algorithms.Primes.EratosthenesPrimeGenerator;
 import static cracking.utils.Util.error;
-import static java.lang.Math.log;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
-import static javax.swing.text.html.HTML.Attribute.N;
 
 /**
  *
@@ -114,12 +113,19 @@ public class Factorization {
         return null;
     }
     
-    private static BigInteger henselLifting(BigInteger x, BigInteger p, BigInteger r) {
-        BigInteger inv = modInverse(TWO.multiply(x), p);
-        BigInteger tmp = r.subtract(x.pow(2)).divide(p);
-        BigInteger t = inv.multiply(tmp).mod(p);
-        return t.multiply(p).add(x);
+    public static BigInteger[] henselLifting(BigInteger r, BigInteger p) {
+        BigInteger[] sols = shanksTonelli(r, p);
+        BigInteger[] ret = new BigInteger[2];
+        int i=0;
+        for(BigInteger x : sols) {
+            BigInteger inv = modInverse(TWO.multiply(x), p);
+            BigInteger tmp = r.subtract(x.pow(2)).divide(p);
+            BigInteger t = inv.multiply(tmp).mod(p);
+            ret[i++] = t.multiply(p).add(x);
+        }
+        return ret;
     }
+    
     
     public static Map<BigInteger, List<BigInteger>> factorSieve(BigInteger N, BigInteger from, BigInteger to, List<BigInteger> factorBase) {
         Map<BigInteger, List<BigInteger>> sieve = new HashMap<>();
@@ -224,6 +230,8 @@ public class Factorization {
     
     
     public static void main(String[] args) throws InterruptedException {
+
+        
         BigInteger N = new BigInteger("6275815110957813119593022531213");        
 //        BigInteger smooth = valueOf(2505157706368382L).pow(2).subtract(N);
 //        List<BigInteger> fb = Factorization.factorBase(valueOf(15000), N);
@@ -241,7 +249,7 @@ public class Factorization {
 //        System.out.println(smoothLog);
 //        System.out.println(smooth);
         
-        BigInteger B = valueOf(350_000);
+//        BigInteger B = valueOf(350_000);
 //        int piOfB = 4000;
 //        BigInteger N = Main.TARGET;
 //        BigInteger N = new BigInteger("6275815110957813119593022531213");
@@ -250,8 +258,8 @@ public class Factorization {
 //        long b1 = 17900041427L;
 //        long b2 = 1085940548621L;
         
-        List<BigInteger> fb = factorBase(B, N);
-        System.out.println(fb.size());
+//        List<BigInteger> fb = factorBase(B, N);
+//        System.out.println(fb.size());
 //        BigInteger M = valueOf(8_000_000);
 //        BigInteger N_SQRT = newtonSqrt(N).setScale(0, 2).toBigInteger();
 //        BigInteger BEGIN = N_SQRT.subtract(M);

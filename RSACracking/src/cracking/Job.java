@@ -8,12 +8,14 @@ public class Job implements Serializable {
 
     private final BigInteger start;
     private final BigInteger end;
-    private final int pos;
+    private final BigInteger N;
+    private final int B;
 
-    public Job(BigInteger begin, BigInteger start, BigInteger end) {
+    public Job(BigInteger N, int B, BigInteger start, BigInteger end) {
         this.start = start;
-        this.end = end;
-        this.pos = start.subtract(begin).intValue();
+        this.end   = end;
+        this.N = N;
+        this.B = B;
     }
 
     public BigInteger getStart() {
@@ -24,12 +26,16 @@ public class Job implements Serializable {
         return end;
     }
 
-    public int getPos() {
-        return pos;
+    public int getB() {
+        return B;
+    }
+
+    public BigInteger getN() {
+        return N;
     }
 
     @Override
     public String toString() {
-        return format("start:%s, end:%s, pos:%d", start, end, pos);
+        return format("start:%s, end:%s, for Integer:%s, FactorBase: %d", start, end, N, B);
     }
 }
