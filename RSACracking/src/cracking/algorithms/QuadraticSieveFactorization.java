@@ -255,7 +255,7 @@ public class QuadraticSieveFactorization {
             while(!Primes.millerRabinTest(q)) {
                 q = ODD_FUNC.apply(q);
             }
-            if(MathOp.legendreSymbol(N, q) == 1) break;
+            if(MathOp.legendre(N, q) == 1) break;
             q = ODD_FUNC.apply(q);
         }
 

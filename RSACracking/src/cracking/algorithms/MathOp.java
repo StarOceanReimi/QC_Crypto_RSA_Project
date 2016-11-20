@@ -27,6 +27,7 @@ public class MathOp {
     public final static BigInteger FIVE = BigInteger.valueOf(5);
     public final static BigInteger FOUR = BigInteger.valueOf(4);
     public final static BigInteger SEVEN = BigInteger.valueOf(7);
+    public final static BigInteger EIGHT = BigInteger.valueOf(8);
     
     public static BigInteger gcd(BigInteger a, BigInteger b) {
         mustPositive(a, b);
@@ -41,8 +42,9 @@ public class MathOp {
     
     public static BigInteger[] exGcd(BigInteger a, BigInteger b) {
         mustNonNegative(a, b);
-        BigInteger[] triple = new BigInteger[3];
+        BigInteger[] triple;
         if(a.equals(ZERO)) {
+            triple = new BigInteger[3];
             triple[0] = b;
             triple[1] = ZERO;
             triple[2] = ONE;
@@ -62,11 +64,11 @@ public class MathOp {
         BigInteger[] triple = exGcd(m, n);
         BigInteger gcd = triple[0];
         if(!gcd.equals(ONE)) {
-            error("%s do not have inverse over %s", m.toString(), m.toString());
+            error("%s do not have inverse over %s", m.toString(), n.toString());
         }
         BigInteger inv = triple[1];
         if(inv.compareTo(ZERO) < 0) {
-            return n.subtract(inv);
+            return n.add(inv);
         }
         return inv;
     }
@@ -87,6 +89,14 @@ public class MathOp {
         return ret;
     }
     
+    public static boolean divides(BigInteger a, BigInteger b) {
+        return b.mod(a).equals(ZERO);
+    }
+    
+    public static boolean congruent(BigInteger a, BigInteger b, BigInteger n) {
+        return a.subtract(b).mod(n).equals(ZERO);
+    }
+    
     public static BigDecimal newtonSqrt(BigInteger n) {
         return newtonSqrt(n, 10, 20.0D, 150);
     }
@@ -105,7 +115,7 @@ public class MathOp {
     
     public static BigInteger[] shanksTonelli(BigInteger a, BigInteger p) {
         if(p.equals(TWO)) { return new BigInteger[] { ONE }; }
-        if(legendreSymbol(a, p) == -1) return null; //No solution
+        if(legendre(a, p) == -1) return null; //No solution
         int numOfSolution = p.equals(TWO) ? 1 : 2;
         BigInteger[] solutions = new BigInteger[numOfSolution];
         BigInteger P_MINUS_ONE = p.subtract(ONE);
@@ -116,7 +126,7 @@ public class MathOp {
         }
         BigInteger n = THREE;
         while(true) {
-            if(legendreSymbol(n, p) == -1) break;
+            if(legendre(n, p) == -1) break;
             n = n.add(ONE);
         }
         BigInteger x = expMod(a, s.add(ONE).divide(TWO), p),
@@ -152,7 +162,9 @@ public class MathOp {
         }
     }
     
-    public static int legendreSymbol(BigInteger a, BigInteger p) {
+    public static int legendre(BigInteger a, BigInteger p) {
+        
+        if(a.equals(ONE)) return 1;
         
         if(p.equals(TWO)) { return a.and(ONE).equals(ZERO) ? 0 : 1; }
         
@@ -160,8 +172,6 @@ public class MathOp {
             error("p has to be odd, but %s", p);
         
         if(a.mod(p).equals(ZERO)) return 0;
-        
-        if(a.equals(ONE)) return 1;
         
         if(a.equals(p.subtract(ONE)) || a.equals(ZERO.subtract(ONE))) {
             return p.subtract(ONE).divide(TWO).mod(TWO).equals(ZERO) ? 1 : -1;
@@ -186,17 +196,16 @@ public class MathOp {
         }
 
         if(a.and(ONE).equals(ZERO)) {
-            return legendreSymbol(TWO, p) * legendreSymbol(a.divide(TWO), p);
+            return legendre(TWO, p) * legendre(a.divide(TWO), p);
         }
         
         if(a.compareTo(p) < 0) {
             int sign = 1;
             if(a.mod(FOUR).equals(THREE) && p.mod(FOUR).equals(THREE))
                 sign = -1;
-            return sign*legendreSymbol(p, a);
+            return sign*legendre(p, a);
         } else {
-
-            return legendreSymbol(a.mod(p), p);
+            return legendre(a.mod(p), p);
         }
     }
 }

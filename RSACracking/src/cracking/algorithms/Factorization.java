@@ -10,7 +10,7 @@ import static cracking.algorithms.MathOp.MINUS_ONE;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.expMod;
 import static cracking.algorithms.MathOp.gcd;
-import static cracking.algorithms.MathOp.legendreSymbol;
+import static cracking.algorithms.MathOp.legendre;
 import static cracking.algorithms.MathOp.modInverse;
 import static cracking.algorithms.MathOp.newtonSqrt;
 import static cracking.algorithms.MathOp.shanksTonelli;
@@ -69,7 +69,7 @@ public class Factorization {
         while(true) {
             BigInteger p = gen.next();
             if(p.compareTo(B) > 0) break;
-            if(legendreSymbol(N, p) == 1) factorBase.add(p);
+            if(legendre(N, p) == 1) factorBase.add(p);
         }
         System.gc();
         return factorBase;

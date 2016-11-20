@@ -9,6 +9,7 @@ package cracking.algorithms;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.expMod;
 import static cracking.algorithms.MathOp.gcd;
+import static cracking.algorithms.Primes.RandomPrimeGenerator.ODD_FUNC;
 import static cracking.utils.Util.intToBigInteger;
 import static cracking.utils.Util.randomBigInteger;
 import java.math.BigInteger;
@@ -24,6 +25,7 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -223,6 +225,34 @@ public class Primes {
         return sieve;
     }
     
+    private static final int SIEVE_SIZE = 800_000;
+    private static final int[] ERATOS_SIEVE = eratosthenesSieve(SIEVE_SIZE);
+    
+    public static BigInteger findClosePrime(BigInteger n) {
+        return findClosePrime(n, (b)->true);
+    }
+    
+    public static BigInteger findClosePrime(BigInteger n, Predicate<BigInteger> condition) {
+        if(n.compareTo(BigInteger.valueOf(SIEVE_SIZE)) < 0) {
+            int p = n.intValue();
+            if(ERATOS_SIEVE[p] == p) return n;
+            if(n.and(ONE).equals(ZERO)) n = ODD_FUNC.apply(n);
+            for(int i=n.intValue(); i<=SIEVE_SIZE; i+=2) {
+                if(ERATOS_SIEVE[i]==i) {
+                    BigInteger ret = BigInteger.valueOf(i);
+                    if(condition.test(ret)) return ret;
+                }
+            }
+        }
+        while (true) {
+            while(!millerRabinTest(n)) {
+                n = ODD_FUNC.apply(n);
+            }
+            if(condition.test(n)) return n;
+            n = ODD_FUNC.apply(n);
+        }
+    }
+    
     public static TreeMap<BigInteger, Integer> findFactorsInSieve(int n, int[] sieve) {
         TreeMap<BigInteger, Integer> factors = new TreeMap<>();
         BigInteger N = intToBigInteger(n);
@@ -271,14 +301,15 @@ public class Primes {
     
     
     public static void main(String[] args) {
-        RandomPrimeGenerator randomGen = new RandomPrimeGenerator();
-        BigInteger b1 = randomGen.gen(20).next();
-        BigInteger b2 = randomGen.gen(30).next();
-        System.out.println(b1);
-        System.out.println(b2);
-        BigInteger N = b1.multiply(b2);
-        System.out.println(N);
-        System.out.println(N.bitLength());
-
+//        RandomPrimeGenerator randomGen = new RandomPrimeGenerator();
+//        BigInteger b1 = randomGen.gen(20).next();
+//        BigInteger b2 = randomGen.gen(30).next();
+//        System.out.println(b1);
+//        System.out.println(b2);
+//        BigInteger N = b1.multiply(b2);
+//        System.out.println(N);
+//        System.out.println(N.bitLength());
+        
+        
     }
 }

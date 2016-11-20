@@ -6,9 +6,21 @@
 
 package cracking.algorithms;
 
-import static cracking.algorithms.MathOp.legendreSymbol;
+import cracking.Main;
+import static cracking.algorithms.Factorization.henselLifting;
+import static cracking.algorithms.MathOp.EIGHT;
+import static cracking.algorithms.MathOp.TWO;
+import static cracking.algorithms.MathOp.gcd;
+import static cracking.algorithms.MathOp.congruent;
+import static cracking.algorithms.MathOp.divides;
+import static cracking.algorithms.MathOp.legendre;
+import static cracking.algorithms.MathOp.modInverse;
 import static cracking.algorithms.MathOp.newtonSqrt;
 import cracking.algorithms.Primes.PrimitiveEratosPrimeGenerator;
+import static cracking.algorithms.Primes.RandomPrimeGenerator.ODD_FUNC;
+import static cracking.algorithms.Primes.findClosePrime;
+import static cracking.algorithms.Primes.millerRabinTest;
+import static cracking.utils.Util.error;
 import static cracking.utils.Util.mustPositive;
 import static java.lang.Math.abs;
 import static java.lang.Math.log;
@@ -35,17 +47,19 @@ public class QuadraticSieve implements Runnable {
     private final BigInteger end;
     private final int B;
     private final int M;
+    private double R;
     private int threshold;
     private int domain;
     private int smoothApprox;
+    private boolean multi;
     private Set<Integer> smoothCandidates;
-    
     private Set<BigInteger> bSmoothRef;
     
     int[] factorBase;
     int[] sieve;
     int[][] roots;
     int[][] pos;
+    int[]   logp;
     
     int counter = 0;
     
@@ -55,39 +69,75 @@ public class QuadraticSieve implements Runnable {
         while(true) {
             int p = gen.next();
             if(p > B) break;
-            if(legendreSymbol(N, valueOf(p)) == 1)
+            if(legendre(N, valueOf(p)) == 1)
                 builder.accept(p);
         }
         factorBase = builder.build().toArray();
     }
     
     private void dataCollection() {
-        roots = new int[B+1][];
         pos   = new int[B+1][];
+        roots = new int[B+1][];
+        logp  = new int[B+1];
         for(int p : factorBase) {
             BigInteger bp = valueOf(p);
+            logp[p] = (int)round(log(p));
             if(p == 2) {
-                roots[p] = new int[]{1};
+                roots[p] = new int[] {1};
                 pos[p] = new int[] { ONE.subtract(start).mod(bp).intValue() };
             } else {
                 BigInteger[] sols = MathOp.shanksTonelli(N, valueOf(p));
-                roots[p] = stream(sols).mapToInt(bi->bi.intValue()).toArray();
-                pos[p] = stream(roots[p]).map(r->valueOf(r).subtract(start).mod(bp).intValue()).toArray();
+                roots[p] = stream(sols).mapToInt(r->r.intValue()).toArray();
+                pos[p] = stream(sols).mapToInt(r->r.subtract(start).mod(bp).intValue()).toArray();
             }
+        }
+    }
+    
+    private BigInteger q = null;
+    
+    private int multipoly(BigInteger a, BigInteger b, int root, int p) {
+        BigInteger bp = valueOf(p);
+        if(divides(bp, a)) return root;
+        BigInteger r = valueOf(root);
+        BigInteger t = r.subtract(b);
+        BigInteger aI = modInverse(a, bp);
+        return t.multiply(aI).subtract(start).mod(bp).intValue();
+    }
+
+    public void setQ(BigInteger q) {
+        this.q = q;
+    }
+
+    private void buildSieveMutiPoly() {
+        if(q == null) {
+            q = newtonSqrt(N.multiply(TWO)).toBigInteger();
+            q = newtonSqrt(q.divide(valueOf(M))).toBigInteger();
+        }
+        while(smoothCandidates.size() < factorBase.length*R) {
+            
+            q = findClosePrime(q, p->legendre(N, p)==1);
+            BigInteger a = q.pow(2);
+            BigInteger[] sols = henselLifting(N, q);
+            BigInteger b = congruent(sols[0].pow(2), N, a) ? sols[0] : sols[1];
+            sieve = new int[domain];
+            for(int p : factorBase) {
+                int[] rs = roots[p];
+                saveLocation(multipoly(a, b,rs[0], p), p);
+                if(p != 2) {
+                    saveLocation(multipoly(a, b,rs[1], p), p);
+                }
+            }
+            q = ODD_FUNC.apply(q);
         }
     }
 
     private void buildSieve() {
-        dataCollection();
         sieve = new int[domain];
         for(int p : factorBase) {
-            int pl = (int)round(log(p));
             int[] rs = pos[p];
-            if(p == 2) {
-                saveLocation(rs[0], p, pl);
-            } else {
-                saveLocation(rs[0], p, pl);
-                saveLocation(rs[1], p, pl);
+            saveLocation(rs[0], p);
+            if(p != 2) {
+                saveLocation(rs[1], p);
             }
         }
     }
@@ -95,25 +145,41 @@ public class QuadraticSieve implements Runnable {
     //XXX: trying to find some efficient way to identify
     //     smooth candidates other than trail division
     private void verifySmooth() {
-        
+        for(int loc : smoothCandidates) {
+            BigInteger smooth = start.add(valueOf(loc));
+            BigInteger qx = smooth.pow(2).subtract(N).abs();
+            if(isSmooth(qx)) { 
+                counter++;
+                if(bSmoothRef != null) {
+                    bSmoothRef.add(smooth);
+                }
+            }
+        }
     }
     
-    private void saveLocation(int r, int p, int pl) {
+    private void saveLocation(int r, int p) {
         int i=0;
         while(true) {
             int l = r+i*p;
             if(l >= domain) break;
-            sieve[l] += pl;
+            sieve[l] += logp[p];
             if(abs(sieve[l]-smoothApprox) < threshold) {
                 smoothCandidates.add(l);
             }
             i++;
         }
     }
+    
+    public QuadraticSieve mulitPoly() { 
+        multi = true;
+        return this;
+    }
 
     private void init() {
-        threshold = 7;
+        multi = false;
+        threshold = 5;
         domain = 2*M+1;
+        R = .95;
         smoothApprox = (int)(log(N.doubleValue())/2+log(M));
         smoothCandidates = new HashSet<>();
     }
@@ -149,29 +215,63 @@ public class QuadraticSieve implements Runnable {
     }
     
     
+    private BigInteger getK() {
+        if(!gcd(EIGHT, N).equals(ONE)) 
+            error("N has a factor of 8");
+        return modInverse(N, EIGHT);
+    }
+    
     private boolean isSmooth(BigInteger candidate) {
-        
         for(int p : factorBase) {
             BigInteger bp = valueOf(p);
             while(candidate.mod(bp).equals(ZERO)) {
                 candidate = candidate.divide(bp);
             }
         }
-        return candidate.equals(ONE);
+        if(candidate.equals(ONE)) return true;
+        if(millerRabinTest(candidate)) return true;
+        return false;
     }
 
+    
+    
     @Override
     public void run() {
-        if(smoothCandidates == null)
-            smoothCandidates = new HashSet<>();
         buildFactorBase();
-        buildSieve();
+        dataCollection();
+        if(!multi) buildSieve();
+        else       buildSieveMutiPoly();
         verifySmooth();
-        if(bSmoothRef != null) {
-            for(int loc : smoothCandidates) {
-                bSmoothRef.add(start.add(valueOf(loc)));
-            }
-        }
     }
+    
+    public static void main(String[] args) {
+        
+        BigInteger N = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
+        QuadraticSieve sieve = new QuadraticSieve(N, 1_000_000, 200_000_000);
+        sieve.buildFactorBase();
+        
+        System.out.println(sieve.isSmooth(new BigInteger("782977848170708394135694466267291").pow(2).subtract(N)));
+//        BigInteger sqrtN = newtonSqrt(N).toBigInteger();
+//        BigInteger M = valueOf(600_000);
+//        BigInteger S = sqrtN.subtract(M);
+//        BigInteger E = sqrtN.add(M);
+//        QuadraticSieve sieve = new QuadraticSieve(N, 350_000, S, E);
+//        sieve.mulitPoly().run();
+//        System.out.println(sieve.factorBase.length);
+//        System.out.println(sieve.smoothCandidates.size());
+//        System.out.println(sieve.counter);
+//        sieve.buildFactorBase();
+//        System.out.println(sieve.getK());
+//        BigInteger kN = new BigDecimal(sieve.getK())
+//                            .multiply(new BigDecimal(Main.TARGET))
+//                            .toBigInteger();
+//        BigInteger maxP = valueOf(sieve.factorBase[sieve.factorBase.length-1]);
+//        double tester = log(M.multiply(newtonSqrt(kN.divide(TWO)).toBigInteger()).divide(maxP.pow(3)).doubleValue());
+//        System.out.println(tester);
+        
+        
+
+    }
+
 
 }

@@ -1,17 +1,15 @@
 package cracking;
 
-import cracking.algorithms.MathOp;
 import cracking.algorithms.QuadraticSieve;
 import cracking.utils.Util;
+import static cracking.utils.Util.error;
 import java.net.Socket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
-import static java.math.BigInteger.valueOf;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -38,15 +36,10 @@ public class Slave {
         cpuCount = Runtime.getRuntime().availableProcessors();
     }
 
-    private void connect() {
-        try {
-            socket = new Socket(address, port);
-            input = new ObjectInputStream(socket.getInputStream());
-            output = new ObjectOutputStream(socket.getOutputStream());
-        } catch(IOException ex) {
-            System.out.printf("can not connect to %s:%d\n", address, port);
-            throw new RuntimeException(ex);
-        }
+    private void connect() throws IOException {
+        socket = new Socket(address, port);
+        input = new ObjectInputStream(socket.getInputStream());
+        output = new ObjectOutputStream(socket.getOutputStream());
     }
 
     private Result process(Job job) {
@@ -84,13 +77,15 @@ public class Slave {
             ret.setBSmooth(bSmooth);
             return ret;
         } catch (UnknownHostException ex) {
-            throw new RuntimeException("Unable to find localhost..");
+            error("Unable to find localhost. %s", ex.getMessage());
         }
+        //unreachable
+        return null;
     }
 
     public void work() {
-        connect();
         try {
+            connect();
             while(true) {
                 Object cmd = input.readObject();
                 if(cmd instanceof Job) {
@@ -107,10 +102,10 @@ public class Slave {
             output.close();
             socket.close();
         } catch(IOException ex) {
-            ex.printStackTrace();
-            System.out.println("Network Connection failed.");
+            System.err.printf("Can not connected to server[%s:%d] \n", address, port);
+            System.err.println("Network Connection failed.");
         } catch(ClassNotFoundException ex) {
-            System.out.println("Job class not found.");
+            System.err.println("Job class not found.");
         }
     }
 
