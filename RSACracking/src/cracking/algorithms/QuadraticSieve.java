@@ -51,7 +51,7 @@ public class QuadraticSieve implements Runnable {
     private int threshold;
     private int domain;
     private int smoothApprox;
-    private boolean multi;
+    private boolean multi = false;
     private Set<Integer> smoothCandidates;
     private Set<BigInteger> bSmoothRef;
     
@@ -113,7 +113,7 @@ public class QuadraticSieve implements Runnable {
             q = newtonSqrt(N.multiply(TWO)).toBigInteger();
             q = newtonSqrt(q.divide(valueOf(M))).toBigInteger();
         }
-        while(smoothCandidates.size() < factorBase.length*R) {
+        while(smoothCandidates.size() < factorBase.length) {
             
             q = findClosePrime(q, p->legendre(N, p)==1);
             BigInteger a = q.pow(2);
@@ -253,14 +253,14 @@ public class QuadraticSieve implements Runnable {
 //        
 //        System.out.println(sieve.isSmooth(new BigInteger("782977848170708394135694466267291").pow(2).subtract(N)));
 
-//        BigInteger sqrtN = newtonSqrt(N).toBigInteger();
-//        BigInteger M = valueOf(600_000);
-//        BigInteger S = sqrtN.subtract(M);
-//        BigInteger E = sqrtN.add(M);
-//        QuadraticSieve sieve = new QuadraticSieve(N, 350_000, S, E);
-//        sieve.mulitPoly().run();
-//        System.out.println(sieve.factorBase.length);
-//        System.out.println(sieve.smoothCandidates.size());
+        BigInteger sqrtN = newtonSqrt(N).toBigInteger();
+        BigInteger M = valueOf(60_000);
+        BigInteger S = sqrtN.subtract(M);
+        BigInteger E = sqrtN.add(M);
+        QuadraticSieve sieve = new QuadraticSieve(N1, 5_000, S, E);
+        sieve.mulitPoly().run();
+        System.out.println(sieve.factorBase.length);
+        System.out.println(sieve.smoothCandidates.size());
 //        System.out.println(sieve.counter);
 //        sieve.buildFactorBase();
 //        System.out.println(sieve.getK());

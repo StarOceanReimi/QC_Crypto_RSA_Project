@@ -14,6 +14,8 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import static java.math.BigInteger.valueOf;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import static java.util.Arrays.stream;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,6 +38,11 @@ public class Master {
     
     private volatile boolean serverDown = false;
 
+    private File findSuitableFile() throws IOException {
+        long filesNum = Files.list(Paths.get(".")).filter(p->p.toString().matches(".*SmoothNumber\\d+")).count();
+        return Files.createFile(Paths.get(".", "SmoothNumber"+filesNum)).toFile();
+    }
+    
     public Master(BigInteger N, int B, BigInteger start, BigInteger end) {
         this.start = start;
         this.end   = end;
@@ -43,14 +50,12 @@ public class Master {
         this.B     = B;
         this.taskQueue = new LinkedList<>();
         this.clientGroup = new ThreadGroup("ClinetThreads");
-        File smoothNumberFile = new File("./SmoothNumber");
+        File smoothNumberFile;
         try {
-            if(!smoothNumberFile.exists()) {
-                smoothNumberFile.createNewFile();
-            }
+            smoothNumberFile = findSuitableFile();
             smoothResult = new PrintStream(smoothNumberFile);
         } catch (IOException ex) {
-            error("can not access file %s", smoothNumberFile.getAbsolutePath());
+            error("can not access file");
         }
         smoothCounter = new AtomicInteger();
     }

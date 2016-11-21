@@ -235,11 +235,12 @@ public class Primes {
     public static BigInteger findClosePrime(BigInteger n, Predicate<BigInteger> condition) {
         if(n.compareTo(BigInteger.valueOf(SIEVE_SIZE)) < 0) {
             int p = n.intValue();
-            if(ERATOS_SIEVE[p] == p) return n;
+            if(ERATOS_SIEVE[p] == p && condition.test(n)) return n;
             if(n.and(ONE).equals(ZERO)) n = ODD_FUNC.apply(n);
             for(int i=n.intValue(); i<=SIEVE_SIZE; i+=2) {
                 if(ERATOS_SIEVE[i]==i) {
                     BigInteger ret = BigInteger.valueOf(i);
+                    boolean match = condition.test(ret);
                     if(condition.test(ret)) return ret;
                 }
             }
