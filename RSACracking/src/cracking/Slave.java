@@ -112,17 +112,19 @@ public class Slave {
     public static void main(String[] args) {
         int port = 5506;
         String address = "localhost";
+        if(args.length > 0)
+            address = args[0];
+        if(args.length > 1)
+            port = Integer.parseInt(args[1]);
+        
         Slave worker = new Slave(address, port);
+        worker.work();
 //        BigInteger N = Main.TARGET;
 //        BigInteger sqrtN = MathOp.newtonSqrt(N).toBigInteger();
 //        BigInteger M = valueOf(1_000_000_000);
 //        Result ret = worker.process(new Job(N, 1_000_000, sqrtN.subtract(M), sqrtN.add(M)));
 //        System.out.println(ret);
 //        System.out.println(ret.getBSmooth().length);
-
-        worker.work();
-        
-        
         
     }
 

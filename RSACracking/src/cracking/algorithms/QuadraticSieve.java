@@ -247,10 +247,12 @@ public class QuadraticSieve implements Runnable {
     public static void main(String[] args) {
         
         BigInteger N = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
-        QuadraticSieve sieve = new QuadraticSieve(N, 1_000_000, 200_000_000);
-        sieve.buildFactorBase();
-        
-        System.out.println(sieve.isSmooth(new BigInteger("782977848170708394135694466267291").pow(2).subtract(N)));
+        BigInteger N1 = new BigInteger("6275815110957813119593022531213");
+//        QuadraticSieve sieve = new QuadraticSieve(N, 1_000_000, 200_000_000);
+//        sieve.buildFactorBase();
+//        
+//        System.out.println(sieve.isSmooth(new BigInteger("782977848170708394135694466267291").pow(2).subtract(N)));
+
 //        BigInteger sqrtN = newtonSqrt(N).toBigInteger();
 //        BigInteger M = valueOf(600_000);
 //        BigInteger S = sqrtN.subtract(M);

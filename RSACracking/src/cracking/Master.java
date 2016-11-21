@@ -231,11 +231,21 @@ public class Master {
     }
 
     public static void main(String[] args) {
+        BigInteger M = BigInteger.valueOf(1_000_000_000);
+        Integer B = 1_000_000;
+        Integer J = 8;
+        if(args.length > 0)
+            B = Integer.parseInt(args[0]);
+        if(args.length > 1)
+            M = new BigInteger(args[1]);
+        if(args.length > 2)
+            J = Integer.parseInt(args[2]);
+        
         BigInteger N = Main.TARGET;
         BigInteger sqrtN = newtonSqrt(N).toBigInteger();
-        BigInteger M = BigInteger.valueOf(1_000_000_000);
-        Master master = new Master(Main.TARGET, 1_000_000, sqrtN.subtract(M), sqrtN.add(M));
-        master.makeAssignment(8);
+        
+        Master master = new Master(Main.TARGET, B, sqrtN.subtract(M), sqrtN.add(M));
+        master.makeAssignment(J);
         master.listening();
     }
 }
