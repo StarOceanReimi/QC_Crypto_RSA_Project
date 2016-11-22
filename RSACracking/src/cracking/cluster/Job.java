@@ -1,4 +1,4 @@
-package cracking;
+package cracking.cluster;
 
 import java.io.Serializable;
 import java.math.BigInteger;

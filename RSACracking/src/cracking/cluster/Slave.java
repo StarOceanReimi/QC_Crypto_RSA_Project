@@ -1,4 +1,4 @@
-package cracking;
+package cracking.cluster;
 
 import cracking.algorithms.QuadraticSieve;
 import cracking.utils.Util;
@@ -103,7 +103,7 @@ public class Slave {
             socket.close();
         } catch(IOException ex) {
             System.err.printf("Can not connected to server[%s:%d] \n", address, port);
-            System.err.println("Network Connection failed.");
+            System.err.printf("Network Connection failed. %s\n", ex.getMessage());
         } catch(ClassNotFoundException ex) {
             System.err.println("Job class not found.");
         }

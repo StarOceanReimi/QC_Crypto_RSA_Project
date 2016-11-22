@@ -1,4 +1,5 @@
-package cracking;
+package cracking.cluster;
+import cracking.Main;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.legendre;
 import static cracking.algorithms.MathOp.newtonSqrt;
@@ -193,7 +194,7 @@ public class Master {
                 synchronized(taskQueue) {
                     taskQueue.offer(job);
                 }
-                error("Error occur in collectResult job.");
+                error("Error occur in collectResult.");
             }
         }
 

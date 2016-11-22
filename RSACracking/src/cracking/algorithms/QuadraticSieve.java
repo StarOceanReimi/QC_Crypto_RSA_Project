@@ -22,6 +22,9 @@ import static cracking.algorithms.Primes.findClosePrime;
 import static cracking.algorithms.Primes.millerRabinTest;
 import static cracking.utils.Util.error;
 import static cracking.utils.Util.mustPositive;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import static java.lang.Math.abs;
 import static java.lang.Math.log;
 import static java.lang.Math.round;
@@ -29,6 +32,7 @@ import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.valueOf;
+import java.nio.file.Paths;
 import static java.util.Arrays.stream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -229,7 +233,7 @@ public class QuadraticSieve implements Runnable {
             }
         }
         if(candidate.equals(ONE)) return true;
-        if(millerRabinTest(candidate)) return true;
+        //if(millerRabinTest(candidate)) return true;
         return false;
     }
 
@@ -244,23 +248,50 @@ public class QuadraticSieve implements Runnable {
         verifySmooth();
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException, IOException {
         
         BigInteger N = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
-        BigInteger N1 = new BigInteger("6275815110957813119593022531213");
-//        QuadraticSieve sieve = new QuadraticSieve(N, 1_000_000, 200_000_000);
-//        sieve.buildFactorBase();
+//        BigInteger N1 = new BigInteger("6275815110957813119593022531213");
+        QuadraticSieve sieve = new QuadraticSieve(N, 1_000_000, 200_000_000);
+        sieve.buildFactorBase();
 //        
-//        System.out.println(sieve.isSmooth(new BigInteger("782977848170708394135694466267291").pow(2).subtract(N)));
+//        System.out.println(sieve.isSmooth(new BigInteger("782977848170708394135694655741222").pow(2).subtract(N)));
 
-        BigInteger sqrtN = newtonSqrt(N).toBigInteger();
-        BigInteger M = valueOf(60_000);
-        BigInteger S = sqrtN.subtract(M);
-        BigInteger E = sqrtN.add(M);
-        QuadraticSieve sieve = new QuadraticSieve(N1, 5_000, S, E);
-        sieve.mulitPoly().run();
-        System.out.println(sieve.factorBase.length);
-        System.out.println(sieve.smoothCandidates.size());
+        int check;
+        IntStream.Builder builder;
+        try (RandomAccessFile raf = new RandomAccessFile(Paths.get(".", "SmoothNumber3").toFile(), "r")) {
+            check = 1000;
+            int cnt = 0;
+            builder = IntStream.builder();
+            if(raf.getFilePointer() < raf.length()) {
+                while (cnt++ < check) {
+                    BigInteger x = new BigInteger(raf.readLine());
+                    BigInteger qx = x.pow(2).subtract(N).abs();
+                    if(sieve.isSmooth(qx)) {
+                        builder.accept(1);
+                    } else {
+                        builder.accept(0);
+                    }
+                }
+            }
+        }
+        int partial = (int)builder.build().filter(i->i==0).count();
+        System.out.println((double)partial/check);
+        
+        
+//        BigInteger sqrtN = newtonSqrt(N).toBigInteger();
+//        BigInteger M = valueOf(8_000_000);
+//        BigInteger S = sqrtN.subtract(M);
+//        BigInteger E = sqrtN.add(M);
+//        QuadraticSieve sieve = new QuadraticSieve(N, 1_000_000, S, E);
+//        sieve.buildFactorBase();
+//        BigInteger x = new BigInteger("782977848170708394133697102616780");
+//        BigInteger qx = x.pow(2).subtract(N);
+//        System.out.println(sieve.isSmooth(qx));
+        
+//        sieve.run();
+//        System.out.println(sieve.factorBase.length);
+//        System.out.println(sieve.smoothCandidates.size());
 //        System.out.println(sieve.counter);
 //        sieve.buildFactorBase();
 //        System.out.println(sieve.getK());

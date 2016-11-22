@@ -1,4 +1,4 @@
-package cracking;
+package cracking.cluster;
 
 public enum Command {
     ReCollectResult,
