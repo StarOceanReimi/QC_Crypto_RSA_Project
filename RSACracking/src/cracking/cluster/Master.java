@@ -189,7 +189,7 @@ public class Master {
                 System.out.printf("total relation in %s is %d.\n", result, 
                                     result.getBSmooth().length);
                 smoothCounter.addAndGet(result.getBSmooth().length);
-                stream(result.getBSmooth()).forEach(num->smoothResult.println(num));
+                stream(result.getBSmooth()).forEach(smoothInfo->smoothResult.println(smoothInfo));
             } catch(IOException | ClassNotFoundException ex) {
                 synchronized(taskQueue) {
                     taskQueue.offer(job);

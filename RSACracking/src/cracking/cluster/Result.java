@@ -1,25 +1,24 @@
 package cracking.cluster;
 import java.io.Serializable;
-import java.math.BigInteger;
 
 public class Result implements Serializable {
 
-    private String msg;
+    private final String msg;
 
-    private BigInteger[] BSmooth;
+    private SmoothInfo[] BSmooth;
     
     public Result(String msg) {
         this.msg = msg;
     }
 
-    public void setBSmooth(BigInteger[] bSmooth) {
-        this.BSmooth = bSmooth;
-    }
-
-    public BigInteger[] getBSmooth() {
+    public SmoothInfo[] getBSmooth() {
         return BSmooth;
     }
-    
+
+    public void setBSmooth(SmoothInfo[] BSmooth) {
+        this.BSmooth = BSmooth;
+    }
+
     @Override
     public String toString() {
         return msg;

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -63,6 +64,17 @@ public class Factorization {
         return factorBase;
     }
     
+    public static int[] fastFactorBase(int B, BigInteger N) {
+        Iterator<Integer> gen = new Primes.PrimitiveEratosPrimeGenerator().gen();
+        IntStream.Builder buffer = IntStream.builder();
+        while(true) {
+            Integer p = gen.next();
+            if(p > B) break;
+            if(legendre(N, valueOf(p)) == 1) buffer.accept(p);
+        }
+        return buffer.build().toArray();
+    }
+    
     public static List<BigInteger> factorBase(BigInteger B, BigInteger N) {
         Iterator<BigInteger> gen = new EratosthenesPrimeGenerator().gen();
         List<BigInteger> factorBase = new ArrayList<>();
@@ -71,7 +83,6 @@ public class Factorization {
             if(p.compareTo(B) > 0) break;
             if(legendre(N, p) == 1) factorBase.add(p);
         }
-        System.gc();
         return factorBase;
     }
     

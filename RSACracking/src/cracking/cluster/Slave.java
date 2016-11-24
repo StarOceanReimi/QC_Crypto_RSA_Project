@@ -46,7 +46,7 @@ public class Slave {
         System.out.println(job);
         BigInteger end = job.getEnd();
         BigInteger start = job.getStart();
-        Set<BigInteger> smooth = ConcurrentHashMap.newKeySet();
+        Set<SmoothInfo> smooth = ConcurrentHashMap.newKeySet();
         BigInteger diff = end.subtract(start);
         int times = (int)Math.ceil(diff.doubleValue()/(freeMem*mutiplier));
         BigInteger[][] ranges = Util.splitRange(times, start, end);
@@ -73,7 +73,7 @@ public class Slave {
         try {
             String resultMsg = String.format("Result from %s, %d", Inet4Address.getLocalHost(), System.currentTimeMillis());
             Result ret = new Result(resultMsg);
-            BigInteger[] bSmooth = smooth.toArray(new BigInteger[smooth.size()]);
+            SmoothInfo[] bSmooth = smooth.toArray(new SmoothInfo[smooth.size()]);
             ret.setBSmooth(bSmooth);
             return ret;
         } catch (UnknownHostException ex) {

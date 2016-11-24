@@ -112,12 +112,13 @@ public class MathOp {
         return x0;
     }
     
-    
     public static BigInteger[] shanksTonelli(BigInteger a, BigInteger p) {
         if(p.equals(TWO)) { return new BigInteger[] { ONE }; }
         if(legendre(a, p) == -1) return null; //No solution
-        int numOfSolution = p.equals(TWO) ? 1 : 2;
-        BigInteger[] solutions = new BigInteger[numOfSolution];
+        if(congruent(p, THREE, FOUR)) {
+            BigInteger sol = expMod(a, p.add(ONE).divide(FOUR), p);
+            return new BigInteger[] { sol, p.subtract(sol) };
+        }
         BigInteger P_MINUS_ONE = p.subtract(ONE);
         BigInteger e = ZERO, s = P_MINUS_ONE;
         while(s.and(ONE).equals(ZERO)) {
@@ -146,11 +147,7 @@ public class MathOp {
             }
             
             if(m.equals(ZERO)) {
-                solutions[0] = x;
-                if(solutions.length > 1) {
-                    solutions[1] = p.subtract(x);
-                }
-                return solutions;
+                return new BigInteger[] { x, p.subtract(x) };
             }
             BigInteger gPow = TWO.pow(r.subtract(m).intValue());
             BigInteger gPow_1 = TWO.pow(r.subtract(m).subtract(ONE).intValue());

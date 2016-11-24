@@ -20,6 +20,7 @@ import cracking.algorithms.Primes.PrimitiveEratosPrimeGenerator;
 import static cracking.algorithms.Primes.RandomPrimeGenerator.ODD_FUNC;
 import static cracking.algorithms.Primes.findClosePrime;
 import static cracking.algorithms.Primes.millerRabinTest;
+import cracking.cluster.SmoothInfo;
 import static cracking.utils.Util.error;
 import static cracking.utils.Util.mustPositive;
 import java.io.FileNotFoundException;
@@ -39,6 +40,7 @@ import java.util.Iterator;
 import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  *
@@ -51,13 +53,12 @@ public class QuadraticSieve implements Runnable {
     private final BigInteger end;
     private final int B;
     private final int M;
-    private double R;
     private int threshold;
     private int domain;
     private int smoothApprox;
     private boolean multi = false;
     private Set<Integer> smoothCandidates;
-    private Set<BigInteger> bSmoothRef;
+    private Set<SmoothInfo> bSmoothRef;
     
     int[] factorBase;
     int[] sieve;
@@ -148,15 +149,30 @@ public class QuadraticSieve implements Runnable {
 
     //XXX: trying to find some efficient way to identify
     //     smooth candidates other than trail division
-    private void verifySmooth() {
+    private void saveSmooth() {
         for(int loc : smoothCandidates) {
             BigInteger smooth = start.add(valueOf(loc));
             BigInteger qx = smooth.pow(2).subtract(N).abs();
-            if(isSmooth(qx)) { 
-                counter++;
-                if(bSmoothRef != null) {
-                    bSmoothRef.add(smooth);
+            IntStream.Builder factors = IntStream.builder();
+            SmoothInfo info = null;
+            for(int p : factorBase) {
+                BigInteger bp = valueOf(p);
+                boolean oddPower = false;
+                while(divides(bp, qx)) {
+                    qx = qx.divide(bp);
+                    oddPower = !oddPower;
                 }
+                if(oddPower) factors.accept(p);
+            }
+            if(qx.equals(ONE)) {
+                info = new SmoothInfo(factors.build().toArray(), smooth, null);
+            } else if(millerRabinTest(qx)) {
+                info = new SmoothInfo(factors.build().toArray(), smooth, qx);
+            }
+            
+            if(info != null) {
+                if(bSmoothRef != null) bSmoothRef.add(info);
+                counter++;
             }
         }
     }
@@ -183,7 +199,6 @@ public class QuadraticSieve implements Runnable {
         multi = false;
         threshold = 5;
         domain = 2*M+1;
-        R = .95;
         smoothApprox = (int)(log(N.doubleValue())/2+log(M));
         smoothCandidates = new HashSet<>();
     }
@@ -214,7 +229,7 @@ public class QuadraticSieve implements Runnable {
         return smoothCandidates.stream().map(loc->start.add(valueOf(loc))).collect(toSet());
     }
 
-    public void setBSmoothRef(Set<BigInteger> bSmoothRef) {
+    public void setBSmoothRef(Set<SmoothInfo> bSmoothRef) {
         this.bSmoothRef = bSmoothRef;
     }
     
@@ -233,7 +248,7 @@ public class QuadraticSieve implements Runnable {
             }
         }
         if(candidate.equals(ONE)) return true;
-        //if(millerRabinTest(candidate)) return true;
+        if(millerRabinTest(candidate)) return true;
         return false;
     }
 
@@ -245,7 +260,7 @@ public class QuadraticSieve implements Runnable {
         dataCollection();
         if(!multi) buildSieve();
         else       buildSieveMutiPoly();
-        verifySmooth();
+        saveSmooth();
     }
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
