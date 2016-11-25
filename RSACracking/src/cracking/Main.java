@@ -17,7 +17,6 @@ public class Main {
 
     public static BigInteger TARGET = new BigInteger("613054310726032886180943888436325837702226698886723435429939101863");
     
-    
     public static void main(String[] args) {
         int[] fb = Factorization.fastFactorBase(1_000_000, TARGET);
         

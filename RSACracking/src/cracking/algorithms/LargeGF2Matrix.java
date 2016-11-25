@@ -196,7 +196,10 @@ public class LargeGF2Matrix implements AutoCloseable {
         LargeGF2Matrix gaussian = new LargeGF2Matrix(R, C, tempGuassian);
         int newRow = 0;
         boolean[] marker = new boolean[R];
+        int onePercent = C/100;
         for(int c=0; c<C; c++) {
+            if(c % onePercent == 0)
+                System.out.printf("Finished %d percent \n", c/onePercent);
             int[] col = getColumn(c);
             LinkedList<Integer> rows = new LinkedList<>();
             for(int j=0; j<R; j++) {

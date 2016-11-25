@@ -6,9 +6,13 @@
 
 package cracking.cluster;
 
+import static cracking.utils.Util.error;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -40,6 +44,47 @@ public class SmoothInfo implements Serializable {
         return x;
     }
 
+    public static SmoothInfo fromString(String info) {
+        BigInteger x = null, l = null;
+        IntStream.Builder fBuilder = IntStream.builder();
+        StringBuilder temp = new StringBuilder();
+        StringReader sr = new StringReader(info);
+        char space = ' ';
+        char comma = ',';
+        char arrStart = '[';
+        char arrEnd = ']';
+        char c;
+        try {
+            char firstChar = (char) sr.read();
+            if(firstChar == '0') sr.skip(1);
+            else if(firstChar == '1') {
+                while((c = (char)sr.read()) != space) {
+                    temp.append(c);
+                }
+                l = new BigInteger(temp.toString());
+                temp = new StringBuilder();
+            } else error("error format");
+            
+            while((c=(char)sr.read()) != space) {
+                temp.append(c);
+            }
+            x = new BigInteger(temp.toString());
+            temp = new StringBuilder();
+            if((c=(char)sr.read()) != arrStart) error("error format: missing [");
+            while((c=(char)sr.read()) != arrEnd) {
+                if((int)c == 65535) error("error format: missing ]");
+                if(c == space) continue;
+                if(c == comma) {
+                    fBuilder.accept(Integer.parseInt(temp.toString()));
+                    temp = new StringBuilder();
+                } else
+                    temp.append(c);
+            }
+        } catch (IOException ex) {
+        }
+        return new SmoothInfo(fBuilder.build().toArray(), x, l);
+    }
+    
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
