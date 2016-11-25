@@ -80,6 +80,8 @@ public class SmoothInfo implements Serializable {
                 } else
                     temp.append(c);
             }
+            if(temp.length() != 0)
+                fBuilder.accept(Integer.parseInt(temp.toString()));
         } catch (IOException ex) {
         }
         return new SmoothInfo(fBuilder.build().toArray(), x, l);

@@ -7,6 +7,7 @@
 package cracking.algorithms;
 
 import cracking.Main;
+import cracking.SmoothNumberFileParser;
 import static cracking.algorithms.Factorization.henselLifting;
 import static cracking.algorithms.MathOp.EIGHT;
 import static cracking.algorithms.MathOp.TWO;
@@ -23,8 +24,10 @@ import static cracking.algorithms.Primes.millerRabinTest;
 import cracking.cluster.SmoothInfo;
 import static cracking.utils.Util.error;
 import static cracking.utils.Util.mustPositive;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import static java.lang.Math.abs;
 import static java.lang.Math.log;
@@ -34,6 +37,7 @@ import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.valueOf;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import static java.util.Arrays.stream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -150,8 +154,8 @@ public class QuadraticSieve implements Runnable {
     //     smooth candidates other than trail division
     private void saveSmooth() {
         for(int loc : smoothCandidates) {
-            BigInteger smooth = start.add(valueOf(loc));
-            BigInteger qx = smooth.pow(2).subtract(N).abs();
+            BigInteger x = start.add(valueOf(loc));
+            BigInteger qx = x.pow(2).subtract(N).abs();
             IntStream.Builder factors = IntStream.builder();
             SmoothInfo info = null;
             for(int p : factorBase) {
@@ -164,9 +168,9 @@ public class QuadraticSieve implements Runnable {
                 if(oddPower) factors.accept(p);
             }
             if(qx.equals(ONE)) {
-                info = new SmoothInfo(factors.build().toArray(), smooth, null);
+                info = new SmoothInfo(factors.build().toArray(), x, null);
             } else if(millerRabinTest(qx)) {
-                info = new SmoothInfo(factors.build().toArray(), smooth, qx);
+                info = new SmoothInfo(factors.build().toArray(), x, qx);
             }
             
             if(info != null) {
@@ -232,7 +236,6 @@ public class QuadraticSieve implements Runnable {
         this.bSmoothRef = bSmoothRef;
     }
     
-    
     private BigInteger getK() {
         if(!gcd(EIGHT, N).equals(ONE)) 
             error("N has a factor of 8");
@@ -264,34 +267,25 @@ public class QuadraticSieve implements Runnable {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
         
-        BigInteger N = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
-//        BigInteger N1 = new BigInteger("6275815110957813119593022531213");
-        QuadraticSieve sieve = new QuadraticSieve(N, 1_000_000, 200_000_000);
-        sieve.buildFactorBase();
+//        BigInteger N = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
+        BigInteger N1 = new BigInteger("6275815110957813119593022531213");
+        QuadraticSieve sieve = new QuadraticSieve(N1, 15_000, 8_000_000);
+        System.out.println(Arrays.toString(Factorization.fastFactorBase(15_000, N1)));
+        Set<SmoothInfo> relations = new HashSet<>();
+        sieve.setBSmoothRef(relations);
+        sieve.run();
+        File file = new File("./testRelation");
+        if(file.exists()) file.delete();
+        file.createNewFile();
+        PrintStream ps = new PrintStream(file);
+        relations.forEach(ps::println);
+        SmoothNumberFileParser parser = new SmoothNumberFileParser(file.getAbsolutePath(), 15_000, N1);
+        LargeGF2Matrix matrix = parser.getExpMatrix();
+        System.out.println(parser.calculateFactor(N1, matrix.nullSpace()));
+        
 //        
 //        System.out.println(sieve.isSmooth(new BigInteger("782977848170708394135694655741222").pow(2).subtract(N)));
 
-        int check;
-        IntStream.Builder builder;
-        try (RandomAccessFile raf = new RandomAccessFile(Paths.get(".", "SmoothNumber3").toFile(), "r")) {
-            check = 1000;
-            int cnt = 0;
-            builder = IntStream.builder();
-            if(raf.getFilePointer() < raf.length()) {
-                while (cnt++ < check) {
-                    BigInteger x = new BigInteger(raf.readLine());
-                    BigInteger qx = x.pow(2).subtract(N).abs();
-                    if(sieve.isSmooth(qx)) {
-                        builder.accept(1);
-                    } else {
-                        builder.accept(0);
-                    }
-                }
-            }
-        }
-        int partial = (int)builder.build().filter(i->i==0).count();
-        System.out.println((double)partial/check);
-        
         
 //        BigInteger sqrtN = newtonSqrt(N).toBigInteger();
 //        BigInteger M = valueOf(8_000_000);

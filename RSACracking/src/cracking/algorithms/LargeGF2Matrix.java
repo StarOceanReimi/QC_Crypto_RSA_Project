@@ -189,6 +189,20 @@ public class LargeGF2Matrix implements AutoCloseable {
         return true;
     }
     
+    
+    public static int[][] nullSpaceBy(LargeGF2Matrix gaussian, LargeGF2Matrix identity) throws IOException {
+        Stream.Builder<int[]> builder = Stream.builder();
+        int rows = identity.getRows();
+        for(int r=rows-1; r>=0; r--) {
+            if(gaussian.isAllZero(r)) {
+                builder.accept(identity.getRow(r));
+            }
+        }
+        gaussian.close();
+        identity.close();
+        return builder.build().toArray(int[][]::new);
+    }
+    
     public int[][] nullSpace() throws IOException {
         String tempIdentity = "./temp1";
         String tempGuassian = "./temp2";
@@ -199,7 +213,7 @@ public class LargeGF2Matrix implements AutoCloseable {
         boolean[] marker = new boolean[R];
         int onePercent = C/100;
         for(int c=0; c<C; c++) {
-            if(c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
+//            if(c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
             int[] col = getColumn(c);
             LinkedList<Integer> rows = new LinkedList<>();
             for(int j=0; j<R; j++) {
@@ -225,9 +239,9 @@ public class LargeGF2Matrix implements AutoCloseable {
         }
         gaussian.close();
         identity.close();
-//        new File(tempIdentity).delete();
-//        new File(tempGuassian).delete();
-        System.out.println("complete calculating.");
+        new File(tempIdentity).delete();
+        new File(tempGuassian).delete();
+//        System.out.println("complete calculating.");
         return builder.build().toArray(int[][]::new);
     }
     

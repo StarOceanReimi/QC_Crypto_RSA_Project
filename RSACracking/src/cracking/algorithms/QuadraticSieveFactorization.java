@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -84,9 +86,9 @@ public class QuadraticSieveFactorization {
 //        multiPloyInit(N);
         
         buildSieve(N);
-//        buildExpVectors(N);
-//        findNullSpace();
-//        calculateFactor(N);
+        buildExpVectors(N);
+        findNullSpace();
+        calculateFactor(N);
     }
 
     private void buildExpVectors(BigInteger N) {
@@ -132,6 +134,7 @@ public class QuadraticSieveFactorization {
         BigInteger begin = SQRT_N.subtract(M);
         QuadraticSieveFactorization qsf = new QuadraticSieveFactorization(begin, SQRT_N.add(M));
         List<BigInteger> factors = qsf.factorize(N);
+        System.out.println(factors);
 //        System.out.println(format("%d/%d", qsf.smoothIndices.size(), qsf.factorbase.size()));
 //        System.out.println(factors.get(0).multiply(factors.get(1)));
 //        for(BigInteger p : factors) {
@@ -195,13 +198,25 @@ public class QuadraticSieveFactorization {
     }
 
     private void findNullSpace() {
-        nullSpace = Matrix.nullspace(expMatrix);
+        try {
+            LargeGF2Matrix matrix = new LargeGF2Matrix(expMatrix.length, expMatrix[0].length, "./testMatrix");
+            for(int i=0; i<matrix.getRows(); i++) {
+                matrix.rowAdd(i, expMatrix[i]);
+            }
+            nullSpace = matrix.nullSpace();
+            matrix.close();
+        } catch (IOException ex) {
+            
+        }
+        
     }
 
     private void calculateFactor(BigInteger N) {
         Integer[] idX = smoothIndices.toArray(new Integer[0]);
         BigInteger factorOne = ONE;
         factors = new LinkedList<>();
+        System.out.println(idX.length);
+        System.out.println(nullSpace.length);
         for(int i=0, n=nullSpace.length; i<n; i++) {
             BigInteger prodX = ONE;
             BigInteger prodQx = ONE;
@@ -215,6 +230,7 @@ public class QuadraticSieveFactorization {
                 }
             }
             Map<BigInteger, Integer> prodFactors = factorQx(prodQx);
+            System.out.println(prodFactors);
             prodFactors.replaceAll((f,pow)->pow/2);
             Stream<BigInteger> fStream = prodFactors.keySet().stream();
             BigInteger sqrtQx = fStream.reduce(ONE, (v,f)->v.multiply(f.pow(prodFactors.get(f))));
@@ -310,9 +326,9 @@ public class QuadraticSieveFactorization {
         }
 
         private void findInitialCandidate(BigInteger sol, BigInteger p) {
+//            pos = sol.subtract(start).mod(p).intValue();
             for(BigInteger x=start; x.compareTo(end) < 0; x=x.add(ONE)) {
                 if(x.mod(p).equals(sol)) {
-                    System.out.println(pos+","+p);
                     return;
                 }
                 pos++;

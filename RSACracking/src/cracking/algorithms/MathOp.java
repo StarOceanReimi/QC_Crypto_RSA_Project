@@ -21,7 +21,7 @@ import java.util.function.Function;
  */
 public class MathOp {
     
-    public static final BigInteger TWO = BigInteger.valueOf(2);
+    public final static BigInteger TWO = BigInteger.valueOf(2);
     public final static BigInteger MINUS_ONE = ZERO.subtract(ONE);
     public final static BigInteger THREE = BigInteger.valueOf(3);
     public final static BigInteger FIVE = BigInteger.valueOf(5);
@@ -191,7 +191,7 @@ public class MathOp {
             if(qr.equals(ONE) || qr.equals(SEVEN)) return 1;
             if(qr.equals(THREE) || qr.equals(FIVE)) return -1;
         }
-
+        
         if(a.and(ONE).equals(ZERO)) {
             return legendre(TWO, p) * legendre(a.divide(TWO), p);
         }

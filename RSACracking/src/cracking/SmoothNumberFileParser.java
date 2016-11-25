@@ -11,10 +11,9 @@ import cracking.algorithms.LargeGF2Matrix;
 import static cracking.algorithms.MathOp.gcd;
 import cracking.cluster.SmoothInfo;
 import static cracking.utils.Util.error;
-import java.io.File;
+import static cracking.utils.Util.mustPositive;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
@@ -28,7 +27,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.BiFunction;
+import java.util.stream.IntStream;
+import static java.util.stream.IntStream.concat;
 import java.util.stream.Stream;
 
 /**
@@ -41,22 +43,40 @@ public class SmoothNumberFileParser {
 
     private RandomAccessFile file;
     private int[] fb;
+    private BigInteger N;
     private List<BigInteger> relations;
+    private List<int[]>      factors;
     private Map<BigInteger, SmoothInfo> leftOverStack;
     private LargeGF2Matrix expMatrix;
     private static final String DEFAULT_MATRIX_PATH = "./SmoothExpMatrix";
 
-    public SmoothNumberFileParser(String filePath) throws FileNotFoundException, IOException {
+    public LargeGF2Matrix getExpMatrix() {
+        return expMatrix;
+    }
+    
+    public SmoothNumberFileParser(String filePath, int B, BigInteger N) throws FileNotFoundException, IOException {
         file = new RandomAccessFile(filePath, "r");
         relations = new ArrayList<>();
-        fb = Factorization.fastFactorBase(1_000_000, Main.TARGET);
-        expMatrix = new LargeGF2Matrix(fb.length+1, fb.length, DEFAULT_MATRIX_PATH);
+        factors   = new ArrayList<>();
+        fb = Factorization.fastFactorBase(B, N);
+        this.N = N;
+        expMatrix = new LargeGF2Matrix(fb.length+1, fb.length+1, DEFAULT_MATRIX_PATH);
         leftOverStack = new HashMap<>();
         parse();
     }
     
-    private int[] factorsToExpVector(final int[] factors) {
-        return stream(fb).map(p->binarySearch(factors, p) < 0 ? 0 : 1).toArray();
+    private int[] factorsToExpVector(BigInteger x, final int[] factors) {
+        BigInteger qx = Qx.apply(x, N);
+        IntStream result = qx.compareTo(ZERO) > 0 ? IntStream.of(0) : IntStream.of(1);
+        return concat(result, stream(fb).map(p->binarySearch(factors, p) < 0 ? 0 : 1)).toArray();
+    }
+    
+    private int[] expVectorToFactors(final int[] expVector) {
+        IntStream.Builder result = IntStream.builder();
+        for(int i=1; i<expVector.length; i++) {
+            if(expVector[i] == 1) result.accept(fb[i-1]);
+        }
+        return result.build().toArray();
     }
     
     private void parse() throws IOException {
@@ -71,15 +91,23 @@ public class SmoothNumberFileParser {
                 if(info.getLeftover() == null) { 
                     //full relation
                     relations.add(info.getX());
-                    expMatrix.rowAdd(i++, factorsToExpVector(info.getFactors()));
+                    factors.add(info.getFactors());
+//                    System.out.println("INFO-----");
+//                    System.out.println(Qx.apply(info.getX(), N));
+//                    System.out.println(Arrays.toString(info.getFactors()));
+//                    System.out.println(Arrays.toString(factorsToExpVector(info.getX(), info.getFactors())));
+//                    System.out.println("-----");
+                    int[] expVec = factorsToExpVector(info.getX(), info.getFactors());
+                    expMatrix.rowAdd(i++, expVec);
                 } else {
                     //partial relation
                     if(leftOverStack.containsKey(info.getLeftover())) {
                         SmoothInfo saved = leftOverStack.remove(info.getLeftover());
                         int row = i++;
                         relations.add(info.getX().multiply(saved.getX()));
-                        expMatrix.rowAdd(row, factorsToExpVector(saved.getFactors()));
-                        expMatrix.rowAdd(row, factorsToExpVector(info.getFactors()));
+                        expMatrix.rowAdd(row, factorsToExpVector(saved.getX(), saved.getFactors()));
+                        expMatrix.rowAdd(row, factorsToExpVector(info.getX(), info.getFactors()));
+                        factors.add(expVectorToFactors(expMatrix.getRow(row)));
                     } else {
                         leftOverStack.put(info.getLeftover(), info);
                     }
@@ -92,11 +120,11 @@ public class SmoothNumberFileParser {
     }
     
     private Map<BigInteger, Integer> factorQx(BigInteger qx) {
-        Map<BigInteger, Integer> fMap = new HashMap<>();
+        Map<BigInteger, Integer> fMap = new TreeMap<>();
         for(int p : fb) {
             BigInteger bp = valueOf(p);
             while(qx.mod(bp).equals(ZERO)) {
-                fMap.put(bp, fMap.getOrDefault(p, 0)+1);
+                fMap.put(bp, fMap.getOrDefault(bp, 0)+1);
                 qx = qx.divide(bp);
             }
         }
@@ -105,20 +133,25 @@ public class SmoothNumberFileParser {
     
     public List<BigInteger> calculateFactor(BigInteger N, int[][] nullSpace) {
         BigInteger factorOne = ONE;
-        LinkedList factors = new LinkedList<>();
+        System.out.println(relations.size());
+        System.out.println(nullSpace.length);
+        LinkedList results = new LinkedList<>();
         for(int i=0, n=nullSpace.length; i<n; i++) {
             BigInteger prodX = ONE;
             BigInteger prodQx = ONE;
-            
+//            final TreeMap<BigInteger, Integer> fMap = new TreeMap<>();
             for(int j=0; j<nullSpace[i].length; j++) {
                 if(nullSpace[i][j] == 1) {
                     BigInteger x = relations.get(j);
+//                    stream(factors.get(j)).forEach(k->fMap.put(valueOf(k), fMap.getOrDefault(valueOf(k), 0)+1));
                     prodX = prodX.multiply(x);
                     BigInteger qx = Qx.apply(x, N);
                     prodQx = prodQx.multiply(qx);
                 }
             }
             Map<BigInteger, Integer> prodFactors = factorQx(prodQx);
+//            System.out.println(prodFactors);
+//            System.out.println(fMap);
             prodFactors.replaceAll((f,pow)->pow/2);
             Stream<BigInteger> fStream = prodFactors.keySet().stream();
             BigInteger sqrtQx = fStream.reduce(ONE, (v,f)->v.multiply(f.pow(prodFactors.get(f))));
@@ -128,10 +161,10 @@ public class SmoothNumberFileParser {
                 break;
             }
         }
-        if(factorOne.equals(ONE)) return factors;
-        factors.add(factorOne);
-        factors.add(N.divide(factorOne));
-        return factors;
+        if(factorOne.equals(ONE)) return results;
+        results.add(factorOne);
+        results.add(N.divide(factorOne));
+        return results;
     }
     
     
@@ -146,18 +179,22 @@ public class SmoothNumberFileParser {
     }
     
     public static void main(String[] args) throws IOException {
-        
-        SmoothNumberFileParser parser = new SmoothNumberFileParser("./SmoothNumber4");
-        File matrixPresentation = new File("./matrixGF2");
-        if(matrixPresentation.exists()) {
-            matrixPresentation.delete();
-        }
-        matrixPresentation.createNewFile();
-        
+        SmoothNumberFileParser parser = new SmoothNumberFileParser("./SmoothNumber4", 1_000_000, Main.TARGET);
         System.out.println(parser.relations.size());
-        parser.expMatrix.gf2Print(new PrintStream(matrixPresentation));
+        int[][] nullSpace = LargeGF2Matrix.nullSpaceBy(new LargeGF2Matrix("./gaussian1"), new LargeGF2Matrix("./identity1"));
+        System.out.println(nullSpace.length);
+        for(int i=0; i<nullSpace.length; i++) {
+            for(int j=0; j<nullSpace[i].length; j++) {
+                if(nullSpace[i][j] == 1) {
+                    System.out.println(parser.relations.get(j));
+                    System.out.println(Arrays.toString(parser.factors.get(j)));
+                    
+                }
+            }
+        }
         
 //        int[][] nullSpace = parser.expMatrix.nullSpace();
 //        System.out.println(parser.calculateFactor(Main.TARGET, nullSpace));
+        
     }
 }
