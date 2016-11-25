@@ -32,7 +32,7 @@ public class Slave {
         this.address = address;
         this.port    = port;
         mutiplier = 0.6;
-        freeMem = Runtime.getRuntime().freeMemory();
+        freeMem = Runtime.getRuntime().totalMemory();
         cpuCount = Runtime.getRuntime().availableProcessors();
     }
 
