@@ -213,7 +213,7 @@ public class LargeGF2Matrix implements AutoCloseable {
         boolean[] marker = new boolean[R];
         int onePercent = C/100;
         for(int c=0; c<C; c++) {
-//            if(c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
+            if(c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
             int[] col = getColumn(c);
             LinkedList<Integer> rows = new LinkedList<>();
             for(int j=0; j<R; j++) {
@@ -239,9 +239,9 @@ public class LargeGF2Matrix implements AutoCloseable {
         }
         gaussian.close();
         identity.close();
-        new File(tempIdentity).delete();
-        new File(tempGuassian).delete();
-//        System.out.println("complete calculating.");
+//        new File(tempIdentity).delete();
+//        new File(tempGuassian).delete();
+        System.out.println("complete calculating.");
         return builder.build().toArray(int[][]::new);
     }
     

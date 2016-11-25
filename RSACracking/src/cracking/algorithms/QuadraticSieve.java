@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.RandomAccessFile;
 import static java.lang.Math.abs;
 import static java.lang.Math.log;
 import static java.lang.Math.round;
@@ -36,7 +35,6 @@ import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.valueOf;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import static java.util.Arrays.stream;
 import java.util.HashSet;
@@ -167,6 +165,7 @@ public class QuadraticSieve implements Runnable {
                 }
                 if(oddPower) factors.accept(p);
             }
+            
             if(qx.equals(ONE)) {
                 info = new SmoothInfo(factors.build().toArray(), x, null);
             } else if(millerRabinTest(qx)) {
@@ -267,10 +266,12 @@ public class QuadraticSieve implements Runnable {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
         
-//        BigInteger N = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
+//        BigInteger N1 = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
+//        BigInteger N1 = new BigInteger("2903978063470729867275975450010365349829284825411351");
         BigInteger N1 = new BigInteger("6275815110957813119593022531213");
-        QuadraticSieve sieve = new QuadraticSieve(N1, 15_000, 8_000_000);
-        System.out.println(Arrays.toString(Factorization.fastFactorBase(15_000, N1)));
+        int B = 15_000;
+        QuadraticSieve sieve = new QuadraticSieve(N1, B, 8_000_000);
+        System.out.println(Arrays.toString(Factorization.fastFactorBase(B, N1)));
         Set<SmoothInfo> relations = new HashSet<>();
         sieve.setBSmoothRef(relations);
         sieve.run();
@@ -279,7 +280,13 @@ public class QuadraticSieve implements Runnable {
         file.createNewFile();
         PrintStream ps = new PrintStream(file);
         relations.forEach(ps::println);
-        SmoothNumberFileParser parser = new SmoothNumberFileParser(file.getAbsolutePath(), 15_000, N1);
+        if(relations.size() < sieve.factorBase.length) {
+            System.err.printf("%d/%d, not enough smooth!\n", relations.size(), sieve.factorBase.length);
+            System.exit(1);
+        }
+        
+        
+        SmoothNumberFileParser parser = new SmoothNumberFileParser(file.getAbsolutePath(), B, N1);
         LargeGF2Matrix matrix = parser.getExpMatrix();
         System.out.println(parser.calculateFactor(N1, matrix.nullSpace()));
         

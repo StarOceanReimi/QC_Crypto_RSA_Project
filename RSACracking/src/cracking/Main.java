@@ -6,7 +6,6 @@
 
 package cracking;
 
-import cracking.algorithms.Factorization;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.stream.IntStream;

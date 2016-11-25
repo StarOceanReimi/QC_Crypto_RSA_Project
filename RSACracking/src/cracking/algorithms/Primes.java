@@ -302,15 +302,14 @@ public class Primes {
     
     
     public static void main(String[] args) {
-//        RandomPrimeGenerator randomGen = new RandomPrimeGenerator();
-//        BigInteger b1 = randomGen.gen(20).next();
-//        BigInteger b2 = randomGen.gen(30).next();
-//        System.out.println(b1);
-//        System.out.println(b2);
-//        BigInteger N = b1.multiply(b2);
-//        System.out.println(N);
-//        System.out.println(N.bitLength());
-        
+        RandomPrimeGenerator randomGen = new RandomPrimeGenerator();
+        BigInteger b1 = randomGen.gen(87).next();
+        BigInteger b2 = randomGen.gen(85).next();
+        System.out.println(b1);
+        System.out.println(b2);
+        BigInteger N = b1.multiply(b2);
+        System.out.println(N);
+        System.out.println(N.bitLength());
         
     }
 }
