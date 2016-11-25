@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 import static java.util.Arrays.stream;
@@ -198,8 +199,7 @@ public class LargeGF2Matrix implements AutoCloseable {
         boolean[] marker = new boolean[R];
         int onePercent = C/100;
         for(int c=0; c<C; c++) {
-            if(c % onePercent == 0)
-                System.out.printf("Finished %d percent \n", c/onePercent);
+            if(c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
             int[] col = getColumn(c);
             LinkedList<Integer> rows = new LinkedList<>();
             for(int j=0; j<R; j++) {
@@ -217,7 +217,6 @@ public class LargeGF2Matrix implements AutoCloseable {
                 identity.rowAdd(row, identityPivotRow);
             }
         }
-        
         Stream.Builder<int[]> builder = Stream.builder();
         for(int r=R-1; r>=0; r--) {
             if(gaussian.isAllZero(r)) {
@@ -226,8 +225,9 @@ public class LargeGF2Matrix implements AutoCloseable {
         }
         gaussian.close();
         identity.close();
-        new File(tempIdentity).delete();
-        new File(tempGuassian).delete();
+//        new File(tempIdentity).delete();
+//        new File(tempGuassian).delete();
+        System.out.println("complete calculating.");
         return builder.build().toArray(int[][]::new);
     }
     
@@ -244,11 +244,24 @@ public class LargeGF2Matrix implements AutoCloseable {
         }
     }
     
-    public void gf2Print() throws IOException {
+    public void gf2Print(PrintStream out) throws IOException {
         for(int i=0; i<R; i++) {
-            System.out.println(Arrays.toString(getRow(i)));
+            int[] row = getRow(i);
+            for(int j=0; j<row.length; j++) {
+                if(j != 0) out.print(' ');
+                out.print(row[j]);
+            }
+            out.println();
         }
         backToStart();
+    }
+    
+    public void gf2Print() throws IOException {
+//        for(int i=0; i<R; i++) {
+//            System.out.println(Arrays.toString(getRow(i)));
+//        }
+//        backToStart();
+        gf2Print(System.out);
     }
     
     public void hexPrint() throws IOException {
