@@ -271,11 +271,11 @@ public class QuadraticSieve implements Runnable {
 //        BigInteger N1 = new BigInteger("2903978063470729867275975450010365349829284825411351");
         BigInteger N1 = new BigInteger("13290059"); //new BigInteger("6275815110957813119593022531213");
         int B = 100;
-        QuadraticSieve sieve = new QuadraticSieve(N1, B, 150);
+        QuadraticSieve sieve = new QuadraticSieve(N1, B, 450);
         System.out.println(Arrays.toString(Factorization.fastFactorBase(B, N1)));
         Set<SmoothInfo> relations = new HashSet<>();
         sieve.setBSmoothRef(relations);
-        sieve.mulitPoly().run();
+        sieve.run();
         File file = new File("./testRelation");
         if(file.exists()) file.delete();
         file.createNewFile();

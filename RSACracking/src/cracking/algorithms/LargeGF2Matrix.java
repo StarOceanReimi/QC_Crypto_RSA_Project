@@ -253,19 +253,20 @@ public class LargeGF2Matrix implements AutoCloseable {
     }
     
     public static void main(String[] args) throws IOException {
-        try (LargeGF2Matrix matrix = new LargeGF2Matrix(10, 10, "./testM")) {
-            matrix.rowAdd(0, new int[]{1,0,0,1,0,0,0,1,0,1});
-            matrix.rowAdd(1, new int[]{1,0,0,1,0,0,0,1,0,1});
-            matrix.rowAdd(2, new int[]{1,1,0,1,0,0,0,1,0,1});
-            matrix.rowAdd(3, new int[]{0,0,1,1,0,0,0,1,0,1});
-            matrix.rowAdd(4, new int[]{1,0,0,1,0,0,0,1,1,1});
-            matrix.rowAdd(5, new int[]{1,0,0,0,0,0,0,1,1,0});
-            matrix.rowAdd(6, new int[]{0,0,0,1,0,1,0,0,1,0});
-            matrix.rowAdd(7, new int[]{0,0,0,1,0,0,1,0,0,1});
-            matrix.rowAdd(8, new int[]{0,0,1,0,0,1,0,0,0,0});
-            matrix.rowAdd(9, new int[]{0,0,0,1,0,0,0,1,0,0});
-            matrix.toMeatAxeBinaryFile("./testMeataxe");
-        }
+//        try (LargeGF2Matrix matrix = new LargeGF2Matrix(10, 10, "./testM")) {
+//            matrix.rowAdd(0, new int[]{1,0,0,1,0,0,0,1,0,1});
+//            matrix.rowAdd(1, new int[]{1,0,0,1,0,0,0,1,0,1});
+//            matrix.rowAdd(2, new int[]{1,1,0,1,0,0,0,1,0,1});
+//            matrix.rowAdd(3, new int[]{0,0,1,1,0,0,0,1,0,1});
+//            matrix.rowAdd(4, new int[]{1,0,0,1,0,0,0,1,1,1});
+//            matrix.rowAdd(5, new int[]{1,0,0,0,0,0,0,1,1,0});
+//            matrix.rowAdd(6, new int[]{0,0,0,1,0,1,0,0,1,0});
+//            matrix.rowAdd(7, new int[]{0,0,0,1,0,0,1,0,0,1});
+//            matrix.rowAdd(8, new int[]{0,0,1,0,0,1,0,0,0,0});
+//            matrix.rowAdd(9, new int[]{0,0,0,1,0,0,0,1,0,0});
+//            matrix.toMeatAxeBinaryFile("./testMeataxe");
+//        }
+//        LargeGF2Matrix.fromMeataxe("./testMeataxe", "testtest").gf2Print();
     }
     
     public void gf2Print(PrintStream out) throws IOException {
@@ -286,6 +287,25 @@ public class LargeGF2Matrix implements AutoCloseable {
 //        }
 //        backToStart();
         gf2Print(System.out);
+    }
+    
+    public static LargeGF2Matrix fromMeataxe(String meatAxePath, String matrixPath) throws FileNotFoundException, IOException {
+        ByteBuffer header = ByteBuffer.allocate(4*3);
+        RandomAccessFile meatAxe = new RandomAccessFile(meatAxePath, "rw");
+        FileChannel mChannel = meatAxe.getChannel();
+        mChannel.read(header);
+        header.rewind();
+        header.order(ByteOrder.LITTLE_ENDIAN);
+        int field = header.getInt();
+        int R = header.getInt();
+        int C = header.getInt();
+        if(field != 2) error("LargeGF2Matrix only deal with GF2");
+        LargeGF2Matrix m = new LargeGF2Matrix(R, C, matrixPath);
+        FileChannel matrixChnl = m.file.getChannel();
+        matrixChnl.transferFrom(mChannel, m.start, meatAxe.length()-header.capacity());
+        m.backToStart();
+        meatAxe.close();
+        return m;
     }
     
     public void toMeatAxeBinaryFile(String filePath) throws FileNotFoundException, IOException {
