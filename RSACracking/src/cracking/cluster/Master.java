@@ -33,7 +33,8 @@ public class Master {
 
     private final LinkedList<Job> taskQueue;
     
-    private PrintStream smoothResult;
+    private final PrintStream smoothResult;
+    private final Object printLocker = new Object();
     private AtomicInteger smoothCounter;
     private Thread multipolyProducer;
     
@@ -189,7 +190,11 @@ public class Master {
                 System.out.printf("total relation in %s is %d.\n", result, 
                                     result.getBSmooth().length);
                 smoothCounter.addAndGet(result.getBSmooth().length);
-                stream(result.getBSmooth()).forEach(smoothInfo->smoothResult.println(smoothInfo));
+                synchronized(printLocker) {
+                    for(SmoothInfo info : result.getBSmooth()) {
+                        smoothResult.println(info);
+                    }
+                }
             } catch(IOException | ClassNotFoundException ex) {
                 synchronized(taskQueue) {
                     taskQueue.offer(job);

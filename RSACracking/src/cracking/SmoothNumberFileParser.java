@@ -25,6 +25,7 @@ import java.util.Arrays;
 import static java.util.Arrays.binarySearch;
 import static java.util.Arrays.stream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ public class SmoothNumberFileParser {
     private RandomAccessFile file;
     private int[] fb;
     private BigInteger N;
+    private HashSet<BigInteger> relationDupChecker;
     private List<BigInteger> relations;
     private List<TreeMap<BigInteger, Integer>> factors;
     private Map<BigInteger, SmoothInfo> leftOverStack;
@@ -61,6 +63,7 @@ public class SmoothNumberFileParser {
         file = new RandomAccessFile(filePath, "r");
         relations = new ArrayList<>();
         factors = new ArrayList<>();
+        relationDupChecker = new HashSet();
         fb = Factorization.fastFactorBase(B, N);
         this.N = N;
         expMatrix = new LargeGF2Matrix(fb.length+226, fb.length+1, DEFAULT_MATRIX_PATH);
@@ -107,9 +110,13 @@ public class SmoothNumberFileParser {
             while(file.getFilePointer() < len) {
                 if(i >= rows) break;
                 SmoothInfo info = SmoothInfo.fromString(file.readLine());
-                if(info.getLeftover() == null) { 
+                if(info.getLeftover() == null) {
+                    if(relationDupChecker.contains(info.getX())) {
+                        continue;
+                    }
                     //full relation
                     relations.add(info.getX());
+                    relationDupChecker.add(info.getX());
                     factors.add(primeFactors(info));
 //                    System.out.println("x1="+info.getX()+primeFactors(info));
                     if(!useExistingMatrix) {
@@ -261,11 +268,17 @@ public class SmoothNumberFileParser {
 //        System.out.println(nullSpace.length);
         System.out.println("data collection..");
         SmoothNumberFileParser parser = new SmoothNumberFileParser("./SmoothNumber0", 1_000_000, Main.TARGET);
-        int[][] nullSpace = parser.expMatrix.nullSpace();
-        System.out.println("saving null space..");
-        saveMatrix(nullSpace, "./nullSpace");
-        System.out.println("calculating...");
-        System.out.println(parser.calculateFactor(Main.TARGET, nullSpace));
+        
+//        parser.expMatrix.toMeatAxeBinaryFile("meataxeMatrix");
+        
+//        System.out.println("loading null space..");
+//        LargeGF2Matrix nullSpaceMatrix = LargeGF2Matrix.fromMeataxe("output", "nspace");
+//        int[][] nullSpace = new int[nullSpaceMatrix.getRows()][];
+//        for(int i=0; i<nullSpace.length; i++)
+//            nullSpace[i] = nullSpaceMatrix.getRow(i);
+//        
+//        System.out.println("calculating...");
+//        System.out.println(parser.calculateFactor(Main.TARGET, nullSpace));
         
 //        System.out.println("saving null space...");
 //        for(int i=0; i<nullSpace.length; i++)
