@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import static java.util.Arrays.stream;
 import java.util.LinkedList;
@@ -251,15 +253,18 @@ public class LargeGF2Matrix implements AutoCloseable {
     }
     
     public static void main(String[] args) throws IOException {
-        try (LargeGF2Matrix matrix = new LargeGF2Matrix(5, 4, "./testM")) {
-            matrix.rowAdd(0, new int[]{1,0,1,0});
-            matrix.rowAdd(1, new int[]{1,1,1,0});
-            matrix.rowAdd(2, new int[]{0,1,0,1});
-            matrix.rowAdd(3, new int[]{1,1,1,1});
-            matrix.rowAdd(4, new int[]{0,0,0,1});
-            int[][] nullSpace = matrix.nullSpace();
-            for(int i=0; i<nullSpace.length; i++)
-                System.out.println(Arrays.toString(nullSpace[i]));
+        try (LargeGF2Matrix matrix = new LargeGF2Matrix(10, 10, "./testM")) {
+            matrix.rowAdd(0, new int[]{1,0,0,1,0,0,0,1,0,1});
+            matrix.rowAdd(1, new int[]{1,0,0,1,0,0,0,1,0,1});
+            matrix.rowAdd(2, new int[]{1,1,0,1,0,0,0,1,0,1});
+            matrix.rowAdd(3, new int[]{0,0,1,1,0,0,0,1,0,1});
+            matrix.rowAdd(4, new int[]{1,0,0,1,0,0,0,1,1,1});
+            matrix.rowAdd(5, new int[]{1,0,0,0,0,0,0,1,1,0});
+            matrix.rowAdd(6, new int[]{0,0,0,1,0,1,0,0,1,0});
+            matrix.rowAdd(7, new int[]{0,0,0,1,0,0,1,0,0,1});
+            matrix.rowAdd(8, new int[]{0,0,1,0,0,1,0,0,0,0});
+            matrix.rowAdd(9, new int[]{0,0,0,1,0,0,0,1,0,0});
+            matrix.toMeatAxeBinaryFile("./testMeataxe");
         }
     }
     
@@ -283,8 +288,22 @@ public class LargeGF2Matrix implements AutoCloseable {
         gf2Print(System.out);
     }
     
-    public void toMeatAxeBinaryFile(String file) {
+    public void toMeatAxeBinaryFile(String filePath) throws FileNotFoundException, IOException {
+        //field, rows, cols
+        ByteBuffer header = ByteBuffer.allocate(4*3);
+        header.order(ByteOrder.LITTLE_ENDIAN);
+        header.putInt(2);
+        header.putInt(R);
+        header.putInt(C);
         
+        try (RandomAccessFile raf = new RandomAccessFile(filePath, "rw")) {
+            byte[] bytes = header.array();
+            raf.write(bytes);
+            
+            FileChannel src = file.getChannel();
+            raf.getChannel().transferFrom(src, bytes.length, file.length()-start);
+        }
+        backToStart();
     }
     
     public void hexPrint() throws IOException {
