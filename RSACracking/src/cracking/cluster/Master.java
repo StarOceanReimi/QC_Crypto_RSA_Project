@@ -34,6 +34,7 @@ public class Master {
     private final LinkedList<Job> taskQueue;
     
     private PrintStream smoothResult;
+
     private final Object printLocker = new Object();
     private AtomicInteger smoothCounter;
     private Thread multipolyProducer;
