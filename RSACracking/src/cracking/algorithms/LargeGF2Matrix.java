@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import static java.util.Arrays.stream;
 import java.util.LinkedList;
@@ -40,7 +41,7 @@ public class LargeGF2Matrix implements AutoCloseable {
     public static byte[] intArrayToRow(int[] array) {
         int[] gf2 = stream(array).map(i->i%2).toArray();
         ByteArrayOutputStream bytesStream = new ByteArrayOutputStream();
-        for(int i=0, l=gf2.length; i<l; i+=8) {
+        for(int i=0, l=gf2.length; i<l; i+=INTEGER_BITS) {
             byte compress = (byte)0;
             int limit = INTEGER_BITS;
             int j = i;
@@ -58,7 +59,7 @@ public class LargeGF2Matrix implements AutoCloseable {
         for(int i=0; i<row.length; i++) {
             byte compressed = row[i];
             int limit = INTEGER_BITS;
-            int j = i*8;
+            int j = i*INTEGER_BITS;
             while(--limit >= 0) {
                 if(j >= colSize) break;
                 intArray[j++] = compressed >> limit & 1;
@@ -147,8 +148,9 @@ public class LargeGF2Matrix implements AutoCloseable {
         long pos = gotoRow(r);
         byte[] row = new byte[colInBytes];
         file.read(row);
-        for(int i=0; i<row.length; i++)
+        for(int i=0; i<row.length; i++) {
             row[i] ^= data[i];
+        }
         file.seek(pos);
         file.write(row);
         backToStart();
@@ -156,12 +158,13 @@ public class LargeGF2Matrix implements AutoCloseable {
     
     public void rowAdd(int r, int[] data) throws IOException {
         if(r>=R) error("row should be less than %d", R);
-        byte[] gf2 = intArrayToRow(data);
+        byte[] raw = intArrayToRow(data);
         long pos = gotoRow(r);
         byte[] row = new byte[colInBytes];
         file.read(row);
-        for(int i=0; i<row.length && i<gf2.length; i++)
-            row[i] ^= gf2[i];
+        for(int i=0; i<row.length && i<raw.length; i++) {
+            row[i] ^= raw[i];
+        }
         file.seek(pos);
         file.write(row);
         backToStart();
@@ -205,15 +208,17 @@ public class LargeGF2Matrix implements AutoCloseable {
     
     public int[][] nullSpace() throws IOException {
         String tempIdentity = "./temp1";
-        String tempGuassian = "./temp2";
-        LargeGF2Matrix identity = new LargeGF2Matrix(R, R, tempIdentity);
+//        String tempGuassian = "./temp2";
+        int I = Math.max(R, C);
+        Stream.Builder<int[]> builder = Stream.builder();
+        LargeGF2Matrix identity = new LargeGF2Matrix(I, I, tempIdentity);
         identity.identity();
-        LargeGF2Matrix gaussian = new LargeGF2Matrix(R, C, tempGuassian);
-        int newRow = 0;
+//        LargeGF2Matrix gaussian = new LargeGF2Matrix(R, C, tempGuassian);
+//        int newRow = 0;
         boolean[] marker = new boolean[R];
         int onePercent = C/100;
         for(int c=0; c<C; c++) {
-            if(c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
+            if(onePercent!=0 && c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
             int[] col = getColumn(c);
             LinkedList<Integer> rows = new LinkedList<>();
             for(int j=0; j<R; j++) {
@@ -224,24 +229,24 @@ public class LargeGF2Matrix implements AutoCloseable {
             marker[pivot] = true;
             byte[] pivotRow = getRawRow(pivot);
             byte[] identityPivotRow = identity.getRawRow(pivot);
-            gaussian.rowAdd(newRow++, pivotRow);
+//            gaussian.rowAdd(newRow++, pivotRow);
             while(!rows.isEmpty()) {
                 int row = rows.poll();
                 rowAdd(row, pivotRow);
                 identity.rowAdd(row, identityPivotRow);
             }
         }
-        Stream.Builder<int[]> builder = Stream.builder();
+        System.out.println("complete calculating. searching nullspace");
         for(int r=R-1; r>=0; r--) {
-            if(gaussian.isAllZero(r)) {
+            if(isAllZero(r)) {
                 builder.accept(identity.getRow(r));
             }
         }
-        gaussian.close();
+//        gaussian.close();
         identity.close();
 //        new File(tempIdentity).delete();
 //        new File(tempGuassian).delete();
-        System.out.println("complete calculating.");
+        System.out.println("finish");
         return builder.build().toArray(int[][]::new);
     }
     
@@ -261,7 +266,7 @@ public class LargeGF2Matrix implements AutoCloseable {
     public void gf2Print(PrintStream out) throws IOException {
         for(int i=0; i<R; i++) {
             int[] row = getRow(i);
-            for(int j=0; j<row.length; j++) {
+            for(int j=0; j<C; j++) {
                 if(j != 0) out.print(' ');
                 out.print(row[j]);
             }
@@ -276,6 +281,10 @@ public class LargeGF2Matrix implements AutoCloseable {
 //        }
 //        backToStart();
         gf2Print(System.out);
+    }
+    
+    public void toMeatAxeBinaryFile(String file) {
+        
     }
     
     public void hexPrint() throws IOException {

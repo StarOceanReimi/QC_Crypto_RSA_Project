@@ -248,6 +248,7 @@ public class QuadraticSieve implements Runnable {
                 candidate = candidate.divide(bp);
             }
         }
+        
         if(candidate.equals(ONE)) return true;
         if(millerRabinTest(candidate)) return true;
         return false;
@@ -268,9 +269,9 @@ public class QuadraticSieve implements Runnable {
         
 //        BigInteger N1 = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
 //        BigInteger N1 = new BigInteger("2903978063470729867275975450010365349829284825411351");
-        BigInteger N1 = new BigInteger("6275815110957813119593022531213");
-        int B = 15_000;
-        QuadraticSieve sieve = new QuadraticSieve(N1, B, 8_000_000);
+        BigInteger N1 = new BigInteger("13290059"); //new BigInteger("6275815110957813119593022531213");
+        int B = 100;
+        QuadraticSieve sieve = new QuadraticSieve(N1, B, 50000);
         System.out.println(Arrays.toString(Factorization.fastFactorBase(B, N1)));
         Set<SmoothInfo> relations = new HashSet<>();
         sieve.setBSmoothRef(relations);
@@ -280,15 +281,23 @@ public class QuadraticSieve implements Runnable {
         file.createNewFile();
         PrintStream ps = new PrintStream(file);
         relations.forEach(ps::println);
+        System.out.printf("%d/%d\n", relations.size(), sieve.factorBase.length);
         if(relations.size() < sieve.factorBase.length) {
             System.err.printf("%d/%d, not enough smooth!\n", relations.size(), sieve.factorBase.length);
             System.exit(1);
         }
-        
-        
+        String path = "./sample.txt";
         SmoothNumberFileParser parser = new SmoothNumberFileParser(file.getAbsolutePath(), B, N1);
+//        System.out.println("---expMatrix");
+//        parser.getExpMatrix().gf2Print();
+        
         LargeGF2Matrix matrix = parser.getExpMatrix();
         System.out.println(parser.calculateFactor(N1, matrix.nullSpace()));
+        
+//        System.out.println("---identity");
+//        new LargeGF2Matrix("./temp1").gf2Print();
+//        System.out.println("---gaussian");
+//        new LargeGF2Matrix("./temp2").gf2Print();
         
 //        
 //        System.out.println(sieve.isSmooth(new BigInteger("782977848170708394135694655741222").pow(2).subtract(N)));
