@@ -74,15 +74,46 @@
 \begin{document}
 \maketitle
 
-\section{Dixon's factorization method}
-
 \section{Quadratic Sieve}
 
-we know Quadratic Sieve is a optimazation of Dixon's method
+Quadratic Sieve method is actually discovered step by step. It is a optimization of Dixon's Factorization Method. So, to learn what is Quadratic Sieve, we have to understand Dixon's Method. And Dixon's Method is also related to Fermat's Factorization and Kraitchik's Factorization Method. Here, I will briefly introduce these three factorization methods.
 
+\subsection {Brief Hierarchies Of Quadratic Sieve}
 
-More text.
+\subsubsection {Fermat's Factorization}
+Fermat factorization method is very straight forward, if we are going to factor $n$, since: $$n = ab \Rightarrow \left [\frac{1}{2}(a+b) \right ]^{2} - \left [\frac{1}{2}(a-b) \right ]^{2}$$
 
+let $$ x= \frac{1}{2}(a+b),\ y= \frac{1}{2}(a-b) \Rightarrow n = x^2 - y^2$$ 
+
+Therefore, we just need to find a $x$ satisfy: $$Q(x) = y^2 = x^2 - n$$ 
+
+and obviously, the smallest $x$ is $\lceil \sqrt[2]{n}\rceil$ and if we can find a $Q(x)$ is a square root, then we can find the factors of $n$ which is $a=x+y, b=x-y$
+
+\subsubsection {Kraitchik's Factorization}
+Kraitchik's method is instead of checking $x^2-n$ is a square, he suggests to check $x^2 - kn$ a square number, which is equivalent to find $y^2 \equiv x^2 \pmod{n} $. And the only interesting solution is $ x \not\equiv \pm y \pmod{n}$. Besides this, instead of seeking one $x^2-n$ is square, he was looking for a set of number $ \{x_1, x_2, \dots, x_k\} $ such that $\displaystyle y^2 \equiv \prod_{i=1}^k{(x_i^2 - n)} \equiv \prod_{i=1}^k{x_i^2} \equiv \left (\prod_{i=1}^k{x_i}\right)^2 \pmod{n} $ is square. if he can find a relation like this, then, the factors of n is $\displaystyle gcd(|y \pm \prod_{i=1}^k{x_i}|, n)$
+
+\subsubsection {Dixon's Factorization}
+One of the great improvement of Dixon's method comparing to the method before is that he replace the requirement from ``is a square of an integer'' to ``has only small prime factors''. To explain this we need introduce 2 concepts which are \textbf{Factor Base} and \textbf{Smooth Number}.
+
+\textbf{Factor Base} is a set of prime factors $S_{fb}=\{p | p \le B\}$ where $B$ is some integer.
+
+\textbf{Smooth Number} is a integer that all its prime factor within the \textbf{Factor Base} which means if we choose integer $B$ and $Q$, $Q = \prod_{i=1}^k{p_i^{a_i}}$ where $a_i, k \in \mathbb{Z}, p_i \in S_{fb}$. We called Q is a \textbf{B-Smooth} Number.
+
+Recall Kraitchik's Method, he suggests to find a relation $y^2 \equiv \left (\prod_{i=1}^k{x_i}\right)^2 \pmod{n}$. But Dixon's idea is different, he is looking for the relation of $\displaystyle y^2 \equiv Q \equiv \prod_{i=1}^k{p_i^{a_i}} \pmod{n}$ where $a_i \in \mathbb{Z},\ k=|S_{fb}|,\ p_i \in S_{fb}$. For each relation is found, it can represent as a exponent vector $\vec{v} = \{a_1, a_2, \dots, a_k\}$ over $\mathbb{F}_{2}$, and after finding $k$ relations, we have a matrix $m = \{\vec{v_i} | i \le k\}$. And searching the null space of this matrix, could help us to find the square integer. Since $M\vec{v} = 0$ where $\vec{v} \in Null\ Space$, we know which rows sum together are equal to 0, which also implies the products of corresponding Q to that row is a square integer. After found the relation, let $x^2 = \prod_i^k{Q_i}$, the factor of n is $gcd(y\pm x, n)$
+
+\subsection {Math and Algorithm in Quadratic Sieve}
+
+\subsubsection{Legendre Symbol \& Quadratic Reciprocity}
+
+\subsubsection{Shanks Tonelli's Algorithm}
+
+\subsubsection{Logarithm Approximation}
+
+\subsection {Sieving In Quadratic Sieve}
+
+\subsubsection {How we do it}
+
+\subsection {16 mins to less than 1s}
 \end{document}
 
 
