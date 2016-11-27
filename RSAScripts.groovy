@@ -80,7 +80,9 @@ dict.each {
 encoded_dict = encoded_dict.sort { -it.value.length() }
 //encoded_dict = encoded_dict.sort { -it.key.length() }
 
-def str = mycode.toString()
+def tb = [1121225:"alady"]
+println possibleMessage(1121225)
+def str = "11212251521715202015415919201825201825112920201252051445181451919"//mycode.toString()
 def founded = []
 def start = 0
 
@@ -104,4 +106,11 @@ for(info in founded) {
 str = tmp.toString().replaceAll("_","")
 println str
 
-println possibleMessage(encode("1addload7518"))
+println possibleMessage(11212)      //all
+println possibleMessage(25152171520)//yougot 
+println possibleMessage(2015415919) //todois
+println possibleMessage(201825)     //try
+println possibleMessage(11292020125)//alittle
+println possibleMessage(2051445181451919)//tenderness
+
+/**/

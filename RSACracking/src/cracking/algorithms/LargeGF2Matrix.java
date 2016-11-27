@@ -208,12 +208,29 @@ public class LargeGF2Matrix implements AutoCloseable {
         return builder.build().toArray(int[][]::new);
     }
     
+    private LinkedList<Integer> getLeftMostOneRows(int column, boolean[] marker) throws IOException {
+        if(column>=C) error("column should be less than %d", C);
+        LinkedList<Integer> result = new LinkedList<>();
+        long startByte = start+column/INTEGER_BITS;
+        file.seek(startByte);
+        int i=0;
+        while(i<R) {
+            byte b = file.readByte();
+            int v = b >> (INTEGER_BITS-column%INTEGER_BITS-1) & 0x1;
+            if(v == 1 && !marker[i]) result.add(i);
+            startByte += colInBytes;
+            i++;
+            file.seek(startByte);
+        }
+        backToStart();
+        return result;
+    }
+    
     public int[][] nullSpace() throws IOException {
         String tempIdentity = "./temp1";
 //        String tempGuassian = "./temp2";
-        int I = Math.max(R, C);
         Stream.Builder<int[]> builder = Stream.builder();
-        LargeGF2Matrix identity = new LargeGF2Matrix(I, I, tempIdentity);
+        LargeGF2Matrix identity = new LargeGF2Matrix(R, R, tempIdentity);
         identity.identity();
 //        LargeGF2Matrix gaussian = new LargeGF2Matrix(R, C, tempGuassian);
 //        int newRow = 0;
@@ -221,11 +238,7 @@ public class LargeGF2Matrix implements AutoCloseable {
         int onePercent = C/100;
         for(int c=0; c<C; c++) {
             if(onePercent!=0 && c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
-            int[] col = getColumn(c);
-            LinkedList<Integer> rows = new LinkedList<>();
-            for(int j=0; j<R; j++) {
-                if(col[j]==1 && !marker[j]) rows.add(j);
-            }
+            LinkedList<Integer> rows = getLeftMostOneRows(c, marker);
             if(rows.isEmpty()) continue;
             int pivot = rows.poll();
             marker[pivot] = true;

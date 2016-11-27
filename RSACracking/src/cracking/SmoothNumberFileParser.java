@@ -10,7 +10,10 @@ import cracking.algorithms.Factorization;
 import cracking.algorithms.LargeGF2Matrix;
 import cracking.algorithms.MathOp;
 import static cracking.algorithms.MathOp.MINUS_ONE;
+import static cracking.algorithms.MathOp.expMod;
 import static cracking.algorithms.MathOp.gcd;
+import static cracking.algorithms.MathOp.modInverse;
+import cracking.algorithms.Primes;
 import cracking.cluster.SmoothInfo;
 import static cracking.utils.Util.error;
 import java.io.FileNotFoundException;
@@ -66,7 +69,7 @@ public class SmoothNumberFileParser {
         relationDupChecker = new HashSet();
         fb = Factorization.fastFactorBase(B, N);
         this.N = N;
-        expMatrix = new LargeGF2Matrix(fb.length+226, fb.length+1, DEFAULT_MATRIX_PATH);
+        expMatrix = new LargeGF2Matrix(fb.length, fb.length+1, DEFAULT_MATRIX_PATH);
         leftOverStack = new HashMap<>();
         parse();
     }
@@ -211,6 +214,7 @@ public class SmoothNumberFileParser {
     public List<BigInteger> calculateFactor(BigInteger N, int[][] nullSpace) {
         BigInteger factorOne = ONE;
         LinkedList results = new LinkedList<>();
+        System.out.println("nullSpace size: " + nullSpace.length);
 //        stream(nullSpace).forEach(row->System.out.println(Arrays.toString(row)));
         for(int i=0, n=nullSpace.length; i<n; i++) {
             BigInteger prodX = ONE;
@@ -253,7 +257,7 @@ public class SmoothNumberFileParser {
         System.out.println();
     }
     
-    private static void saveMatrix(int[][] data, String file) throws IOException {
+    public static void saveMatrix(int[][] data, String file) throws IOException {
         LargeGF2Matrix matrix = new LargeGF2Matrix(data.length, data[0].length, file);
         for(int i=0; i<matrix.getRows(); i++)
             matrix.rowAdd(i, data[i]);
@@ -261,33 +265,41 @@ public class SmoothNumberFileParser {
         
     }
     
+    public static int[][] loadMatrix(String file) throws IOException {
+        int[][] data;
+        try (LargeGF2Matrix matrix = new LargeGF2Matrix(file)) {
+            data = new int[matrix.getRows()][];
+            for(int i=0; i<data.length; i++)
+                data[i] = matrix.getRow(i);
+        }
+        return data;
+    }
+    
     public static void main(String[] args) throws IOException {
         
+        System.out.println(new LargeGF2Matrix("nullSpace").getRows());
 //        System.out.println(parser.expMatrix.getRows());
 //        int[][] nullSpace = LargeGF2Matrix.nullSpaceBy(new LargeGF2Matrix("ExpMatrix"), new LargeGF2Matrix("identity"));
 //        System.out.println(nullSpace.length);
-        System.out.println("data collection..");
-        SmoothNumberFileParser parser = new SmoothNumberFileParser("./SmoothNumber0", 1_000_000, Main.TARGET);
-        
-//        parser.expMatrix.toMeatAxeBinaryFile("meataxeMatrix");
-        
-//        System.out.println("loading null space..");
-//        LargeGF2Matrix nullSpaceMatrix = LargeGF2Matrix.fromMeataxe("output", "nspace");
-//        int[][] nullSpace = new int[nullSpaceMatrix.getRows()][];
-//        for(int i=0; i<nullSpace.length; i++)
-//            nullSpace[i] = nullSpaceMatrix.getRow(i);
-//        
+//        System.out.println("data collection..");
+//        SmoothNumberFileParser parser = new SmoothNumberFileParser("./SmoothNumber1", 1_000_000, Main.TARGET);
+//        int[][] nullSpace = parser.expMatrix.nullSpace();
+//        saveMatrix(nullSpace, "nullSpace");
 //        System.out.println("calculating...");
 //        System.out.println(parser.calculateFactor(Main.TARGET, nullSpace));
-        
-//        System.out.println("saving null space...");
-//        for(int i=0; i<nullSpace.length; i++)
-//            nullSpaceMatrix.rowAdd(i, nullSpace[i]);
 //        System.out.println("Done");
-//        System.out.println(nullSpace.length);
-//        System.out.println(parser.calculateFactor(Main.TARGET, nullSpace));
-
         
+        BigInteger p = new BigInteger("9457663801784055781292440587131633");
+        BigInteger q = new BigInteger("64820903298591432157114065708311");
+        BigInteger t  = new BigInteger("809");
         
+        BigInteger N = p.multiply(q).multiply(t);
+        System.out.println(N);
+        BigInteger phi = Primes.eulerTotient(N, new BigInteger[]{p, q, t});
+        BigInteger d = modInverse(valueOf(31), phi);
+        System.out.println(d);
+        BigInteger cMsg = new BigInteger("19705178523446373241426321455642097240677633038639787310457022491789");
+        BigInteger msg = expMod(cMsg, d, N);
+        System.out.println(msg);
     }
 }

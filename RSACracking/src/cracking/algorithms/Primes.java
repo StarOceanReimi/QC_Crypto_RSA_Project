@@ -15,6 +15,7 @@ import static cracking.utils.Util.randomBigInteger;
 import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
+import static java.math.BigInteger.valueOf;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -211,6 +212,16 @@ public class Primes {
         }
     }
     
+    public static BigInteger eulerTotient(BigInteger n, BigInteger[] factors) {
+        BigInteger ret = n;
+        BigInteger tmp = ONE;
+        for(BigInteger p : factors) {
+            tmp = tmp.multiply(p.subtract(ONE));
+            ret = ret.divide(p);
+        }
+        return tmp.multiply(ret);
+    }
+    
     public static int[] eratosthenesSieve(int n) {
         int[] sieve = new int[n+1];
         Arrays.fill(sieve, 0);
@@ -303,8 +314,8 @@ public class Primes {
     
     public static void main(String[] args) {
         RandomPrimeGenerator randomGen = new RandomPrimeGenerator();
-        BigInteger b1 = randomGen.gen(87).next();
-        BigInteger b2 = randomGen.gen(85).next();
+        BigInteger b1 = randomGen.gen(60).next();
+        BigInteger b2 = randomGen.gen(69).next();
         System.out.println(b1);
         System.out.println(b2);
         BigInteger N = b1.multiply(b2);

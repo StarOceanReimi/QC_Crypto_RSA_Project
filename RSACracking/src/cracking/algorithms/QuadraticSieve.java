@@ -268,11 +268,11 @@ public class QuadraticSieve implements Runnable {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         
 //        BigInteger N1 = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
-//        BigInteger N1 = new BigInteger("2903978063470729867275975450010365349829284825411351");
-        BigInteger N1 = new BigInteger("13290059"); //new BigInteger("6275815110957813119593022531213");
-        int B = 100;
-        QuadraticSieve sieve = new QuadraticSieve(N1, B, 450);
-        System.out.println(Arrays.toString(Factorization.fastFactorBase(B, N1)));
+        BigInteger N1 = new BigInteger("489293762578746481445307920902864380533");
+//        BigInteger N1 = new BigInteger("6275815110957813119593022531213"); //new BigInteger("13290059");
+        int B = 150_000;
+        QuadraticSieve sieve = new QuadraticSieve(N1, B, 80_000_000);
+//        System.out.println(Arrays.toString(Factorization.fastFactorBase(B, N1)));
         Set<SmoothInfo> relations = new HashSet<>();
         sieve.setBSmoothRef(relations);
         sieve.run();
