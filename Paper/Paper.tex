@@ -62,6 +62,7 @@
 \renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
 \renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
 
+\newcommand{\legendre}[2]{\left(\frac{#1}{#2}\right)}
 %%% END Article customizations
 
 %%% The "real" document content comes below...
@@ -105,13 +106,34 @@ Recall Kraitchik's Method, he suggests to find a relation $y^2 \equiv \left (\pr
 
 \subsubsection{Legendre Symbol \& Laws of Quadratic Reciprocity}
 
-
+From now, we know two ways to test whether $n$ is a quadratic residue mod p, one is Euler Criterion, and the other is Legendre symbol. In practice, probably because we factor base is not insanely large, we did not noticed how much faster does Legendre symbol than the Euler criterion (since Euler criterion is an $\mathcal{O}(\log{n}) $ algorithm).
 
 \subsubsection{Shanks Tonelli's Algorithm}
 
+Shanks Tonelli's Algorithm is a faster algorithm to find the root of a quadratic residue. In class, we only learn the simple case, which is when $p \equiv 3 \pmod{4}$. Since this algorithm is very important for quadratic sieve, we are going to prove the algorithm.
+
+Given $x^2 \equiv n \pmod{p} $, we want to find x.
+
+let $p-1 = 2^eS,\ x \equiv n^{\frac{S+1}{2}} \pmod{p},\ t \equiv n^S \pmod{p}.$
+
+we have, $x^2 \equiv n^{S+1} \equiv n^Sn \equiv tn \pmod{p}$, notice that, 
+
+if $t \equiv 1 \pmod{p},$ our $x = \pm n^{\frac{S+1}{2}} \pmod{p}$
+
+if $t \not\equiv 1 \pmod{p}$, then find a quadratic non-residue $a$ and let $b \equiv a^S \pmod{p}$, then, $b^{2^e} \equiv (a^S)^{2^e} \equiv a^{2^eS} \equiv a^{p-1} \equiv 1 \pmod{p}$, Since we know $a$ is a quadratic non-residue, By Euler Criterion, $a^{\frac{p-1}{2}} \equiv b^{2^{e-1}} \equiv -1 \pmod{p} \rightarrow 2^e$ is the order of b.
+
+we have $t^{2^e} \equiv 1 \pmod{p}$, and we let $2^{e^\prime}$ be the order of $t \pmod{p}$, since $n$ is a quadratic residue, $e^\prime \le e-1$
+
+let $c \equiv b^{2^{e-e^\prime-1}} \pmod{p}$, $b^\prime \equiv c^2$, $t^\prime = tb^\prime$, $x^\prime = cx$, after this construction, $x^{\prime 2} \equiv t^\prime n \pmod{p}$ still holds, since $x^{\prime 2} \equiv b^{2^{e-e^\prime}}x^2 \equiv tnb^{2^{e-e^\prime}} \equiv tnb^\prime \equiv  t^\prime n \pmod{p}$. And we can repeat this process until $e^\prime = 0$ we can find a $t^\prime = 1$, and our final solution is $ \pm x^\prime \pmod{p}$
+
 \subsubsection{Logarithm Approximation}
 
+Logarithm approximation plays a very import role in implementing the sieving process.
+Since we use the polynomial $Q(x) = (x)^2-n$, and we want to sieving in the interval  $[\lfloor \sqrt{n} \rfloor - M, \lfloor \sqrt{n} \rfloor + M]$, therefore, $\log{(Q(x))} \approx \log{(Q(\lfloor \sqrt{n} \rfloor + M))} = \log{(2M\sqrt{n}+M^2)}$, because of $M^2$ is trivial if $\sqrt{n}$ is huge, $\log{(Q(x))} \approx 0.5\log{n} + log{M}$. We also know $Q(x) = \prod_{i=1}^k{p_i^{a_i}}$ where $p_i \in S_{fb}, k=|S_{fb}|$ if $Q(x)$ has a smooth relationship in our factor base, then we have,  $\log{(Q(x))} = \log{\prod_{i=1}^k{p_i^{a_i}}} = \sum_{i=1}^k{a_i\log{p_i}}$. This formula tell us if we can find a $\log{Q(x)} = \sum_{i=1}^k{a_i\log{p_i}} \approx 0.5\log{n} + log{M}$ it probably a candidates of smooth number.
+
 \subsection {Sieving In Quadratic Sieve}
+
+
 
 \subsubsection {Pre-Sieving}
 
