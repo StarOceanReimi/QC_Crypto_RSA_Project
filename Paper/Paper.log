@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.9.7)  28 NOV 2016 16:04
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.9.7)  28 NOV 2016 17:05
 entering extended mode
 **Paper.tex
 (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.tex
@@ -590,90 +590,227 @@ LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <15.59996> not available
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <18.72003> not available
-(Font)              size <17.28> substituted on input line 81.
+(Font)              size <17.28> substituted on input line 83.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <18.72003> not available
-(Font)              size <17.28> substituted on input line 81.
+(Font)              size <17.28> substituted on input line 83.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/bx/n' in size <18.72003> not available
 
-(Font)              size <17.28> substituted on input line 81.
+(Font)              size <17.28> substituted on input line 83.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <18.72003> not available
-(Font)              size <17.28> substituted on input line 81.
+(Font)              size <17.28> substituted on input line 83.
+
+LaTeX Font Info:    Calculating math sizes for size <13> on input line 86.
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <6.5> not available
+(Font)              size <6> substituted on input line 86.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <13> not available
+(Font)              size <12> substituted on input line 86.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <6.5> not available
+(Font)              size <6> substituted on input line 86.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <13> not available
+(Font)              size <12> substituted on input line 86.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <6.5> not available
+(Font)              size <6> substituted on input line 86.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 84--90
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 84--90
+
+ []
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/bx/n' in size <15.59996> not available
 
-(Font)              size <14.4> substituted on input line 85.
+(Font)              size <14.4> substituted on input line 101.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <15.59996> not available
-(Font)              size <14.4> substituted on input line 85.
-
-
-LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <13> not available
-(Font)              size <12> substituted on input line 87.
-
-
-LaTeX Font Warning: Font shape `OT1/cmss/bx/n' in size <13> not available
-(Font)              size <12> substituted on input line 87.
-
-
-LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 87.
-
-LaTeX Font Info:    Calculating math sizes for size <13> on input line 88.
-
-LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 88.
-
-
-LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <13> not available
-(Font)              size <12> substituted on input line 88.
-
-
-LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <6.5> not available
-(Font)              size <6> substituted on input line 88.
-
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 88.
-
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 88.
+(Font)              size <14.4> substituted on input line 101.
 
 [1
 
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] [2] [3]
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
+
+LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <13> not available
+(Font)              size <12> substituted on input line 138.
+
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/it' in size <13> not available
-(Font)              size <12> substituted on input line 167.
+(Font)              size <12> substituted on input line 138.
 
 
-Overfull \hbox (5.05441pt too wide) in paragraph at lines 167--169
+Underfull \hbox (badness 10000) in paragraph at lines 134--141
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 134--141
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 134--141
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 141--143
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 145--151
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 145--151
+
+ []
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 153--162
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 153--162
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 153--162
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 153--162
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 162--167
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 162--167
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 167--174
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 167--174
+
+ []
+
+[4]
+Underfull \hbox (badness 10000) in paragraph at lines 174--181
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 174--181
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 174--181
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 185--188
+
+ []
+
+
+Overfull \hbox (20.3729pt too wide) in paragraph at lines 185--188
+\OT1/cmr/m/n/12 mod-u-lus with 809 was 6130543107260328861809438884363258377022
+26698886723435429939101863.
+ []
+
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 194--203
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 194--203
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 194--203
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 194--203
+
+ []
+
+[6] [7]
+Underfull \hbox (badness 10000) in paragraph at lines 205--208
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 211--214
+
+ []
+
+[8]
+
+LaTeX Font Warning: Font shape `OT1/cmss/bx/n' in size <13> not available
+(Font)              size <12> substituted on input line 222.
+
+
+LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <13> not available
+(Font)              size <12> substituted on input line 222.
+
+[9] [10] [11]
+Overfull \hbox (5.05441pt too wide) in paragraph at lines 302--304
 \OT1/cmr/m/n/12 We read a lot of re-sources and most of them sug-gests a value 
 be-tween $[] []$
  []
 
-[4] [5] [6] [7] [8] (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.aux)
+[12] [13] [14] [15] [16] (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.72395pt have occurred.
 
  ) 
 Here is how much of TeX's memory you used:
- 5088 strings out of 493921
- 76398 string characters out of 3144886
- 261754 words of memory out of 3000000
- 8309 multiletter control sequences out of 15000+200000
+ 5091 strings out of 493921
+ 76435 string characters out of 3144886
+ 266760 words of memory out of 3000000
+ 8312 multiletter control sequences out of 15000+200000
  16602 words of font info for 62 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 50i,10n,54p,958b,276s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 50i,10n,54p,2597b,274s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C
 :/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/
@@ -690,9 +827,9 @@ eX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX
 9/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
 onts/type1/public/amsfonts/cm/cmti12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
 ts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Paper.pdf (8 pages, 203575 bytes).
+Output written on Paper.pdf (16 pages, 251554 bytes).
 PDF statistics:
- 93 PDF objects out of 1000 (max. 8388607)
+ 118 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
