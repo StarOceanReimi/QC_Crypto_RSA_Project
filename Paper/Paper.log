@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.9.7)  27 NOV 2016 23:14
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.9.7)  28 NOV 2016 01:41
 entering extended mode
 **Paper.tex
 (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.tex
@@ -652,22 +652,28 @@ LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <6.5> not available
 {C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] [2] [3]
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/it' in size <13> not available
-(Font)              size <12> substituted on input line 165.
+(Font)              size <12> substituted on input line 166.
 
-[4] (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.aux)
+
+Overfull \hbox (5.05441pt too wide) in paragraph at lines 166--168
+\OT1/cmr/m/n/12 We read a lot of re-sources and most of them sug-gests a value 
+be-tween $[] []$
+ []
+
+[4] [5] [6] [7] (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.72395pt have occurred.
 
  ) 
 Here is how much of TeX's memory you used:
- 5078 strings out of 493921
- 76310 string characters out of 3144886
- 261707 words of memory out of 3000000
- 8299 multiletter control sequences out of 15000+200000
+ 5079 strings out of 493921
+ 76319 string characters out of 3144886
+ 261710 words of memory out of 3000000
+ 8300 multiletter control sequences out of 15000+200000
  16602 words of font info for 62 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 50i,10n,54p,896b,234s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 50i,10n,54p,958b,272s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C
 :/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/
@@ -684,9 +690,9 @@ eX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX
 9/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
 onts/type1/public/amsfonts/cm/cmti12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
 ts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Paper.pdf (4 pages, 177657 bytes).
+Output written on Paper.pdf (7 pages, 191739 bytes).
 PDF statistics:
- 79 PDF objects out of 1000 (max. 8388607)
+ 90 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
