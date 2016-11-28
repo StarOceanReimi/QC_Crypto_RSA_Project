@@ -6,6 +6,7 @@
 
 package cracking.algorithms;
 
+import cracking.Main;
 import static cracking.algorithms.MathOp.MINUS_ONE;
 import static cracking.algorithms.MathOp.TWO;
 import static cracking.algorithms.MathOp.expMod;
@@ -244,6 +245,8 @@ public class Factorization {
 
         
         BigInteger N = new BigInteger("6275815110957813119593022531213");        
+        int[] fb = Factorization.fastFactorBase(1398139, Main.TARGET);
+        System.out.println(fb.length);
 //        BigInteger smooth = valueOf(2505157706368382L).pow(2).subtract(N);
 //        List<BigInteger> fb = Factorization.factorBase(valueOf(15000), N);
 //        Map<BigInteger, Integer> factors = new HashMap<>();

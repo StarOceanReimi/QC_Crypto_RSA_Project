@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  */
 public class LargeGF2Matrix implements AutoCloseable {
 
-    private static final int INTEGER_BITS = 8;
+    private static final int BYTE_BITS = 8;
     
     private final int R;
     private final int C;
@@ -37,15 +37,15 @@ public class LargeGF2Matrix implements AutoCloseable {
     private final RandomAccessFile file;
     
     private static int getPad(int row) {
-        return INTEGER_BITS-row%INTEGER_BITS;
+        return BYTE_BITS-row%BYTE_BITS;
     }
     
     public static byte[] intArrayToRow(int[] array) {
         int[] gf2 = stream(array).map(i->i%2).toArray();
         ByteArrayOutputStream bytesStream = new ByteArrayOutputStream();
-        for(int i=0, l=gf2.length; i<l; i+=INTEGER_BITS) {
+        for(int i=0, l=gf2.length; i<l; i+=BYTE_BITS) {
             byte compress = (byte)0;
-            int limit = INTEGER_BITS;
+            int limit = BYTE_BITS;
             int j = i;
             while(--limit >= 0) {
                 if(j >= l) break;
@@ -60,8 +60,8 @@ public class LargeGF2Matrix implements AutoCloseable {
         int[] intArray = new int[colSize];
         for(int i=0; i<row.length; i++) {
             byte compressed = row[i];
-            int limit = INTEGER_BITS;
-            int j = i*INTEGER_BITS;
+            int limit = BYTE_BITS;
+            int j = i*BYTE_BITS;
             while(--limit >= 0) {
                 if(j >= colSize) break;
                 intArray[j++] = compressed >> limit & 1;
@@ -81,7 +81,7 @@ public class LargeGF2Matrix implements AutoCloseable {
         file.writeInt(R);
         file.writeInt(C);
         start = file.getFilePointer();
-        colInBytes = (C+pad)/INTEGER_BITS;
+        colInBytes = (C+pad)/BYTE_BITS;
         initializeZero();
     }
 
@@ -90,17 +90,17 @@ public class LargeGF2Matrix implements AutoCloseable {
         R = file.readInt();
         C = file.readInt();
         pad = getPad(C);
-        colInBytes = (C+pad)/INTEGER_BITS;
+        colInBytes = (C+pad)/BYTE_BITS;
         start = file.getFilePointer();
     }
     
     public void add(int v, int r, int c) throws IOException {
         if(r >= R || c >= C) error("index out of bound %s,%s", r, c);
         long pos = gotoRow(r);
-        int numByte = c/INTEGER_BITS;
+        int numByte = c/BYTE_BITS;
         pos += numByte;
         byte b = file.readByte();
-        b |= (v << (INTEGER_BITS-c%INTEGER_BITS-1));
+        b |= (v << (BYTE_BITS-c%BYTE_BITS-1));
         file.seek(pos);
         file.write(b);
         backToStart();
@@ -119,12 +119,12 @@ public class LargeGF2Matrix implements AutoCloseable {
     public int[] getColumn(int c) throws IOException {
         if(c>=C) error("column should be less than %d", C);
         int[] col = new int[R];
-        long startByte = start+c/INTEGER_BITS;
+        long startByte = start+c/BYTE_BITS;
         file.seek(startByte);
         int i=0;
         while(i<R) {
             byte b = file.readByte();
-            int v = b >> (INTEGER_BITS-c%INTEGER_BITS-1) & 0x1;
+            int v = b >> (BYTE_BITS-c%BYTE_BITS-1) & 0x1;
             col[i++] = v;
             startByte += colInBytes;
             file.seek(startByte);
@@ -211,12 +211,12 @@ public class LargeGF2Matrix implements AutoCloseable {
     private LinkedList<Integer> getLeftMostOneRows(int column, boolean[] marker) throws IOException {
         if(column>=C) error("column should be less than %d", C);
         LinkedList<Integer> result = new LinkedList<>();
-        long startByte = start+column/INTEGER_BITS;
+        long startByte = start+column/BYTE_BITS;
         file.seek(startByte);
         int i=0;
         while(i<R) {
             byte b = file.readByte();
-            int v = b >> (INTEGER_BITS-column%INTEGER_BITS-1) & 0x1;
+            int v = b >> (BYTE_BITS-column%BYTE_BITS-1) & 0x1;
             if(v == 1 && !marker[i]) result.add(i);
             startByte += colInBytes;
             i++;
