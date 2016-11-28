@@ -56,6 +56,8 @@
 
 \usepackage{indentfirst} %make section indent
 
+%\usepackage{tikz} %drawings
+
 %%% ToC (table of contents) APPEARANCE
 \usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
 \usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
@@ -133,20 +135,39 @@ Since we use the polynomial $Q(x) = (x)^2-n$, and we want to sieving in the inte
 
 \subsection {Sieving In Quadratic Sieve}
 
-
+Quadratic Sieve's sieving method is inspired by the ancient Eratosthenes Sieve. The Eratosthenes sieve is to crossing out the multiples of prime, and the leftovers are the candidates of prime. In quadratic sieve, we want a relation $x^2 \equiv n \equiv r \pmod{p}$ where $r < p$, in order to keep this relation, we marking the multiples of $p$ plus $r$ as our candidates. 
 
 \subsubsection {Pre-Sieving}
 
+Before sieving we need to build our factor base, and in order to build our factor base, we need to choose a number $B$ which all the prime in our factor base must less than or equal to $B$. If $B$ is too small, it will be very hard to find such smooth relations, but if $B$ is too large, we will be facing a huge matrix and finding the null space of it will be very time consuming. And our $B$ choice is one million (we will explain why later). After choose $B$, we have another criteria for our factor base, that is the prime factor $p$ in our factor base must make our N(the number we want to factorize) to be a quadratic residue.
+
 \subsubsection {Sieving}
+
+For each prime factor in factor base, we use shank-tonelli's algorithm to find the roots(which means the x) of $x^2 \equiv N \pmod{p}$, if $p = 2$, the root can only be 1, and for every other odd prime factor we have two roots which is $x$ and $p-x$, we save the position of $x+i*p$ and $p-x+i*p$ where $i \in \{0, 1, \dots \}$ until $x+i*p>M$ where $M$ is our bound of searching space. And at the meantime, accumulate $\log{p}$ to the position in our sieve array.
 
 \subsubsection {Saving the result}
 
-\subsubsection {Our optimization}
+During the sieving stage, when we found a position and it's value in our sieve array is close to $0.5\log{n} + log{M}$ we consider it is our smooth candidate. But to define what is close to, we need a threshold. To determine value of the threshold little articles we read mentioned about it, some of articles said that the value of this threshold is a small error. We made a bunch of tests, and we found when the threshold is less than 8 it seems accurate(we will explain the detail of the tests later). And we also found that the threshold is good to be small, because we do not need find all the smooth relations in this range, we just need to find the relation as fast as possible. Since if the threshold is large, we need to double check the relation, but if the threshold is small, we do not have to.
 
-\subsection {Linear Algebra (Finding Null Space) }
+\subsection {Linear Algebra In Quadratic Sieve}
 
-\subsection {Problems we met, and solutions}
+If we use logarithm approximation, it is very likely to find partial relations instead of full relation. A full relation means the relation is exactly the smooth number. A partial relation means that there are factors out of our factor base. A relation like this is also useful, since we are working over $\mathbb{F}_2$, if we can find another partial relation which have the leftover in common, the leftover will be canceled. In other words, if we can find two partial relations have the same leftover factors we can treat them as two full relations.
 
+After we collecting enough relations, we use them to create a exponent matrix. The common way to do this, is use trial division. For each relation we divide out all its  prime factor in the factor base, and use the powers mod 2 to build a exponent vector. 
+Then, if we can find $k$ relations where $k = |S_{fb}|$, we have k exponent vectors to form a exponent matrix. 
+
+Since in our approach, $|S_{fb}|\approx 40000$, we can simply use Gaussian elimination to find null space. But for larger matrix, something like 100000x100000 it is better to use Block Lanczos algorithm. By the way, the Meataxe is using Gaussian Elimination to find null space as well.
+
+\subsection {Details of Our implementation \& optimization}
+
+\renewcommand\labelenumi{\Roman{enumi}}
+\begin{enumerate}
+\item \textit{Choosing B:} 
+\end{enumerate}
+
+\subsection {Problems we met \& the solutions}
+
+\subsection {Tables and Graphs of Experiments}
 \end{document}
 
 

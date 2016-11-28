@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.9.7)  27 NOV 2016 20:34
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.9.7)  27 NOV 2016 23:14
 entering extended mode
 **Paper.tex
 (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.tex
@@ -492,18 +492,18 @@ Package tocloft Info: The document has section divisions on input line 44.
 \cftsubtabnumwidth=\skip99
 )
 (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.aux)
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -559,109 +559,113 @@ Package caption Info: End \AtBeginDocument code.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <22.46396> not available
-(Font)              size <20.74> substituted on input line 76.
+(Font)              size <20.74> substituted on input line 78.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <15.59996> not available
-(Font)              size <14.4> substituted on input line 76.
+(Font)              size <14.4> substituted on input line 78.
 
-LaTeX Font Info:    Calculating math sizes for size <15.59996> on input line 76
+LaTeX Font Info:    Calculating math sizes for size <15.59996> on input line 78
 .
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <15.59996> not available
-(Font)              size <14.4> substituted on input line 76.
+(Font)              size <14.4> substituted on input line 78.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <15.59996> not available
-(Font)              size <14.4> substituted on input line 76.
+(Font)              size <14.4> substituted on input line 78.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 76.
+LaTeX Font Info:    Try loading font information for U+msa on input line 78.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 76.
+LaTeX Font Info:    Try loading font information for U+msb on input line 78.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <15.59996> not available
-(Font)              size <14.4> substituted on input line 76.
+(Font)              size <14.4> substituted on input line 78.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <18.72003> not available
-(Font)              size <17.28> substituted on input line 78.
+(Font)              size <17.28> substituted on input line 80.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <18.72003> not available
-(Font)              size <17.28> substituted on input line 78.
+(Font)              size <17.28> substituted on input line 80.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/bx/n' in size <18.72003> not available
 
-(Font)              size <17.28> substituted on input line 78.
+(Font)              size <17.28> substituted on input line 80.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <18.72003> not available
-(Font)              size <17.28> substituted on input line 78.
+(Font)              size <17.28> substituted on input line 80.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/bx/n' in size <15.59996> not available
 
-(Font)              size <14.4> substituted on input line 82.
+(Font)              size <14.4> substituted on input line 84.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <15.59996> not available
-(Font)              size <14.4> substituted on input line 82.
+(Font)              size <14.4> substituted on input line 84.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <13> not available
-(Font)              size <12> substituted on input line 84.
+(Font)              size <12> substituted on input line 86.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/bx/n' in size <13> not available
-(Font)              size <12> substituted on input line 84.
+(Font)              size <12> substituted on input line 86.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 84.
+(Font)              size <12> substituted on input line 86.
 
-LaTeX Font Info:    Calculating math sizes for size <13> on input line 85.
+LaTeX Font Info:    Calculating math sizes for size <13> on input line 87.
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 85.
+(Font)              size <6> substituted on input line 87.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <13> not available
-(Font)              size <12> substituted on input line 85.
+(Font)              size <12> substituted on input line 87.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <6.5> not available
-(Font)              size <6> substituted on input line 85.
+(Font)              size <6> substituted on input line 87.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 85.
+(Font)              size <12> substituted on input line 87.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 85.
+(Font)              size <6> substituted on input line 87.
 
 [1
 
 {C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] [2] [3]
-(C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.aux)
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/it' in size <13> not available
+(Font)              size <12> substituted on input line 165.
+
+[4] (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.72395pt have occurred.
 
  ) 
 Here is how much of TeX's memory you used:
- 5075 strings out of 493921
- 76274 string characters out of 3144886
+ 5078 strings out of 493921
+ 76310 string characters out of 3144886
  261707 words of memory out of 3000000
- 8297 multiletter control sequences out of 15000+200000
- 16255 words of font info for 61 fonts, out of 3000000 for 9000
+ 8299 multiletter control sequences out of 15000+200000
+ 16602 words of font info for 62 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  50i,10n,54p,896b,234s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
@@ -678,10 +682,11 @@ KTeX 2.9/fonts/type1/public/amsfonts/cm/cmss17.pfb><C:/Program Files (x86)/MiKT
 eX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX
  2.9/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Program Files (x86)/MiKTeX 2.
 9/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
-onts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Paper.pdf (3 pages, 163249 bytes).
+onts/type1/public/amsfonts/cm/cmti12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
+ts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on Paper.pdf (4 pages, 177657 bytes).
 PDF statistics:
- 72 PDF objects out of 1000 (max. 8388607)
+ 79 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
