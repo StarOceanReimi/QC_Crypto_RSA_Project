@@ -159,13 +159,12 @@ the other attacks so we won't go into to details about them.
  \subsubsection{ Brute Force}
 		The brute force method we used here is to do the trial division from 2 and 3 to $\sqrt{N}$ and increase by 2.
 		In this month, we search up to 58248674129 (35-bit), which is 21 digits difference with the second prime factor 64820903298591432157114065708311(105-bit).
-		And it will take us 7.6*$10^{18}$ years to reach the second prime factor if we use brute force search.
-		Moreover, the completely search from 1 to N will take about 5*$10^{55}$ years. (all the calculations above are done by Java) 
+		And it will take us 7.6*$10^{18}$ years to reach the second prime factor if we use brute force search. (all the calculations above are done by Java) 
 		Therefore, if we only use brute force search to factor N, we won't be able to reach the solution until 7.6*$10^{16}$ generations after (and each generation should continue this task non-stop).
 		
  \subsubsection{Pollard's Rho method}
-		Assume we want to factor a positive number N. We begin by randomly selecting with replacement from the set $S_1$ = {0,1,2,...,N-1} to form a sequence $x_1$, $x_2$, $x_3$,.... 
-		Define $x_i$' = $x_i$ mod p so that our sequence is now $x_1$', $x_2$',$x_3$',... with each $x_i$' belongs to $S_2$ = {0,1,2,...,p-1}.
+		Assume we want to factor a positive number N. We begin by randomly selecting with replacement from the set $S_1$ = \{0,1,2,...,N-1\} to form a sequence $x_1$, $x_2$, $x_3$,.... 
+		Define $x_i$' = $x_i$ mod p so that our sequence is now $x_1$', $x_2$',$x_3$',... with each $x_i$' belongs to $S_2$ = $\{0,1,2,...,p-1\}$.
 		Because the sets $S_1$,$S_2$ are finite, eventually there will be a repeated integer in both sequence. Say, $x_i$' = $x_j$' for i $\ne$ j. Then, $x_i$ $\equiv$ $x_j$ mod p, which means p$|$($x_i$ - $x_j$) if $x_i$ is not equal to $x_j$.
 		So, gcd($|$$x_i$ - $x_j$$|$, N) $\ne$ 1. Then if, gcd($|$$x_i$ - $x_j$$|$, N) $\ne$ N, we have found a proper divisor for N.
 		
@@ -459,14 +458,30 @@ After we got $\sqrt{\prod Q(x)}$, our final answer is $gcd\left(\prod Q(x) \pm \
 Once we got the factors of N, we use Euler-totient function calculates the $\varphi(N)$, and then we can calculate the private key $d$ by find the mod inverse of $e \mod{\varphi(N)}$ thorough extend euclidean gcd algorithm. After we got $d$ we can recover the message just by taking $(m^e)^d \pmod{n}$. 
 
 Then, we got a message encoded as 1121225152171520201541591920182520182511292020125\\2051445181451919. Since, we know it is English and the encoding method already, we use three methods to recover it to English very quickly. 
+
 \renewcommand\labelenumi{\arabic{enumi}.}
 \begin{enumerate}
 \item We use a English dictionary, and encodes the words exactly the same way as the message did. And we only searching for the longer words(at least 4 letters). And we extract the matching part, which could shrink the length of the message. In our case, we use this method found the word ``tenderness''.
 
-\item We wrote a program to calculate all the possible combinations. The idea is using backtrack algorithm to build a tree. Then, saving all the leaves in the tree. 
-\end{enumerate}
+\item We wrote a program to calculate all the possible combinations. The idea is using backtrack algorithm to build a tree. Then, saving all the leaves in the tree. Finally, collecting each path from the leaf to root. The example for code 21525 in below: 
 
 \pagebreak
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{tree.png}
+\end{figure}
+
+and we use this little program to list all possibilities to give us hints.
+
+\item Since the message is not very long and encoding method is easy, we just use our English knowledge to test whether the words make sense in its place.
+
+\end{enumerate}
+
+And finally, we solve this assignment.
+
+\pagebreak
+
 \begin{thebibliography}{99}
 
 \bibitem{contini} Scott Patrick Contini, [\textit{Factoring Integers with the Self-Initializing Quadratic Sieve}], 1997
