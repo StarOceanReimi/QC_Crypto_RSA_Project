@@ -78,25 +78,13 @@
 \begin{document}
 \maketitle
 
-
-
 \section{Introduction}
-For this assignment, we were given an RSA mechanism developed by a clear villain. The data we were given is simply the public key, and the cipher modulus. The problem has specified that the message was encrypted to number format by each being equal to a set of one or two number (Ex: A = 1,B = 2,with Z = 26).
-\\\\
-We have the public exponent $ e = 31 $.The public modulus $N=$  4959609373773606049203836057\\44987602701101399399359259262820733407167.
-And the cipher text, 197051785234463732414\\26321455642097240677633038639787310457022491789, giving us the full public mechanism in the form $ C \equiv M^{e} $ (mod N) 
-\\\\
+For this assignment, we were given the task of breaking RSA encryption. The data we were given is simply the public key, and the cipher modulus. The problem has specified that the message was encrypted to number format by each being equal to a set of one or two number (Ex: A = 1,B = 2,with Z = 26).
+
+We have the public exponent $ e = 31 $.The public modulus $N=$  49596093737736060492038360\\5744987602701101399399359259262820733407167.
+And the cipher text, 19705178523446373241\\426321455642097240677633038639787310457022491789, giving us the full public mechanism in the form $ C \equiv M^{e} $ (mod N) 
+
 \indent This is all the information afforded to us to solve the problem of recovering the message. Now we will discuss potential attacks against RSA and the pitfalls of many of them given the information provided.
-
-\section{Introduction}
-    1.real applications of RSA
-	2.general RSA concepts
-	3.let Alice be the message sender and Bob be the message reciever from Alice.
-	Eve is the malicious devil attacker to try to intercept and decrypt the message. 
-\section{Misuse attacks against RSA}
-	Since factoring the large number, N, is a hard problem, our objective in this section is to decrypt the encrypted message without directly factoring N.
-	Unfortunately, most of these special attacks are based on misuse of RSA.
-	So, if the numbers, structures and implementation of RSA are designed well and used properly, these kinds of special attacks are not applicable against RSA.
 
 \subsection{ Common Modulus Attack}
 		Assume the same common modulus N is used by all the users under a system, so each user i gets a unique public key pair $<N,e_i>$ and a unique private key pair $<N,d_i>$ from the central system.
@@ -118,91 +106,81 @@ And the cipher text, 197051785234463732414\\263214556420972406776330386397873104
 		
 		Our problem doesn't involve in digital signature.
 \subsection{Small private Exponent Attack}
-		so
+		
 		1. d has to be large enough to be secure (drawback: large d would take more computation time and a large storage space for smart cards)
+		
 		2. d can be recovered in linear time if d is small
 		it does not apply to our case because we don't have information about d so that it would be inefficient to apply this attack.
 
 \subsection{ Small public Exponent Attack}
 		Sometimes it is possible that we use small small public exponent in order to reduce encryption time. However, it is not secure and we show several methods to break RSA by having small public exponent as following.
 
-\section{Attacks Against RSA}
-There were many potential attacks against the RSA mechanism covered in the first of the two papers suggested to us "20 Years of Attacks against RSA". The paper is a survey of all the known types of attacks against RSA, the paper is careful to note however while many of the attacks are interesting that none of the attacks have been particularly devastating to RSA on a whole. While there were many attacks listed within the paper, there were many that had little to no applications to our particular problem. Before getting to the main method of attack we used against in our assignment (a factoring attack) we will discuss the other attacks and why they do not apply (or we did not apply them), to our situation.
-\subsection{Elementary Attacks}
-There were several attacks against RSA listed under the title elementary attacks. These attacks are simply put a misuses of the RSA protocol. The attacks listed in this section are.
-\begin{enumerate}
-\item Common Modulus
-\\\\
-\indent A common modulus attack involves attempting to eliminate the need for the to continuously generate unique $ N = PQ $ for every unique user of RSA by providing a common modulus with a unique public and private exponent to every user. The problem with doing this involves a Fact listed in the paper that states the following (quoted from the paper).
-\\\\
-\textbf{Fact}\textit{"Let {N,e} be an RSA public key. Given the private key d, one can efficiently factor the modulus N = pq. Conversely given N,one can efficiently find d.}
-\\\\
-\indent As nice as a proposition this is, we are only given the public information and the snooped cipher text. Thus this line of attack is invalid to us.
-\item Blinding
-\\\\This technique involves fooling a person into giving a false digital signature, which can be used to get their real digital signature. This is clearly irrelevant to our task so detail won't be provided for this attack.
-\end{enumerate}
-\subsection{Low Private Exponent Attack}
-The decryption time of the RSA mechanism is tied directly to the time it takes to do the exponentiation of $ M^{ed} $. the time it takes is linear in fact linear in $log_{2}d $ So utilizing a small private exponent can greatly improve the speed of the RSA mechanism. However there exists an attack that
-works for any pair (e,d) where $d$ is below $ \frac{1}{3}N^{\frac{1}{4}} $ based on a theorem by M.Weiner (quote of theorem provided below).
-\\\\
-"\textbf{Theorem} \textit{Let N = pq with q $<$ p $ <$ 2q. Let d $<  \frac{1}{3}N^{\frac{1}{4}} $. Given (N,e) with $ed - k\phi(N) = 1$ one can efficiently recover d.}"
-\\\\
-\indent There is a proof outlined in the paper that utilizes continued fractions to show that d can be approximated when it is small enough for the computations in the proof to remain feasible. The issue with this line of attack in relation to our question remains the lack of any information regarding d. Banking on d being small when it is a complete unknown would involve utilizing time implementing this method to see if d could Be approximated. We decided to use our time elsewhere.
-\subsection{Low public Exponent}
-\begin{enumerate}
-\item \textbf{Hastad's Broadcast Attack}
-\\\\
-Hadstad's broadcast attack is an implementation of Coppersmith's theorem which makes an improvement of an older attack. Coppersmith's theorem states (quoted from 20 Years of \dots).
-\\\\
-"\textbf{Coppersmith's Theorem} \textit{Let N be an integer and f $ \in $ $\mathbb{Z}[x]$  be a monic polynomial of degree d. Set $X = N^{\frac{1}{d} - \epsilon} $for some $\epsilon \geq 0$. Then given {N,f} an evesdropper Marvin can efficiently find all integers |$x_0 < X$ satisfying f($x_0) = 0$ mod N The running time is dominated by the time it takes to run the LLL algorithm on the lattice of dimension O(w) with $ w = min(1/\epsilon,log_2N)$}"
-\\\\
-With the proof involving the use of the LLL latice basis reduction algorithm sourced in the paper itself. The attack itself involves a user of RSA sending out the same message to multiple parties each with a unique RSA public/private key and having the wrong doer Marvin, using the data gathered from these data transfers to can recover M through an application of the Chinese Remainder Theorem. Which would allow us to recover M by calculating the \textit{e}th root of M. This method only remains computationally feasible with low public exponents.
-\\\\
-The upgrade to this attack described by Hastad involves an attack against a a defense of the older attack described above which would be if the message sender sent a padded( an artificially extended) version of the message to the recipients (Example given by the paper: $ M_i = i2^{m}+M$). This would invalidate the above attack by the fact that the messages sent are not the same anymore and cannot be computed in the same way.
-\item \textbf{Related Message Attack}
-\\\\
-The Franklin-Reiter related message attack is an attack that involves a situation where recipients send a series of messages where $M_1 = f(M_2)$ with $M_1M_2 \in \mathbb{Z}^{*}_N[x] $. These Messages are encrypted with the same modulus. Now given the $C_1$ and $C_2$ along with the public key (N,e) $M_1$ and $M_2$ can be recovered in quadratic time in log(N). A specific proof is given in the "20 years of \dots RSA". This attack is only computationally feasible with small public exponents.
-\\\\
-This attack once again cannot be used for our problem for the reason of only being given one M, though perhaps it could be possible to construct an M such that $ M_2 = f(M_1) $. It however was not the line of attack we ultimately went with.
-\item \textbf{Short Pad Attack}
-Coppersmith's Short Pad attack is a strengthening of the above attack in the situation of a simple padding algorithm attempting to distort the value of M by adding a number of bits to the end of M. In the paper, an imaginary situation is described involving an initial padded message being intercepted by a wrong doer and the original sender sending a second padded message after noticing his recipient did not receive the first message.the attacker now has two Cipher texts to work with and despite not having an idea of what padding was used can now obtain the plain text through use of a theorem outlined below. (Quoted mostly verbatim from "20 years \dots RSA")
-\\\\
-\textbf{Theorem:}\textit{ Let (N,e) be a public RSA key where N is m-bits long. Set m = $\left\lfloor n/e^{2} \right\rfloor$ Let $M \in \mathbb{Z}^{*}_N$ be a message of length at most n - m bits. Define $M_1 = 2^{m}M + r_2$, where $r_1$ and $r_2$ are distinct integers with $0 \leq r_1,r_2 < 2^{m}$. If Marvin (the attacker) is given (N,e) and the encryptions $C_1,C_2$ of $M_1,M_2$ (but is not given $r_1$ or $r_2$) he can efficiently recover M.}
-\\\\
-The proof of this statement is outlined in the paper which will be on the reference page of this paper.
-This attack also describes a scenario that is irrelevant to our situation as we are only given some cipher text along with the public key (N,e) and the public modulus. So we now will move on to the final low public exponent attack.
-\item \textbf{Partial Key Exposure}
-\\\\
-A partial key exposure attack involves a situation where if an attacker can expose around a quarter of the bits of the private key, he can construct the rest of d providing the public exponent is small (small meaning $e <\sqrt[]{N}$ where N and e are the public RSA key). This attack was developed when the above statement was discovered by Boneh,Durfee and Frankel. There is involved in this attack Which I will outline below (quoted from "20 years \dots RSA".
-\\\\
-\textbf{Theorem (BDF): }\textit{Let (N,d) be an RSA private key in which N is n bits long. Given the $\left\lceil n/4 \right\rceil$ least significant bits of d. Marvin can reconstruct d in time linear in $elog_2e$}
-\\\\
-The proof of this relies on a second theorem from Coppersmith which we will not be outlining at this time. This attack is actually interesting do to a statement that it may be possible to get the RSA system to leak a portion of the significant bits of the private key and with a few equations be able to approximate the private key. We ultimately did not pursue this line of attack do to fears of spending too much time on a potentially fruitless line of attack. 
-\end{enumerate}
-\subsection{Implementation Attacks}
-The implementation attacks involve attacks against applications of RSA rather than the RSA mechanism itself. These attacks involve timing attacks, attacks involving computer glitches and one involving the an RSA message padded using the public key cryptography standard 1. These attacks are incompatible with our problem to a much higher degree than the other attacks so we won't go into to details about them.
-\section{Factoring Attacks Against RSA}
-Now we will discuss our main line of attack for our problem at last. Do to our modulus size being a reasonable size of 229 bits rather than a more realistic modulus of maybe 1024 bits. A factoring attack becomes very feasible. We decided early on to follow this line of attack after going realizing the pitfalls of the other lines of attacks as described above. Also when we were suggested the paper "A Tale of two Sieves" which is a paper referring to two factoring algorithms, The Quadratic Sieve and the Number field sieve it become increasing likely that this was going to be the primary focus of the our team. Before actually beginning the quadratic sieve (and not the Number Field Sieve for reasons that will be discussed later) we were advised to exhaust other methods of attacks first. 
-\\\\
-\indent Before getting into all the lines of attacks we tried preceding the quadratic sieve it is Interestingly (and important) to note that in the weekend immediately following the assignment being administered we actually managed to find a factor through use of the Pollard Rho algorithm outlined below. The factor was 809. The other number that was produced through division of the modulus with 809 was 613054310726032886180943888436325837702226698886723435429939101863. Use of Miller-Rabin on this number (613\dots863) revealed that this number was indeed composite and through brute force testing 809 was revealed to be prime. This means that we were not dealing with a modulus in the form of $N=PQ$. Also it meant that our primary work was actually done on this second 219 bit (809 is 10 bits) number rather than the original 229 bit modulus 495960937377360604920383605744987602701101399399359259262820733407167. It was the opinion of a certain member of the group that the was simple a dirty trick concocted by the clear evil that we are combating in this assignment. Now with that important note finished we will begin discussing all the factoring attacks levied against our number (we will refer to it as $N^{'}$) preceding the quadratic sieve and then talk about why we did not pursue an implementation of the number field sieve. Then finally discuss the quadratic sieve itself.    
-\subsection{Brute Force}
-\subsection{Pollard's Rho}
-\subsection{Pollard's P-1}
+\subsubsection{Hastad's Broadcast Attack}
+		Assume Alice wants to send a message to many users (k of them). It is possible that Alice is lazy to compute $M^(e_i)$ according to each user, so she may choose the same e for all users.
+		Then She first encrypts the message M according to a user's public key pair $<N_i, e>$ by $M^e$ (mod $N_i$) = $C_i$ and sends the cipher text $C_i$ to the corresponding user i. 
+		If Eve can intercept k cipher text, she can recover the encrypted message as following.
+		She first take congruence of each user's cipher text to get $(M_i)^k$ by $C_i$ = $(M_i)^k$ (mod $N_i$). Then she applies the Chinese Remainder Theorem to each $C_i$, which gives C' = $M^k$ (mod ($N_1$)*($N_2$)*...*($N_k$)).
+		Since M is less than all $N_i$, $M^k$ < ($N_1$)*($N_2$)*...*($N_k$) is satisfied, which means C' = $M^k$. So, Eve can recover M by taking k root of C'.
+		This attack is efficient only when e is the same for all users and e is small.
+		
+		It does not apply to our case because it has to send message to many people. In our case, Alice only send message to Bob so we only have one public key pair $<N, e>$. Thus, we cannot recover M by using Chinese Remainder Theorem.
+		
+\subsubsection{Franklin-Reiter Related Message Attack}
+		
+		it does not apply to our case because it has to send related messages using same modulus N. In our case, we only intercept one message.
+	
 
+\subsection{implementation attacks}
+	it does not apply to our case because it needs to measure the time it takes for decryption. In our case, we do not have such information.
+		
+\section{Factoring Attacks Against RSA}
+\subsection{Special Factoring Methods}
+		The efficiency of this type of methods usually depends on the size of the first prime factor or some special form of N. If the first prime factor is small (N is less than 100 bits) or N can be expressed in some special forms, these methods can find the first prime factor fast.
+		Thus, we usually apply these special factoring methods to find whether there is a small prime factor to divide N so that we can decrease the size of N before proceed with the general factoring methods.
+		
+ \subsubsection{ Brute Force}
+		The brute force method we used here is to do the trial division from 2 and 3 to $\sqrt{N}$ and increase by 2.
+		In this month, we search up to 58248674129 (35-bit), which is 21 digits difference with the second prime factor 64820903298591432157114065708311(105-bit).
+		And it will take us 7.6*$10^{18}$ years to reach the second prime factor if we use brute force search.
+		Moreover, the completely search from 1 to N will take about 5*$10^{55}$ years. (all the calculations above are done by Java) 
+		Therefore, if we only use brute force search to factor N, we won't be able to reach the solution until 7.6*$10^{16}$ generations after (and each generation should continue this task non-stop).
+		
+ \subsubsection{Pollard's Rho method}
+		Assume we want to factor a positive number N. We begin by randomly selecting with replacement from the set $S_1$ = {0,1,2,...,N-1} to form a sequence $x_1$, $x_2$, $x_3$,.... 
+		Define $x_i$' = $x_i$ mod p so that our sequence is now $x_1$', $x_2$',$x_3$',... with each $x_i$' belongs to $S_2$ = {0,1,2,...,p-1}.
+		Because the sets $S_1$,$S_2$ are finite, eventually there will be a repeated integer in both sequence. Say, $x_i$' = $x_j$' for i $\ne$ j. Then, $x_i$ $\equiv$ $x_j$ mod p, which means p$|$($x_i$ - $x_j$) if $x_i$ is not equal to $x_j$.
+		So, gcd($|$$x_i$ - $x_j$$|$, N) $\ne$ 1. Then if, gcd($|$$x_i$ - $x_j$$|$, N) $\ne$ N, we have found a proper divisor for N.
+		
+		In our case, we factor 495960937377360604920383605744987602701101399399359259262820\\733407167 = 809*613054310726032886180943888436325837702226698886723435429939101863 using Pollard's rho algorithm within 6 ms by Java.
+		And after using Miller-Rabin's primality test, we found that 613054310726032886180943888436325837702226698886723435429939101863 is a composite number.
+		So, we keep factoring 61305431072603288618094388843632583770222669888\\672435429939101863 using Pollard's rho algorithm.
+		However, the Pollard's rho algorithm program is still running, so we failed to use this algorithm to factor N in one month.
+\subsubsection{Pollard's P-1}
+By Fermat’s Little Theorem, if $a$ and $p$ are coprime, then $a^{p-1} = 1(mod\ p)$, which means that $a^{k(p-1)} (mod\ p)$ should also be $1$. Say $p$ and $q$ are prime factors of the number we want to factor, $N$. If we can find an integer $L$, such that $p-1| L$, meaning $k(p-1) = L$ for some integer $k$ and $a^{L} = 1(mod p)$, we then know that $p|a^{L-1}$. From there we can calculate gcd($a^{L-1}$, $N$), which we can have two cases. The first case is if the gcd($a^{L-1}$, $N$) is not equal to $N$, which means that the gcd must be our prime factor p (since $a^{L-1} = kp$, for some integer $k$, $N = pq$, and gcd($kp$, $pq$) = $p$). The second case is if gcd($a^{L-1}$, $N$) = $N$, which implies that $N| a^{L-1}$. In this case $q$ will also divide $a^{L-1}$, meaning $a^{L} = 1(mod q)$ (because $a^{L-1} = 0(mod q)$).
+\\\\Algorithm
+	\\1. Choose $a$, where $1<a<n$
+	\\2. Check if gcd($a$,$n$) != 1, if it is, (though not likely), then you’ve found a factor, $a$.
+	\\3. Otherwise, for $r$ = $2,3,..$ compute the gcd($a^{r!-1}$, $n$) = $d$:
+	\\If $d = n$, then go back to (1), try a different a
+	\\If $d \ne n$, but $d > 1$,  then $d$ is a prime factor of 
+	\\Otherwise, if $d = 1$, increment $r$ and repeat
+\\\\
+Note: We use $r!$ as our exponent since $r!$ will have a lot of small prime factors, but we can also have a bound $B$, and take the product of all primes < $B$ as well, with an increasing $B$ instead of $r!$. The goal is to find an $L$ such that it is a large multiple of $p-1$
+\\\\An attempt at factoring our $N$ using Pollard’s $p-1$ factoring algorithm also proved to yield similar results with Pollard rho factorization. The algorithm itself, which relies on $p-1$, where $p$ is a prime factor of $N$ containing a lot of small prime factors, fails to further factor $N$ beyond the initial 809 factor.
 
 \subsection{William's P+1}
-Now we will be discussing our attempt at factoring our modulus using the Williams p+1 method of factoring. This method was based on one of the steps in the p-1 algorithm, and it's effectiveness is determinant on whether p+1 where p is a prime divisor of the number to be factored is a smooth number (Smooth numbers will be discussed in-depth in the section about the quadratic sieve). For this section the explanation of the method will come primarily from Williams paper from 1982 "A P+1 Method of Factoring" and then a discussion of the implementation and the result of this method against both the project modulus and the modulus with 809 factored out.
-\\\\
-\indent As stated earlier the P+1 method is based on one of the steps of the P-1 algorithm. The specific step that is talked about is the first step of the algorithm.In order to set up the a somewhat  watered down description of p+1, the specific step will be William's referred to will be reiterated here drawn mostly from his 1982 paper. Let a prime factor of a composite number N have the property that $p = (\prod^{k}_{i=1}q^{a_i})+1$ where $q_i$ is the ith prime and $q^{\alpha_i}_i\leq B_i$. $q^{\beta}_i$ will now be a power of $q_i$  with $q^{\beta}_i \leq B_1$ and $q^{\beta+1}_i > B_1$. Now we allow a value R to be defined as $R= \prod^{k}_{i=1}q^{\beta _i}_i$. With this in mind a few additional facts appear. Firstly $p-1|R$ and due Fermat's Little Theorem  $a^{p-1} \equiv 1$ (mod p) and $a^{R} \equiv 1$ (mod p) when a is a constant which is co-prime to N. The result of these statements is that $p|(N,a^{R}-1)$. This step is the basis of the P+1 method, which utilizes Lucas functions.
-\\\\
-\indent A Lucas sequence is a recurrence relation that satisfies of $x^{}2 - Px+Q$ where with P and Q being integers.In the paper there are seven different identities for Lucas sequences described.These identities stem from this first equation (which is noted by the paper to be the formal definition of a Lucas Sequence)  $U_n(P,Q) = (\alpha^{n}-\beta^{n})/(\alpha-\beta), V_n(P,Q) = \alpha^{n}+\beta^{n}$ where $\alpha$ and $\beta$  are the roots of $x^{}2 - Px+Q$. All the identities won't be outlined here, however there are multiple identities used in the algorithm for the P+1 method. 
+Now we will be discussing our attempt at factoring our modulus using the Williams P+1 method of factoring. This method was based on one of the steps in the P-1 algorithm, and it's effectiveness is determinant on whether p+1 where p is a prime divisor of the number to be factored is a smooth number (Smooth numbers will be discussed in-depth in the section about the quadratic sieve). For this section the explanation of the method will come primarily from Williams paper from 1982 "A P+1 Method of Factoring" and then a discussion of the implementation and the result of this method against both the project modulus and the modulus with 809 factored out.
+
+\indent As stated earlier the P+1 method is based on one of the steps of the P-1 algorithm. The specific step that is talked about is the first step of the algorithm. The specific step will be William's referred to will be reiterated here drawn mostly from his 1982 paper. Let a prime factor of a composite number N have the property that $p = (\prod^{k}_{i=1}q^{a_i})+1$ where $q_i$ is the ith prime and $q^{\alpha_i}_i\leq B_i$. $q^{\beta}_i$ will now be a power of $q_i$  with $q^{\beta}_i \leq B_1$ and $q^{\beta+1}_i > B_1$. Now we allow a value R to be defined as $R= \prod^{k}_{i=1}q^{\beta _i}_i$. With this in mind a few additional facts appear. Firstly $p-1|R$ and due Fermat's Little Theorem  $a^{p-1} \equiv 1$ (mod p) and $a^{R} \equiv 1$ (mod p) when a is a constant which is co-prime to N. The result of these statements is that $p|(N,a^{R}-1)$. This step is the basis of the P+1 method, which utilizes Lucas functions.
+
+\indent A Lucas sequence is a recurrence relation that satisfies of $x^2 - Px+Q$ where with P and Q being integers.In the paper there are seven different identities for Lucas sequences described.These identities stem from this first equation (which is noted by the paper to be the formal definition of a Lucas Sequence)  $U_n(P,Q) = (\alpha^{n}-\beta^{n})/(\alpha-\beta), V_n(P,Q) = \alpha^{n}+\beta^{n}$ where $\alpha$ and $\beta$  are the roots of $x^{}2 - Px+Q$. All the identities won't be outlined here, however there are multiple identities used in the algorithm for the P+1 method. 
 \\\\
 \indent The algorithm itself as outlined in the paper is similar to the following. Let $p = (\prod^{k}_{i=1}q^{\alpha_i}_i - 1)$ where p is a prime factor of N. If we define R in the same way as in the P-1 method then $p+1|R$ and $p|U_R(P,Q)$ thus $p|(U_R(P,Q),N)$. The issues with this method is the calculation of $U_R$ which can be a very large number as the size of R may be very large. A method is described to get around this which ends in an assumption that Q may be set to be equal to one in the calculations of all Lucas sequences involved in this algorithm. 
 \\\\
 \indent There is a second bypass involved to decrease the computational load that leads to the primary implementation done for our assignment. The details to this implementation are outlined in the paper itself. This method was implemented on a laptop computer with a I3 Intel processor that clocks at 2.2 Gigahertz with a RAM size of 4.0 gigabytes. Firstly define a Lucas Sequence to be $V_n = V_{n-1}+V{n_2}$ where $V_0 = 2$ and $V_1 = a$ with a being an integer larger than 2. Then create a loop that continuously calculates $V_{n!}$ where $n \geq 2$. Then after every iteration of this loop calculate the GCD of (N,$V_{n!}-2$) this was done using the Euclid's Algorithm. When the GCD is not equal to either 1 or N, then you have a non trivial factor of N. The major difficulty of implementing this algorithm was the computational overload of calculating subsequent factorial Lucas Sequences. There was a small work around to this to relieve some of the burden of this by recognizing that $V_{n!}(a) = V_n({V_{n-1}})$ meaning if we allow the input to the Lucas sequence to be the output to the previous Lucas Sequence, we can get the factorials of the initial input a without having to actually calculate subsequent factorials of that Lucas Sequence. Without this work around even five iterations of this loop quickly became lengthy to calculate, as it would be $V_120$, an extreme amount of stack calls on the limited hardware being used. The numbers still become prohibitively large for the hardware fairly quickly, in about 15 iterations. So a limit on the number of iterations was engraved in the method (about 15 or so). The paper itself mentions in the implementation and results section that the P+1 method was about 9 times slower than the P-1 method possibly likely due to the calculation of a Lucas sequence on top of the calculation of the factorial that the P-1 method already had. When actually run on the original modulus the algorithm once again found 809 to be a factor about 5 seconds. Use of the method on the modulus with 809 divided out produced no further results, even when run for over 20+ hours. At this time an estimate for the time the program would actually factor the second modulus has not been produced. The only new information that could be extrapolated from this would be that the probability of the p+1 of the larger number being comprised of mostly small factors would be low provided that the premise of the algorithm itself is to be believed. This ends the discussion of William's P+1 method and our attempt to implement it for our assignment. 
  
 \section{The Quadratic Sieve}
-At last we come to the crux of our assignment, The Quadratic Sieve. As stated in the section on the Number Field Sieve, the quadratic sieve is faster for numbers under 100 digits. This method was invented by Carl Pomerance in 1981 after a series of enhancements on Fermat's factoring method led to the idea of utilizing smooth numbers to set up a matrix to with enough vectors of which to assure that the squares need for Fermat's method would be found. We decided within the first two weeks to stick to the Quadratic Sieve over other methods after we exhausted all the other options listed above.
+At last we come to the crux of our assignment, The Quadratic Sieve. The quadratic sieve is faster for numbers under 100 digits\cite{pomerance}. This method was invented by Carl Pomerance in 1981 after a series of enhancements on Fermat's factoring method led to the idea of utilizing smooth numbers to set up a matrix to with enough vectors of which to assure that the squares need for Fermat's method would be found. We decided within the first two weeks to stick to the Quadratic Sieve over other methods after we exhausted all the other options listed above.
 \\\\
 Firstly we will discuss the Quadratic Sieve in detail, explaining what the algorithm is and how it works (similar to the above sections but tackling it in depth). Then we will explain our journey through the implementation of the Quadratic Sieve, our problems as well as the solutions to those problems. Then we will finally discuss the final results to this assignment.
 \subsection{Basic's of the Algorithm}
@@ -210,12 +188,12 @@ Firstly we will discuss the Quadratic Sieve in detail, explaining what the algor
 \subsection{Application of Linear Algebra}
 \indent For In this section we will talk about the input of Linear Algebra for this algorithm. All information in this section not within "A Tale of Two Sieves" will be otherwise sourced. Linear Algebra is a key component to the quadratic Sieve Algorithm and is the tool used to actually identify the numbers that would be factors out of all the potential candidates found in the data collection/Sieving phase. This component of the Quadratic Sieve method was created when John Brillheart and Michael Morris Utilization multiple linear algebra concepts we convert the smooth numbers found in the earlier stages of the algorithm into exponent vectors. As in a vector of the exponents of a numbers prime factors. This vector shall be converted into a vector in a finite field of size 2 ($F_2$). This is due to the fact that a number is a square if and only if all of it's prime factors exponents add up to zero. Thus there is no need to have the vectors number be out of $F_2$. The objective of having these vectors is to create a matrix of theses exponent vectors. The size of the matrix will be the size of our factor base cross the size of our factor base plus at least 1,(so if $F_B = p_0p_1\dots p_i$ we will have a matrix of size $(ixi)+1$) With this matrix we will use a few properties of linear algebra to find which combination of smooth numbers will give us our factorization. 
 \\\\
-\indent So firstly, why do we add the vectors? This is because adding the vectors is the equivalent of multiplying the integers themselves in terms of determining if the product of those two numbers (or more) will be a square. As an example consider the integers $24 = 2{3}*3^{1}$ and $15 = 3^{1}*5^{1} $ The exponent vectors for these two will be 110 and 011 the sum vector of these two numbers is not zero and hence the multiple of 24 and 15 is not a square. Secondly the reasoning to having one more vector than the size of the factor is due to a linear algebra concept known as Linear dependence. Linear dependence tells us that when the number of vectors(rows) exceed the number of dimensions (columns), the sum of a subset of the vectors must be equal to zero. Now finding the subset of vectors that equal to zero can be computationally difficult if the matrix became large enough, however there is a technique within Linear Algebra called Gaussian Elimination that can greatly decrease the complexity of finding the zero subset (discussed more in the implementation section). Thus by ensuring that the amount of smooth numbers collected exceeds the factor base guarantees that we obtain a square within the resulting matrix. Obtaining a factor from the square is not guaranteed however, as half of the possible squares will yield an uninteresting solution. So even with the convenience of the matrix there is some luck involved.
+\indent So firstly, why do we add the vectors? This is because adding the vectors is the equivalent of multiplying the integers themselves in terms of determining if the product of those two numbers (or more) will be a square. As an example consider the integers $24 = 2^{3}*3^{1}$ and $15 = 3^{1}*5^{1} $ The exponent vectors for these two will be 110 and 011 the sum vector of these two numbers is not zero and hence the multiple of 24 and 15 is not a square. Secondly the reasoning to having one more vector than the size of the factor is due to a linear algebra concept known as Linear dependence. Linear dependence tells us that when the number of vectors(rows) exceed the number of dimensions (columns), the sum of a subset of the vectors must be equal to zero. Now finding the subset of vectors that equal to zero can be computationally difficult if the matrix became large enough (if you simply try all the combinations ), however there is a technique within Linear Algebra called Gaussian Elimination that can greatly decrease the complexity of finding the zero subset (discussed more in the implementation section). Thus by ensuring that the amount of smooth numbers collected exceeds the factor base guarantees that we obtain a square within the resulting matrix. Obtaining a factor from the square is not guaranteed however, as half of the possible squares will yield an uninteresting solution. So even with the convenience of the matrix there is some luck involved.
 
 
 \section{Quadratic Sieve}
 
-Quadratic Sieve method is actually discovered step by step. It is a optimization of Dixon's Factorization Method. So, to learn what is Quadratic Sieve, we have to understand Dixon's Method. And Dixon's Method is also related to Fermat's Factorization and Kraitchik's Factorization Method. Here, I will briefly introduce these three factorization methods.
+Quadratic Sieve method is actually built upon previous factorization method. It is a optimization of Dixon's Factorization Method. So, to learn what is Quadratic Sieve, we have to understand Dixon's Method first, which is also related to Fermat's Factorization and Kraitchik's Factorization Method. Here, we will briefly introduce these three factorization methods.
 
 \subsection {Brief Hierarchies Of Quadratic Sieve}
 
@@ -232,15 +210,59 @@ and obviously, the smallest $x$ is $\lceil \sqrt[2]{n}\rceil$ and if we can find
 Kraitchik's method is instead of checking $x^2-n$ is a square, he suggests to check $x^2 - kn$ a square number, which is equivalent to find $y^2 \equiv x^2 \pmod{n} $. And the only interesting solution is $ x \not\equiv \pm y \pmod{n}$. Besides this, instead of seeking one $x^2-n$ is square, he was looking for a set of number $ \{x_1, x_2, \dots, x_k\} $ such that $\displaystyle y^2 \equiv \prod_{i=1}^k{(x_i^2 - n)} \equiv \prod_{i=1}^k{x_i^2} \equiv \left (\prod_{i=1}^k{x_i}\right)^2 \pmod{n} $ is square. if he can find a relation like this, then, the factors of n is $\displaystyle gcd(|y \pm \prod_{i=1}^k{x_i}|, n)$
 
 \subsubsection {Dixon's Factorization}
-One of the great improvement of Dixon's method comparing to the method before is that he replace the requirement from ``is a square of an integer'' to ``has only small prime factors''. To explain this we need introduce 2 concepts which are \textbf{Factor Base} and \textbf{Smooth Number}.
+One of the great improvement of Dixon's method compared to the previous methods is that he replaces the requirement from ``is a square of an integer'' to ``has only small prime factors''. To explain this, we need introduce two concepts which are \textbf{Factor Base} and \textbf{Smooth Number}.
 
 \textbf{Factor Base} is a set of prime factors $S_{fb}=\{p | p \le B\}$ where $B$ is some integer.
 
-\textbf{Smooth Number} is a integer that all its prime factor within the \textbf{Factor Base} which means if we choose integer $B$ and $Q$, $Q = \prod_{i=1}^k{p_i^{a_i}}$ where $a_i, k \in \mathbb{Z}, p_i \in S_{fb}$. We called Q is a \textbf{B-Smooth} Number.
+\textbf{Smooth Number} is an integer in which all its prime factors are within the \textbf{Factor Base} which means if we choose integer $B$ and $Q$, $Q = \prod_{i=1}^k{p_i^{a_i}}$ where $a_i, k \in \mathbb{Z}, p_i \in S_{fb}$. We called Q is a \textbf{B-Smooth} Number.
 
-Recall Kraitchik's Method, he suggests to find a relation $y^2 \equiv \left (\prod_{i=1}^k{x_i}\right)^2 \pmod{n}$. But Dixon's idea is different, he is looking for the relation of $\displaystyle y^2 \equiv Q \equiv \prod_{i=1}^k{p_i^{a_i}} \pmod{n}$ where $a_i \in \mathbb{Z},\ k=|S_{fb}|,\ p_i \in S_{fb}$. For each relation is found, it can represent as a exponent vector $\vec{v} = \{a_1, a_2, \dots, a_k\}$ over $\mathbb{F}_{2}$, and after finding $k$ relations, we have a matrix $m = \{\vec{v_i} | i \le k\}$. And searching the null space of this matrix, could help us to find the square integer. Since $M\vec{v} = 0$ where $\vec{v} \in Null\ Space$, we know which rows sum together are equal to 0, which also implies the products of corresponding Q to that row is a square integer. After found the relation, let $x^2 = \prod_i^k{Q_i}$, the factor of n is $gcd(y\pm x, n)$
+Recall Kraitchik's Method, he suggests to find a relation $y^2 \equiv \left (\prod_{i=1}^k{x_i}\right)^2 \pmod{n}$. But Dixon's idea is different, he is looking for the relation of $\displaystyle y^2 \equiv Q \equiv \prod_{i=1}^k{p_i^{a_i}} \pmod{n}$ where $a_i \in \mathbb{Z},\ k=|S_{fb}|,\ p_i \in S_{fb}$. For each relation  found, it can be represented as an exponent vector $\vec{v} = \{a_1, a_2, \dots, a_k\}$ over $\mathbb{F}_{2}$, and after finding $k$ relations, we have a matrix $m = \{\vec{v_i} | i \le k\}$. And searching the null space of this matrix could help us to find the square integer. Since $M\vec{v} = \vec{0}$ where $\vec{v} \in Null\ Space$, we know which rows sum together are equal to $\vec{0}$, which also implies the products of corresponding Q to that row is a square integer. After we find the relations, let $x^2 = \prod_i^k{Q_i}$, the factor of n is $gcd(y\pm x, n)$
 
 \subsection {Math and Algorithm in Quadratic Sieve}
+Once again, like in previous factoring methods such as in Fermat’s or Dixon’s, we rely on finding two integers, $x$ and $y$,such that N can be expressed as the difference of two squares, $x^{2}-y^{2}$. From there we can apply simply algebra find the two factors of $N$, $(x-y)$ and $(x+y)$. This may seem simply enough, but how exactly do you find such $x$ and $y$? Surely we could try to check every integer $x$, from $sqrt{N}$ to $N$ and see if $x^{2}-N$ is a square or not, like in Fermat’s, but this method is too slow for large numbers of $N$. For small numbers of $N$, trial division would work fine. We, however, don’t need to search the entire interval to find a square. Take for example the number $N = 1649$. The
+ $\sqrt{1649} = 41$ so we can begin being to find squares starting with 41.  We have\\
+ $41^{2} = 32 = 2^{5}$ \\ $42^{2} = 115 = 5\cdot 23$ \\ $42^{3} = 200 = 2^{3}\cdot 5^{2}$ mod $N$, and so on.
+ \\\\Note that none of these numbers individually produce a square, but \\$41^{2}\cdot43^{2}\equiv 2^{5}\cdot2^{3}\cdot5^{2}\equiv 2^{8}\cdot5^{2}\equiv (2^{4}\cdot 5)^{2}$ produces a square. 
+ Additionally, even after finding such a and b, we must check if the result is ‘interesting’. According to Pomerance, there are “surely plenty of uninteresting pairs $a$,$b$, with $a^{2}-b^{2}(mod  n)$..namely take any value of $a$ and let $b = \pm a$”. 
+ However, if we were to instead find an $a$ and $b$ such that $a^{2}\equiv b^{2}(mod N)$, and $b \not\equiv \pm a(mod N)$ then we have found an interesting pair, which would lead to a nontrivial factorization of $N$, through taking the gcd($a\pm b$,$n$). This is because although N divides $a^{2}-b^{2}\equiv(a-b)(a+b)$, N does not divide either $(a-b)$ or $(a+b)$ individually because of the second condition. Hence non trivial factors $(a-b, N)$ and $(a+b, N)$. 
+\\\\
+So instead of searching through the entire interval from $sqrt{N}$ to N looking for an individual integer a, such that $a^{2} - N = b^{2}$, we can find a subsequence of integers, such that the product will yield a square as well. But how exactly do you find such a subsequence? Surely we cannot examine all subsequences, for given an interval of length L, there would be $2^{L}$ possible subsequences, in other words, an exponential growth in the number of subsequences as L gets bigger. Furthermore, how long of a sequence do we need to examine before we find such a subsequence, and how do we know what the subsequence is? 
+\\Well, Pomerance provides us with this lemma:
+\\\\LEMMA. If $m_1$,$m_2$,...$m_k$ are positive B-smooth integers, and if $k > \pi(B)$ (where $\pi{B})$ denotes the number of primes in the interval $[1, B]$, then some non-empty subsequence of ($m_i$) has a product of a square. (Pomerance)
+\\\\Recall the definition of B-smooth numbers, where a number is B-smooth if all factors in the prime factorization of said number are less than B. Pomerance observes that if a number in the sequence is not B-smooth, than it is unlikely that it will be used in our subsequence. This is in observance of the fact that if a number is not B-smooth, the number contains a prime larger than B, and if we were to use this number in our subsequence, there must be one other number which also contains that prime. However, if such a prime were large, finding another number with such a prime factor will not be easy, hence why we need some bound B. 
+\\Essentially, Pomerance’s lemma states that if we were to find at least $\pi{B}$ B-smooth numbers, we are able to find some subsequence of those numbers that would be a product of a square. So say we have a sequence of numbers $m_1$,$m_2$,...$m_k$, where $k>\pi{B}$, we can represent each $m_i$ as a product of those primes less than $B$, namely $p_1$,$p_2$,...$p_j$. From here we are only interesting in a subsequence of $m_i$’s where there product is a square, but how do we go about finding it? Well, by applying some linear algebra, we can represent each number as an exponent vector of length $j$, the length of our factor base, where each entry in the vector corresponds to the exponent corresponding to the same prime in the prime factorization of $m_i$.For example, given a factor base of \{2,3,5,7\}, the exponent vector of the number 336 would just be [4, 1, 0, 1]. 
+\\\\ Additionally, we want to work with numbers in GF(2), since we are only interested whether or not some combination will yield even exponents, represented as 0 for even exponent and 1 for odd exponent in our vector, because ultimately we want some subsequence whose product is a square, which means each exponent will be a multiple of 2. After creating such a $k$ by $j$ matrix, we want to find some number of rows who when combined together form a vector of 0's, the zero vector of length $j$, which is why we need to calculate the null space of the matrix. Put simply, the null space of a matrix is the set of all vectors, $v$, such that given a matrix $A$, the product $A\cdot v$, yields the zero vector, which is exactly what we want. In our case the null space will yield vectors, each vector containing only entries of 1s and 0s, in which every 1 corresponds to a row in which that $m_i$ belongs to our subsequence. 
+\\\\Another problem that arises, however, is selecting such a bound B. What exactly is a good limit for the bound B? 
+\\How do we populate the factor base given a bound B? Perhaps it may seem necessary to store a large number of primes in order to sieve, but in fact we can easily generate all primes less than B through applying the Sieve of Eratosthenes:
+\\\\Algorithm: We start with a table of numbers (e.g., 2, 3, 4, 5, . . . ) and progressively cross off numbers in the table until the only numbers left are primes. Specifically, we begin with the first number, p, in the table, and 
+\\1. Declare p to be prime, and cross off all the multiples of that number in the table, starting from $p^{2}$;
+\\2. Find the next number in the table after p that is not yet crossed off and set p to that number; and then repeat from step 1. (O’Niel)
+\\\\Now, the problem is, how do we find the necessary amount of B-smooth numbers needed to factor N? Surely, a naive approach would be to trial divide a number by the primes in the factor base until you either get a 1, in which case the number is B-smooth, or you get a number larger larger than B which is not a multiple of any prime in the factor base, in which case it’s not B-smooth. Indeed, this approach would be much too slow, given a sufficiently large bound B, B-smooth numbers are far and few between. It would be a huge waste of time and resources. 
+\\A further improvement could be to only consider numbers which are multiples of primes in the factor base. Say in our interval $[\sqrt{N},N]$ and a prime in our factor base, p, we notice that at some point, x, the number $x^{2}-N$ will be a multiple of p, which can be represented as $\sqrt{N}+i$, where i is the distance from the start of the interval. From there, every subsequent multiple of p is $k*i$ distance away from $\sqrt{N}$. Essentially we will have to solve for $x$ in $x^{2}-N\equiv 0(mod p_i)$, which can yield either 2, 1 or 0 solutions. We can do this for every $p_i$ in the factor base and ‘mark’ numbers that are multiples of said prime. Then, we will only check marked numbers in our interval by dividing only those primes that marked the number, hence not having to check every number in the interval, and not having to trial divide by every prime in the factor base. In the end, this method will work, but does not scale well (as in our case), which is further explained in Sect. 4.5.
+\\\\
+Additionally, with a defined bound B, should we consider all the primes less than B? Recall the definition of a quadratic residue:
+\\\\
+Definition: An integer q is called a quadratic residue mod n, if it is congruent to a perfect square mod n. In other words, there exists an x such that, $x^{2} \equiv q(mod n)$ 
+\\\\
+When we attempt to sieve, we try to calculate $x^{2}-N\equiv 0(mod p_i)$ where $p_i$ a prime from the factor base, which can be rewritten as $x^{2} \equiv N(mod p_i)$. Does this seem familiar? Well this essentially boils down to finding out whether or not N is a quadratic residue of $p_i$, in other words, are there solutions, $x$, such that $x^{2}\equiv N(mod p_i)$. In effect, not all primes less than $B$ should be in our factor base. More specifically, only those primes, $p_i$, less than $B$ such that $N$ is a quadratic residue modulo $p_i$, should be added to our factor base. 
+\\Now the obvious question arises: how do you know if N is a quadratic residue modulo p? Recall the definition of the legendre symbol:
+\\\\
+Definition: The legendre symbol of a and p where p is an odd prime is defined as 
+\\\\
+$\frac{a}{p} = $
+\\$1$ if a is a quadratic residue modulo p and $a\not\equiv 0(mod p)$
+\\$-1$ if a is quadratic non-residue modulo p
+\\$0$ if $a\equiv 0(mod p)$
+\\\\Additionally we will introduce the Law of Quadratic Reciprocity:
+\\\\
+Definition: If p and q are distinct odd primes then:
+\\(a)$(\frac{p}{q})(\frac{q}{p}) = (-1)^{\frac{(p-1)(q-1)}{4}}$
+\\(b)$\frac{1}{p} = 1$
+\\(c)$(\frac{-1}{p}) = (-1)^{\frac{p-1}{2}}$
+\\(d)$(\frac{2}{p} = (-1)^{\frac{p^{2}-1}{8}})$
+\\\\
+Through applying the Law of Quadratic Reciprocity, it is trivial to calculate $\frac{N}{p_i}$ to find which primes will make N a quadratic residue.
+
 
 \subsubsection{Legendre Symbol \& Laws of Quadratic Reciprocity}
 
@@ -374,33 +396,3 @@ And the reason why it is hard to manipulate large matrix is our ram not big enou
 
  
 \end{document}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
