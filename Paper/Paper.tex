@@ -73,7 +73,7 @@
 %%% The "real" document content comes below...
 
 \title{RSA Project Report Paper}
-\author{\textbf{RSA Group}\\Li Qiu\\Yiwei \\Leester Mei\\Akeem}
+\author{\textbf{RSA Group}\\Li Qiu\\Yiwei Sun\\Leester Mei\\Akeem Miller}
 %\date{} % Activate to display a given date or no date (if empty),
 % otherwise the current date is printed 
 
@@ -183,19 +183,31 @@
 	\\\\An attempt at factoring our $N$ using Pollard’s $p-1$ factoring algorithm also proved to yield similar results with Pollard rho factorization. The algorithm itself, which relies on $p-1$, where $p$ is a prime factor of $N$ containing a lot of small prime factors, fails to further factor $N$ beyond the initial 809 factor.
 	
 	\subsection{William's P+1}
-Now we will be discussing our attempt at factoring our modulus using the Williams P+1 method of factoring. This method was based on one of the steps in the P-1 algorithm, and it's effectiveness is determinant on whether p+1 where p is a prime divisor of the number to be factored is a smooth number (Smooth numbers will be discussed in-depth in the section about the quadratic sieve). For this section the explanation of the method will come primarily from Williams paper from 1982 "A P+1 Method of Factoring" and then a discussion of the implementation and the result of this method against both the project modulus and the modulus with 809 factored out.
-
-\indent As stated earlier the P+1 method is based on one of the steps of the P-1 algorithm. The specific step that is talked about is the first step of the algorithm. The specific step will be William's referred to will be reiterated here drawn mostly from his 1982 paper. Let a prime factor of a composite number N have the property that $p = (\prod^{k}_{i=1}q^{a_i})+1$ where $q_i$ is the ith prime and $q^{\alpha_i}_i\leq B_i$. $q^{\beta}_i$ will now be a power of $q_i$  with $q^{\beta}_i \leq B_1$ and $q^{\beta+1}_i > B_1$. Now we allow a value R to be defined as $R= \prod^{k}_{i=1}q^{\beta _i}_i$. With this in mind a few additional facts appear. Firstly $p-1|R$ and due Fermat's Little Theorem  $a^{p-1} \equiv 1$ (mod p) and $a^{R} \equiv 1$ (mod p) when a is a constant which is co-prime to N. The result of these statements is that $p|(N,a^{R}-1)$. This step is the basis of the P+1 method, which utilizes Lucas functions.
-
-\indent A Lucas sequence is a recurrence relation that satisfies of $x^2 - Px+Q$ where with P and Q being integers.In the paper there are seven different identities for Lucas sequences described.These identities stem from this first equation (which is noted by the paper to be the formal definition of a Lucas Sequence)  $U_n(P,Q) = (\alpha^{n}-\beta^{n})/(\alpha-\beta), V_n(P,Q) = \alpha^{n}+\beta^{n}$ where $\alpha$ and $\beta$  are the roots of $x^{}2 - Px+Q$. All the identities won't be outlined here, however there are multiple identities used in the algorithm for the P+1 method. 
-\\\\
-\indent The algorithm itself as outlined in the paper is similar to the following. Let $p = (\prod^{k}_{i=1}q^{\alpha_i}_i - 1)$ where p is a prime factor of N. If we define R in the same way as in the P-1 method then $p+1|R$ and $p|U_R(P,Q)$ thus $p|(U_R(P,Q),N)$. The issues with this method is the calculation of $U_R$ which can be a very large number as the size of R may be very large. A method is described to get around this which ends in an assumption that Q may be set to be equal to one in the calculations of all Lucas sequences involved in this algorithm. 
-\\\\
-\indent There is a second bypass involved to decrease the computational load that leads to the primary implementation done for our assignment. The details to this implementation are outlined in the paper itself. This method was implemented on a laptop computer with a I3 Intel processor that clocks at 2.2 Gigahertz with a RAM size of 4.0 gigabytes. Firstly define a Lucas Sequence to be $V_n = V_{n-1}+V{n_2}$ where $V_0 = 2$ and $V_1 = a$ with a being an integer larger than 2. Then create a loop that continuously calculates $V_{n!}$ where $n \geq 2$. Then after every iteration of this loop calculate the GCD of (N,$V_{n!}-2$) this was done using the Euclid's Algorithm. When the GCD is not equal to either 1 or N, then you have a non trivial factor of N. The major difficulty of implementing this algorithm was the computational overload of calculating subsequent factorial Lucas Sequences. There was a small work around to this to relieve some of the burden of this by recognizing that $V_{n!}(a) = V_n({V_{n-1}})$ meaning if we allow the input to the Lucas sequence to be the output to the previous Lucas Sequence, we can get the factorials of the initial input a without having to actually calculate subsequent factorials of that Lucas Sequence. Without this work around even five iterations of this loop quickly became lengthy to calculate, as it would be $V_120$, an extreme amount of stack calls on the limited hardware being used. The numbers still become prohibitively large for the hardware fairly quickly, in about 15 iterations. So a limit on the number of iterations was engraved in the method (about 15 or so). The paper itself mentions in the implementation and results section that the P+1 method was about 9 times slower than the P-1 method possibly likely due to the calculation of a Lucas sequence on top of the calculation of the factorial that the P-1 method already had. The use of the P+1 method on 50 bit integers produce the factors in an average .0125 to .015 (there were a few outliers that took up to 5-10 seconds however) At around 100 bits the method takes around .5 to .8 seconds to produce a factor. When actually run on the original modulus the algorithm once again found 809 to be a factor in an average time of about .018 to .021 seconds.Despite the results on even some numbers in the 200 bit range(average run time of 2 to 5 seconds)  use on the modulus with 809 divided out produced no further results, even when run for over 20+ hours. The only new information that could be extrapolated from this could be that the probability of the p+1 of the larger number being comprised of mostly small factors would be low provided that the premise of the algorithm itself is to be believed. This ends the discussion of William's P+1 method and our attempt to implement it for our assignment.
+	Now we will be discussing our attempt at factoring our modulus using the Williams P+1 method of factoring. This method was based on one of the steps in the P-1 algorithm, and it's effectiveness is determinant on whether p+1 where p is a prime divisor of the number to be factored is a smooth number (Smooth numbers will be discussed in-depth in the section about the quadratic sieve). For this section the explanation of the method will come primarily from Williams paper from 1982 "A P+1 Method of Factoring" and then a discussion of the implementation and the result of this method against both the project modulus and the modulus with 809 factored out.
+	
+	\indent As stated earlier the P+1 method is based on one of the steps of the P-1 algorithm. The specific step that is talked about is the first step of the algorithm. The specific step will be William's referred to will be reiterated here drawn mostly from his 1982 paper. Let a prime factor of a composite number N have the property that $p = (\prod^{k}_{i=1}q^{a_i})+1$ where $q_i$ is the ith prime and $q^{\alpha_i}_i\leq B_i$. $q^{\beta}_i$ will now be a power of $q_i$  with $q^{\beta}_i \leq B_1$ and $q^{\beta+1}_i > B_1$. Now we allow a value R to be defined as $R= \prod^{k}_{i=1}q^{\beta _i}_i$. With this in mind a few additional facts appear. Firstly $p-1|R$ and due Fermat's Little Theorem  $a^{p-1} \equiv 1$ (mod p) and $a^{R} \equiv 1$ (mod p) when a is a constant which is co-prime to N. The result of these statements is that $p|(N,a^{R}-1)$. This step is the basis of the P+1 method, which utilizes Lucas functions.
+	
+	\indent A Lucas sequence is a recurrence relation that satisfies of $x^2 - Px+Q$ where with P and Q being integers.In the paper there are seven different identities for Lucas sequences described.These identities stem from this first equation (which is noted by the paper to be the formal definition of a Lucas Sequence)  $U_n(P,Q) = (\alpha^{n}-\beta^{n})/(\alpha-\beta), V_n(P,Q) = \alpha^{n}+\beta^{n}$ where $\alpha$ and $\beta$  are the roots of $x^{}2 - Px+Q$. All the identities won't be outlined here, however there are multiple identities used in the algorithm for the P+1 method. 
+	\\\\
+	\indent The algorithm itself as outlined in the paper is similar to the following. Let $p = (\prod^{k}_{i=1}q^{\alpha_i}_i - 1)$ where p is a prime factor of N. If we define R in the same way as in the P-1 method then $p+1|R$ and $p|U_R(P,Q)$ thus $p|(U_R(P,Q),N)$. The issues with this method is the calculation of $U_R$ which can be a very large number as the size of R may be very large. A method is described to get around this which ends in an assumption that Q may be set to be equal to one in the calculations of all Lucas sequences involved in this algorithm. 
+	\\\\
+	\indent There is a second bypass involved to decrease the computational load that leads to the primary implementation done for our assignment. The details to this implementation are outlined in the paper itself. This method was implemented on a laptop computer with a I3 Intel processor that clocks at 2.2 Gigahertz with a RAM size of 4.0 gigabytes. Firstly define a Lucas Sequence to be $V_n = V_{n-1}+V{n_2}$ where $V_0 = 2$ and $V_1 = a$ with a being an integer larger than 2. Then create a loop that continuously calculates $V_{n!}$ where $n \geq 2$. Then after every iteration of this loop calculate the GCD of (N,$V_{n!}-2$) this was done using the Euclid's Algorithm. When the GCD is not equal to either 1 or N, then you have a non trivial factor of N. The major difficulty of implementing this algorithm was the computational overload of calculating subsequent factorial Lucas Sequences. There was a small work around to this to relieve some of the burden of this by recognizing that $V_{n!}(a) = V_n({V_{n-1}})$ meaning if we allow the input to the Lucas sequence to be the output to the previous Lucas Sequence, we can get the factorials of the initial input a without having to actually calculate subsequent factorials of that Lucas Sequence. Without this work around even five iterations of this loop quickly became lengthy to calculate, as it would be $V_120$, an extreme amount of stack calls on the limited hardware being used. The numbers still become prohibitively large for the hardware fairly quickly, in about 15 iterations. So a limit on the number of iterations was engraved in the method (about 15 or so). The paper itself mentions in the implementation and results section that the P+1 method was about 9 times slower than the P-1 method possibly likely due to the calculation of a Lucas sequence on top of the calculation of the factorial that the P-1 method already had. When actually run onfthe original modulus the algorithm once again found 809 to be a factor about 5 seconds. Use of the method on the modulus with 809 divided out produced no further results, even when run for over 20+ hours. At this time an estimate for the time the program would actually factor the second modulus has not been produced. The only new information that could be extrapolated from this would be that the probability of the p+1 of the larger number being comprised of mostly small factors would be low provided that the premise of the algorithm itself is to be believed. This ends the discussion of William's P+1 method and our attempt to implement it for our assignment. 
+	
+	\section{The Quadratic Sieve}
+	At last, we had reached the conclusion that we may have to implement the Quadratic Sieve in order to factor our N. According to Carl Pomerance, the mind behind the Quadratic Sieve, the Quadratic Sieve is the fastest for numbers under 100 digits\cite{pomerance}. This method was created after a series of enhancements on Fermat's factoring method utilizing smooth numbers, and matrices of exponent vectors in order to assure that such a square needed for Fermat's method would be found. We decided within the first two weeks to stick to the Quadratic Sieve over other methods after we exhausted all the other options listed above.
+	\\\\
+	Firstly we will discuss the Quadratic Sieve in detail, explaining what the algorithm is and how it works. We will then explain our our task of implementing the Quadratic Sieve, as well as the problems that we were faced with.
+	\subsection{Basic's of the Algorithm}
+	
+	\subsection{Application of Linear Algebra}
+	\indent For In this section we will talk about the input of Linear Algebra for this algorithm. All information in this section not within "A Tale of Two Sieves" will be otherwise sourced. Linear Algebra is a key component to the quadratic Sieve Algorithm and is the tool used to actually identify the numbers that would be factors out of all the potential candidates found in the data collection/Sieving phase. This component of the Quadratic Sieve method was created when John Brillheart and Michael Morris Utilization multiple linear algebra concepts we convert the smooth numbers found in the earlier stages of the algorithm into exponent vectors. As in a vector of the exponents of a numbers prime factors. This vector shall be converted into a vector in a finite field of size 2 ($F_2$). This is due to the fact that a number is a square if and only if all of it's prime factors exponents add up to zero. Thus there is no need to have the vectors number be out of $F_2$. The objective of having these vectors is to create a matrix of theses exponent vectors. The size of the matrix will be the size of our factor base cross the size of our factor base plus at least 1,(so if $F_B = p_0p_1\dots p_i$ we will have a matrix of size $(ixi)+1$) With this matrix we will use a few properties of linear algebra to find which combination of smooth numbers will give us our factorization. 
+	\\\\
+	\indent So firstly, why do we add the vectors? This is because adding the vectors is the equivalent of multiplying the integers themselves in terms of determining if the product of those two numbers (or more) will be a square. As an example consider the integers $24 = 2^{3}*3^{1}$ and $15 = 3^{1}*5^{1} $ The exponent vectors for these two will be 110 and 011 the sum vector of these two numbers is not zero and hence the multiple of 24 and 15 is not a square. Secondly the reasoning to having one more vector than the size of the factor is due to a linear algebra concept known as Linear dependence. Linear dependence tells us that when the number of vectors(rows) exceed the number of dimensions (columns), the sum of a subset of the vectors must be equal to zero. Now finding the subset of vectors that equal to zero can be computationally difficult if the matrix became large enough (if you simply try all the combinations ), however there is a technique within Linear Algebra called Gaussian Elimination that can greatly decrease the complexity of finding the zero subset (discussed more in the implementation section). Thus by ensuring that the amount of smooth numbers collected exceeds the factor base guarantees that we obtain a square within the resulting matrix. Obtaining a factor from the square is not guaranteed however, as half of the possible squares will yield an uninteresting solution. So even with the convenience of the matrix there is some luck involved.
+	
 	
 	\section{Quadratic Sieve}
 	
-	Quadratic Sieve method is actually built upon previous factorization method. It is a optimization of Dixon's Factorization Method. So, to learn what is Quadratic Sieve, we have to understand Dixon's Method first, which is also related to Fermat's Factorization and Kraitchik's Factorization Method. Here, we will briefly introduce these three factorization methods.
+	Quadratic Sieve method is actually built upon a previous factorization method. It is a optimization of Dixon's Factorization Method. So, to learn what is Quadratic Sieve, we have to understand Dixon's Method first, which is also related to Fermat's Factorization and Kraitchik's Factorization Method. Here, we will briefly introduce these three factorization methods.
 	
 	\subsection {Brief Hierarchies Of Quadratic Sieve}
 	
@@ -252,13 +264,13 @@ Now we will be discussing our attempt at factoring our modulus using the William
 	\\\\
 	Definition: The legendre symbol of a and p where p is an odd prime is defined as 
 	\\\\
-	$$
-	\frac{a}{p} = \begin{cases}
-	1, & \textmd{If a is a quadratic residue mod p and a$\not\equiv$ 0 $\pmod{p}$}\\
-	-1, & \textmd{If a is a quadratic non-residue $\pmod{p}$}\\
-	0, & \textmd{If $a\equiv 0 \pmod{p}$}\\
-	\end{cases}
-	$$
+	\[
+	\frac{a}{p} = \left\{\begin{array}{lr}
+	1, & \textmd{If a is a quadratic residue mod p and a$\not\equiv$ 0$\left(mod p\right)$}\\
+	-1, & \textmd{If a is a quadratic non-residue mod p}\\
+	0, & \textmd{If $a\equiv 0\left(p\right)$}\\
+	\end{array}\right\}
+	\]
 	\\\\Additionally we will introduce the Law of Quadratic Reciprocity as defined by Gauss:
 	\\\\Definition: If p and q are distinct odd primes then:
 	\\$\left(\frac{p}{q}\right) = \left(\frac{q}{p}\right)$ if $q\equiv 1(mod 4)$ or $\left(-\frac{q}{p}\right)$ if $q\equiv 3(mod 4)$
@@ -318,8 +330,6 @@ Now we will be discussing our attempt at factoring our modulus using the William
 	
 	If we use logarithm approximation, it is very likely to find partial relations instead of full relation. A full relation means the relation is exactly a B-smooth number. A partial relation means that there are factors out of our factor base. A relation like this is also useful, since we are working over $\mathbb{F}_2$, if we can find another partial relation which has the leftover factors in common, the leftovers will be canceled. In other words, if we can find two partial relations which have the same leftover factors we can treat them as one full relation.
 	
-	For example, 
-	
 	After collecting enough relations, we use them to create a exponent matrix. The common way to do this, is use trial division. For each relation we divide out all its  prime factor in the factor base, and use the powers mod 2 to build an exponent vector. 
 	Then, if we can find $k$ relations where $k = |S_{fb}|$, we have k exponent vectors to form a exponent matrix. 
 	
@@ -331,43 +341,43 @@ Now we will be discussing our attempt at factoring our modulus using the William
 	\renewcommand\labelenumi{\Roman{enumi}}
 	\begin{enumerate}
 		\item \textit{Choosing B \& M:} \itemgap
-		\\ We read a lot of resources and most of them suggested a value between $\exp{(\frac{1}{2}\sqrt{\log{n}\log{\log{n}}})}$ and $\exp{(2\sqrt{\log{n}\log{\log{n}}})}$ (the reasoning behind choosing it this way is given in an explanation appendix A of Contini's paper \cite{contini}. At first in class, Professor Boklan emphasized that the number is just a toy number, therefore, we decided to use the smaller bound $\exp{(\frac{1}{2}\sqrt{\log{n}\log{\log{n}}})}$ instead. We then use this bound to test our number, resulting in 1.4 million and the a factor base of size about 50 thousand. However, since we used Pollard Rho to find an initial small factor, 809, we reduce the original number by dividing this factor out. We then recalculate again, resulting in 970000+, and a smaller factor base, shrinking to 40 thousand. For the convenience of communication, we choose 1 million as our B. 
+		\\ We read a lot of resources and most of them suggested a value between $\exp{(\frac{1}{2}\sqrt{\log{n}\log{\log{n}}})}$ and $\exp{(2\sqrt{\log{n}\log{\log{n}}})}$ (the reasoning behind choosing it this way is given in an explanation appendix A of Contini's paper \cite{contini}. At first in class, Professor Boklan emphasized that the number is just a toy number, therefore, we decided to use the smaller bound $\exp{(\frac{1}{2}\sqrt{\log{n}\log{\log{n}}})}$ instead. We then use this bound to test our number, resulting in B being 1.4 million and the a factor base of size about 50 thousand. However, since we used Pollard Rho to find an initial small factor, 809, we reduce the original number by dividing this factor out. We then recalculate again, resulting in B of 970000+, and a smaller factor base, shrinking to 40 thousand. For the convenience of communication, we choose 1 million as our B. 
 		
 		For choosing M, our search space, we did not really know of any formulas or read of any suggestions from the resources we read. Our M is just based on experimentation. Our main idea is to set M to be large enough, in which we then proceed to continuously search until, we find enough relations. In our experiment we set M to 2 trillion, which means we are searching 4 trillion numbers.
 		
 		\item \textit{Building Factor Base:} \itemgap
 		\\ To build the factor base, we first need to generate primes. There are several ways to do so. Our approach was to build a prime generator by Eratosthenes' Sieve, using a dictionary to dynamically hold the relations. For example, if a test number is not in the dictionary, then it is a prime, in which we then add the square of this number to the dictionary. If the test number is in the dictionary, then, pull out all its factors and add the sum of the test number and its factors to the dictionary. After that, delete the test numbers from the dictionary. We use this generator to build our factor base, if the prime generated by the generator satisfies two conditions: (1)the prime is less than $B$ and (2) the prime makes $N$ a quadratic residue, then add it to our factor base. Otherwise, continue generating until the prime greater than our $B$. What makes this method great is that the building process is very fast. However, the con is that it uses extra memory to save the relations.
 		
-		To decide whether $\legendre{N}{p} = 1$, we implemented both Euler criterion and Legendre Symbol. And probably because our factor base was not enough, we did not notice Legendre Symbol is much faster than Euler Criterion. Since professor suggest us use Legendre Symbol, we are using Legendre symbol to test $\legendre{N}{p}$.
+		Again, to decide whether $\legendre{N}{p} = 1$, we implemented both Euler's Criterion and Legendre Symbol and again probably because our factor base was not that large, we did not notice that much of a difference in the Law of Quadratic Reciprocity over Euler's Criterion. Since Professor Boklan, suggested us to use the Law of Quadratic Reciprocity, we ended up using this to test $\legendre{N}{p}$.
 		
 		\item \textit{Pre-Sieving:} \itemgap
-		\\ In this stage, we did a lot optimizations. First, we use an array as dictionary, which means we use prime valuse as the indices to the array, meaning since our B is one million, our array length is also one million. The reason why we do this is because we to be extremely fast in our sieving process. Since the array get operation is $\mathcal{O}(1)$ this is very fast. The downside, however, is obviously wasting memory. We then use this approach to save 3 informations. First one, is the roots of quadratic residue. Since every odd prime has two solutions, we use a two dimensional array to save both. Secondly, we also cache the value of $\log p$, since we do not want any unnecessary calculations in our sieving process. Finally, we also store the offset of x from the start position $\lfloor \sqrt{N} \rfloor - M$. We did not see any resource mention this, but we think it is useful, since we can very easily obtain the smooth numbers by just adding the offset to the starting position. 
+		\\ In this stage, we did a lot optimizations. First, we use an array as a dictionary, which means we use prime valuse as the indices to the array, meaning since our B is one million, our array length is also one million. The reason why we do this is because we to be extremely fast in our sieving process. Since the array get operation is $\mathcal{O}(1)$ this is very fast. The downside, however, is obviously wasting memory. We then use this approach to save three pieces ofinformation.First one, is the roots of quadratic residue. Since every odd prime has two solutions, we use a two dimensional array to save both. Secondly, we also cache the value of $\log p$, since we do not want any unnecessary calculations in our sieving process. Finally, we also store the offset of x from the start position $\lfloor \sqrt{N} \rfloor - M$. We did not see any resource mention this, but we think it is useful, since we can very easily obtain the smooth numbers by just adding the offset to the starting position. 
 		
 		Here is a story about how math helped us solve problems. As we mentioned before, we wanted to save the info of the offset of x from the start position, which is also to find the closest position from x that satisfies $x+o \equiv r \pmod{p}$ where $x$ is start position $o$ is offset, and $r$ is the square roots of quadratic residue. We also want to find $o$, at the very beginning we used a very naive way to do it. Since $x+o=r+ip$ where $i \in \{0,1,\dots\}$ we just kept increasing i until we found a value which made both two sides equal. We found that this approach became very slow when the factor base gets larger(we used to choose a much smaller factor base), but after much analysis we realize that if we want the $o$, it is just simply $o = r-x \pmod{p}$. After we implement this new approach the program runs 2 times faster than before. So the moral of the story is, doing a mathematical analysis before writing code is probably a good idea.
 		
 		\item \textit{Sieving:} \itemgap
-		\\ The sieving array is to store the accumulated $\log{p}$ value for each position in the range of [$-M, M$]. Therefore, its length is $2M+1$. The sieving process is just go through each prime in our factor base. Get its position which already cached in previous stage, and add $r+ip$ where $r$ is the position to the sieve array.
+		\\ The sieving array is used to store the accumulated $\log{p}$ value for each position in the range of [$-M, M$]. Therefore, its length is $2M+1$. The sieving process goes as follows:\\(1) For each prime in our factor base, $p$, get its position which should already be cached in the pre-sieving stage\\(2) Add $r+ip$ where $r$ is the position in the sieve array for $i\ge0$ but $r+ip<M$.
 		
-		This stage is probably most simple part of our program. It is not the idea is simple, it is made to be simple, since this is the bottle neck of our whole program. if we made this process calculates more, the program will slow down dramatically. And we also did this part in parallel. Not only multi-thread but also multi-process. 
+		This stage is probably the most simple part of our program. However, it is not the idea that is simple, but it was made to be simple, since this is the bottle neck of our whole program. If we made this process calculate more, the program will slow down dramatically. Additionally, we did this part in parallel, utilizing multi-threading but also multi-processing. 
 		
-		We implemented a sever which only responsible to generate job which specify the range to search and add it to a task queue. And then, each client connected to sever and got job from the queue. The job could be very large, so we split the job according to the memory of client, and starting multiple threads according to the number of processors of client. Then, each thread search different ranges within the job.
-
+		We implemented a server whose sole responsible was to generate jobs. Each job specifies the range in which we search for smooth candidates. Each job is then added to a task queue in which each client who is connected to server will take a job off the queue. Additionally, the jobs can be very large, so we split the jobs according to the memory of the client; starting multiple threads according to the number of processors the client has in which each thread searches a different range within the job.
+		
 		\item \textit{Save Sieving Result:} \itemgap
-		\\ If we found a relation $\left|sieve\_array[position]-(0.5\log{N}+\log{M})\right| < threshold$ during the sieving, we consider this position is our smooth candidate, and save this position to our candidates set. And the reason we use the data structure of set is that it is possible to have duplicate positions and we want avoid checking process. We know for a set to check inclusion is very fast, since it just check whether the hash of target is in the table, which is almost $\mathcal{O}(1)$. 
+		\\ If we found a relation $\left|sieve\_array[position]-(0.5\log{N}+\log{M})\right| < threshold$ during the sieving, we consider this position a smooth candidate, and save this position to our candidates set. The reason we use the set data structure is that it is possible to have duplicate positions and we want to avoid a checking process to remove those duplicates. We know that for sets, to check inclusion is very fast, since it is just to check whether the hash of target is in the table, which is almost $\mathcal{O}(1)$. 
 		
-		When finish sieving, we go through each position we saved, and do trial division. We  only record the full relations, and the partial relations with prime leftover. And we use millar rabin testing check the primality of the leftover. 
+		When finish sieving, we go through each position we saved, and do trial division. We only record the full relations, and the partial relations with primes leftover. In order to check for the primality of the leftover primes, we use Millar-Rabin primality testing. 
 		
-		And we also record the odd power prime factors, and save these informations to a concurrent set. Since this process will do in parallel, we have to keep in mind that concurrency would be a issue, therefore, we need to keep mutual exclusive when we do the save action. 
+		In addition, we need to record the odd power prime factors, and save this information to a concurrent set. Since this process will be done in parallel, we have to keep in mind that concurrency would be a issue, therefore, we need to keep mutual exclusiveness when we do the saving action. 
 		
-		After collecting all the data, the client will sent it back to sever. And sever just simply save them in a file.
+		After collecting all the data, the client will send it back to server, which the server then simply saves in a file.
 		
 		\item \textit{Build Exponent Matrix:} \itemgap
-		\\ We retrieve the file from sever, and parse it line by line. Here we met a problem that still confused us that is even though we collect data in different range , we find duplicates relations. This problem force us to collect more relations than we need. It could be a bug of our code. So, we need check duplication first.
-		After that since each line in file correspond to a relation, we need to differentiate full or partial relations. if it is full relation we just save $x$ in a list and all the prime factors of $Q(x)$ in a dictionary, prime factor as key, and exponent as value.(why we save this will be explained in \textit{Calculating Factors}). Since we have the odd exponent factors information of the relation, it is very simple to use it building a exponent vector and save it in matrix. if it is partial relation, we save it a dictionary first, and use the leftover as a key. until we find another partial relation have the same leftover, we pop out it from the dictionary, and combine two relation together as following. First, we multiply $x_1$ and $x_2$ as $x$, then, merge the two prime factor dictionaries. Finally, we xor two exponent vectors and save it in matrix.
+		\\ We retrieve the file from server, and parse it line by line. Here we faced a problem that still confuses us; even though we collect data in different ranges, we still found duplicate relations, though the reason behind these duplicates could just be a bug in the code. This problem forced us to collect more relations than we need which we then had to be wary of duplicates when parsing.  
+		Afterwards, since each line in the file corresponds to a relation, we need to differentiate full or partial relations. If it is full relation we just save $x$ in a list and all the prime factors of $Q(x)$ in a dictionary: using a prime factor as key, and exponent as value.(why we saved them this will be explained in \textit{Calculating Factors}). Since we have information on the odd exponent factors of the relation, it is very simple to use it building a exponent vector and save it in the matrix. If it is partial relation, we save it to a dictionary first, and use the leftover as a key. Until we find another partial relation(having the same leftover), we pop it from the dictionary, and combine the two relations together as follows. First, we multiply $x_1$ and $x_2$ as $x$, then, merge the two prime factor dictionaries. Finally, we xor the two exponent vectors and save it in the matrix.
 		
-		Since we did not use the meataxe, we need introduce our matrix implementation. The reason why we were not using meataxe is that it is not very well documented, and sometimes it does not work as we expected. We are afraid of spending too many time on it. And another reason is our number is not insanely large, it just 40000x40000 matrix. 
+		Since we did not use the meataxe, we need to introduce our matrix implementation. The reason why we did not using meataxe is that it is not very well documented, and sometimes it does not work as we expected. We were afraid of spending too much time on it, and seeing that our 40000x40000 matrix is not insanely large. 
 		
-		And the reason why it is hard to manipulate large matrix is our ram not big enough to save it. Let us do a simple calculation, 40000x40000=1600000000 elements. If we use a integer to represent each element that will cost 1600000000*4=6400000000 bytes $\approx$ 6Gb ram. This is too memory consuming. However, since the matrix is over $\mathcal{F}_2$, we can use binary representation for each element it will only cost 6Gb/32 $\approx$ 190Mb which is acceptable. 
+		The reason why it is hard to manipulate large matrices is because our RAM is not large enough to save it. Let us do a simple calculation, 40000x40000=1600000000 elements. If we use a integer to represent each element that will cost 1600000000*4=6400000000 bytes $\approx$ 6Gb ram. This is too large of a memory consumption. However, notice since the matrix is over $\mathcal{F}_2$, we can use binary representation for each element it will only cost 6Gb/32 $\approx$ 190Mb which is acceptable. 
 		
 		Suppose we have a 4x10 matrix below, 
 		\begin{table}[h]
@@ -387,15 +397,15 @@ Now we will be discussing our attempt at factoring our modulus using the William
 			\end{tabular}
 		\end{table}
 		
-		First, we make a very simple header, which only has two integers that specific the row number and the column number. Then, we use 1 byte to represent 8 bits, and if the matrix's column size mod 8 is not 0, we are padding zeros after each row. For example 01 becomes 01000000 which is 40 in hex. This is for sake of simplicity of implementation. And finally, we just save each row linearly.
+		First, we make a very simple header, which only has two integers that specific the number of rows and columns. Then, we use 1 byte to represent 8 bits, and if the matrix's column size mod 8 is not 0, we are padding zeros after each row. For example 01 becomes 01000000 which is 40 in hex. This is for sake of simplicity of implementation. Finally, we just save each row linearly.
 		
-		To access certain rows, say the 8th row, we have our initial position pointer $s$, and we calculate many bytes in each row by row\_length = (column+padding)/8, and the start position of 8th row is 8*row\_length+$s$. 
+		To access certain rows, say the 8th row, we have our initial position pointer $s$, and we calculate how many bytes in each row, row\_length = (column+padding)/8, in which we can find the start position of 8th row, 8*row\_length+$s$. 
 		
-		To access certain column, say the 6th column, we calculate this column in which byte by 6/8=0, this means 6th column belongs to the first byte, then, take the byte and right shift 6 position and do a ``and'' operation with 1 which means ignore other bits except for the last bit.
+		To access certain columns, say the 6th column, we calculate in a similar way. A column in which byte by 6/8=0, this means 6th column belongs to the first byte, then, take the byte and right shift 6 position and do a ``and'' operation with 1 which means to ignore other bits except for the last bit.
 		
 		\item \textit{Finding Null Space:} \itemgap
 		
-		We use Gaussian elimination to find the null space. The reason why we can use Gaussian elimination to find null space, is because any elementary row operation can be seen as a matrix transformation. For example.
+		We use Gaussian elimination to find the null space. The reason why we can use Gaussian elimination to find null space, is because any elementary row operation can be seen as a matrix transformation. For example:
 		
 		An elementary row operation $M\xrightarrow{R1\rightarrow R1+2\times R2}M^\prime$
 		$$
@@ -431,58 +441,56 @@ Now we will be discussing our attempt at factoring our modulus using the William
 		\end{bmatrix}
 		$$
 		
-		So, if we reduce $M$ to its reduced echelon form $M^\prime$ by Gaussian Elimination, means that $\exists E=\prod_{i=1}^k{E_i}\ s.t.\ EM \rightarrow M^\prime$, where $E_i$ is the elementary row operation. We also know at the bottom of reduced echelon form always have all zero rows, and that is the null space. 
+		So, if we reduce $M$ to its reduced echelon form $M^\prime$ by Gaussian Elimination, which means $\exists E=\prod_{i=1}^k{E_i}\ s.t.\ EM \rightarrow M^\prime$, where $E_i$ is the elementary row operation. We also know that at the bottom of the reduced echelon form matrix, it will always have all zero rows, which is the null space. 
 		
-		Our approach is to records all the elementary operation by using a identity matrix $I$ since $EI=E$.
+		Our approach is to record all the elementary operations by using a identity matrix $I$ since $EI=E$.
 		
 		\item \textit{Calculating Factors:} \itemgap
 		
-		First, we will going to explain why finding null space is equal to find the sum of rows equal to zero. It is easy only if you notice that and none of the resources we read explained this. It is just because the matrix production is for each row multiply a coefficient add rows together. And we are working over $\mathbb{F}_2$, the multiplier 0 means not using this row, 1 means using this row. And this is the reason why we are checking each element of the vector in null space, if we found a 1, we find the corresponding row in matrix and get related $x$ and all the prime factors of $Q(x)$. 
+		First, we will explain why finding the null space is equal to finding the sum of rows equal to zero, because initially we did not realize this ourselves from all the resources we read. After finding the null space, each vector in the null space will contain coefficients in which each coefficient corresponds to a row in the original matrix.Recall we perform the product of the matrices: for each row multiply by a coefficient, and add the addows together. We are working over $\mathbb{F}_2$, the multiplier 0 means not using this row, 1 means using this row, which is why we are checking each element of the vector in the null space; if we found a 1, we find the corresponding row in matrix and get related $x$ and all the prime factors of $Q(x)$. 
 		
-		Recall that in \textit{Building Exponent Matrix} Section, we said we will explain why we save all the prime factors of $Q(x)$ instead of just saving $Q(x)$ itself. The reason is that if we multiply these $Q(x)$ , we get an insanely large number, we do not know any good algorithm to find the square root of it, we tried newton's square root approximation, which did not help us much. We can not get a accurate number. Therefore, we saved all the prime factor and their exponents. And then, we only need to half of the exponent and multiply them together we get the $\sqrt{\prod Q(x)}$. 
+		Recall that in \textit{Building Exponent Matrix} Section, we said we will explain why we save all the prime factors of $Q(x)$ instead of just saving $Q(x)$ itself. The reason is that if we multiply those $Q(x)$ , we get an insanely large number, which we do not know of any good algorithm to find the square root of. We tried Newton's Square Root approximation, which did not help us much, seeing as we were unable to get an accurate enough of a number. Therefore, we saved all the prime factors and their exponents, which we then only have to halve the exponents and multiply them together,getting $\sqrt{\prod Q(x)}$. 
 		
-		After we got $\sqrt{\prod Q(x)}$, our final answer is $gcd\left(\prod Q(x) \pm \prod x, N\right)$, if we are lucky not all relation we've found are trivial, we have one factor of N.
+		After we got $\sqrt{\prod Q(x)}$, our final answer is $gcd\left(\prod Q(x) \pm \prod x, N\right)$. If we are lucky and not all of the relations we find are trivial, we have finally the factors of N.
 		
 	\end{enumerate}
 	
 	\section {Collecting data by parallel computing} 
 	\subsection{Computer spec}
-	computer 1: i7-4700M, 2.4GHz (boost 3.1Ghz), RAM 16G\\
-	\indent computer 2: i7-3537U, 2.0GHz               , RAM 8G\\
-	\indent computer 3: i5-3570K, 3.4GHz               , RAM 16G\\
-	\indent computer 4: i5-4210U, 1.7GHz               , RAM 8G
+	Computer 1: i7-4700M, 2.4GHz (overclocked to 3.1Ghz), RAM 16G\\
+	\indent Computer 2: i7-3537U, 2.0GHz               , RAM 8G\\
+	\indent Computer 3: i5-3570K, 3.4GHz               , RAM 16G\\
+	\indent Computer 4: i5-4210U, 1.7GHz               , RAM 8G
 	
 	\subsection{Data collection}
-	We collect 706854 relations in 3 hours and 20 minutes with 4 parallel computing computers. In the 706854 relations, there are 48059 full relations, 305914 partial relations and the remaining are duplicate relations.
-	Thus, there are about 85$\%$ of the relations are partial relations. In other words, when modulus N grows bigger and bigger, the probabilities of finding full relations gets lower and lower.
+	We collect 706854 relations in 3 hours and 20 minutes with 4 computers computing in parallel. In the 706854 relations, there are 48059 unique full relations, and 305914 unique partial relations. The remaining 352,881 relations are duplicate relations.
+	Additionally, approximately 85$\%$ of the relations are partial relations. In other words, when our x grows larger and larger, the probability of finding full relations gets lower and lower.
 	
 	\section {Decoding the message}
 	
-	Once we got the factors of N, we use Euler-totient function calculates the $\varphi(N)$, and then we can calculate the private key $d$ by find the mod inverse of $e \mod{\varphi(N)}$ thorough extend euclidean gcd algorithm. After we got $d$ we can recover the message just by taking $(m^e)^d \pmod{n}$. 
+	Once we got the factors of N, calculate the $\varphi(N)$, and then we can calculate the private key $d$ by find the mod inverse of $e \mod{\varphi(N)}$ through the Extend Euclidean Algorithm. After we get $d$ we can recover the message just by taking $(m^e)^d \pmod{n}$. 
 	
-	Then, we got a message encoded as 1121225152171520201541591920182520182511292020125\\2051445181451919. Since, we know it is English and the encoding method already, we use three methods to recover it to English very quickly. 
+	Ultimately, we get a message encoded as 1121225152171520201541591920182520182511292020125\\2051445181451919. Since, we know it is English and the encoding method already, we use three methods to recover it to English very quickly. 
 	
 	\renewcommand\labelenumi{\arabic{enumi}.}
 	\begin{enumerate}
-		\item We use a English dictionary, and encodes the words exactly the same way as the message did. And we only searching for the longer words(at least 4 letters). And we extract the matching part, which could shrink the length of the message. In our case, we use this method found the word ``tenderness''.
+		\item We use an English dictionary, and encode the words exactly the same way as the message did. We then only search for the longer words(at least 4 letters) and we extract the matching part, which could shrink the length of the message. In our case, using this method, we found the word ``tenderness''.
 		
-		\item We wrote a program to calculate all the possible combinations. The idea is using backtrack algorithm to build a tree. Then, saving all the leaves in the tree. Finally, collecting each path from the leaf to root. The example for code 21525 in below: 
+		\item We wrote a program to calculate all the possible combinations. The idea is using backtrack algorithm to build a tree ,then saving all the leaves in the tree. Finally, we collect each path from the a leaf to the root. The example for code 21525 in below: 
 		
 		\begin{figure}[h]
-			\centering
+
 			\includegraphics[width=0.6\textwidth]{tree.png}
 		\end{figure}
-		
-		\pagebreak
 		
 		
 		and we use this little program to list all possibilities to give us hints.
 		
-		\item Since the message is not very long and encoding method is easy, we just use our English knowledge to test whether the words make sense in its place.
+		\item Since the message is not very long and encoding method is easy, we just use some human intuition and English knowledge to test whether the words make sense in its place.
 		
 	\end{enumerate}
 	
-	And finally, we solve this assignment and decrypt message M shown as following:\\
+	Finally, with much effort, we were finally able to retrieve and decrypt the original message, M, shown as following:\\
 	
 	
 	1 12 12 25 15 21 7 15 20 20 15 4 15 9 19 20 18 25 20 18 25 1 12 9 20 20 12 \\
