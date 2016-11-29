@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.2.21)  29 NOV 2016 05:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.2.21)  29 NOV 2016 12:18
 entering extended mode
 **./Paper.tex
 (Paper.tex
@@ -931,18 +931,28 @@ Overfull \hbox (3.36613pt too wide) in paragraph at lines 323--324
  []
 
 [13]
-Overfull \hbox (12.16962pt too wide) in paragraph at lines 345--347
+Overfull \hbox (12.16962pt too wide) in paragraph at lines 343--345
 \OT1/cmr/m/n/12 We read a lot of re-sources and most of them sug-gested a value
  be-tween $[] []$
  []
 
-[14] [15] [16] [17] [18]
-Underfull \hbox (badness 10000) in paragraph at lines 492--493
+[14] [15]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[16] [17]
+Overfull \hbox (25.5909pt too wide) in paragraph at lines 473--474
+[]\OT1/cmr/m/n/12 Ultimately, we get a mes-sage en-coded as 1121225152171520201
+541591920182520182511292020125 
+ []
+
+[18]
+Underfull \hbox (badness 10000) in paragraph at lines 490--491
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 495--497
+Underfull \hbox (badness 10000) in paragraph at lines 493--495
 
  []
 
@@ -959,7 +969,7 @@ Here is how much of TeX's memory you used:
  9556 multiletter control sequences out of 15000+200000
  18538 words of font info for 71 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 50i,12n,54p,2600b,285s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 50i,12n,54p,2600b,289s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C
 :/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/
@@ -976,7 +986,7 @@ eX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX
 9/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
 onts/type1/public/amsfonts/cm/cmti12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
 ts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Paper.pdf (20 pages, 270004 bytes).
+Output written on Paper.pdf (20 pages, 270440 bytes).
 PDF statistics:
  131 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
