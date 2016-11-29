@@ -193,18 +193,6 @@
 	\\\\
 	\indent There is a second bypass involved to decrease the computational load that leads to the primary implementation done for our assignment. The details to this implementation are outlined in the paper itself. This method was implemented on a laptop computer with a I3 Intel processor that clocks at 2.2 Gigahertz with a RAM size of 4.0 gigabytes. Firstly define a Lucas Sequence to be $V_n = V_{n-1}+V{n_2}$ where $V_0 = 2$ and $V_1 = a$ with a being an integer larger than 2. Then create a loop that continuously calculates $V_{n!}$ where $n \geq 2$. Then after every iteration of this loop calculate the GCD of (N,$V_{n!}-2$) this was done using the Euclid's Algorithm. When the GCD is not equal to either 1 or N, then you have a non trivial factor of N. The major difficulty of implementing this algorithm was the computational overload of calculating subsequent factorial Lucas Sequences. There was a small work around to this to relieve some of the burden of this by recognizing that $V_{n!}(a) = V_n({V_{n-1}})$ meaning if we allow the input to the Lucas sequence to be the output to the previous Lucas Sequence, we can get the factorials of the initial input a without having to actually calculate subsequent factorials of that Lucas Sequence. Without this work around even five iterations of this loop quickly became lengthy to calculate, as it would be $V_120$, an extreme amount of stack calls on the limited hardware being used. The numbers still become prohibitively large for the hardware fairly quickly, in about 15 iterations. So a limit on the number of iterations was engraved in the method (about 15 or so). The paper itself mentions in the implementation and results section that the P+1 method was about 9 times slower than the P-1 method possibly likely due to the calculation of a Lucas sequence on top of the calculation of the factorial that the P-1 method already had. When actually run on the original modulus the algorithm once again found 809 to be a factor about 5 seconds. Use of the method on the modulus with 809 divided out produced no further results, even when run for over 20+ hours. At this time an estimate for the time the program would actually factor the second modulus has not been produced. The only new information that could be extrapolated from this would be that the probability of the p+1 of the larger number being comprised of mostly small factors would be low provided that the premise of the algorithm itself is to be believed. This ends the discussion of William's P+1 method and our attempt to implement it for our assignment. 
 	
-	\section{The Quadratic Sieve}
-	At last, we had reached the conclusion that we may have to implement the Quadratic Sieve in order to factor our N. According to Carl Pomerance, the mind behind the Quadratic Sieve, the Quadratic Sieve is the fastest for numbers under 100 digits\cite{pomerance}. This method was created after a series of enhancements on Fermat's factoring method utilizing smooth numbers, and matrices of exponent vectors in order to assure that such a square needed for Fermat's method would be found. We decided within the first two weeks to stick to the Quadratic Sieve over other methods after we exhausted all the other options listed above.
-	\\\\
-	Firstly we will discuss the Quadratic Sieve in detail, explaining what the algorithm is and how it works. We will then explain our our task of implementing the Quadratic Sieve, as well as the problems that we were faced with.
-	\subsection{Basic's of the Algorithm}
-	
-	\subsection{Application of Linear Algebra}
-	\indent For In this section we will talk about the input of Linear Algebra for this algorithm. All information in this section not within "A Tale of Two Sieves" will be otherwise sourced. Linear Algebra is a key component to the quadratic Sieve Algorithm and is the tool used to actually identify the numbers that would be factors out of all the potential candidates found in the data collection/Sieving phase. This component of the Quadratic Sieve method was created when John Brillheart and Michael Morris Utilization multiple linear algebra concepts we convert the smooth numbers found in the earlier stages of the algorithm into exponent vectors. As in a vector of the exponents of a numbers prime factors. This vector shall be converted into a vector in a finite field of size 2 ($F_2$). This is due to the fact that a number is a square if and only if all of it's prime factors exponents add up to zero. Thus there is no need to have the vectors number be out of $F_2$. The objective of having these vectors is to create a matrix of theses exponent vectors. The size of the matrix will be the size of our factor base cross the size of our factor base plus at least 1,(so if $F_B = p_0p_1\dots p_i$ we will have a matrix of size $(ixi)+1$) With this matrix we will use a few properties of linear algebra to find which combination of smooth numbers will give us our factorization. 
-	\\\\
-	\indent So firstly, why do we add the vectors? This is because adding the vectors is the equivalent of multiplying the integers themselves in terms of determining if the product of those two numbers (or more) will be a square. As an example consider the integers $24 = 2^{3}*3^{1}$ and $15 = 3^{1}*5^{1} $ The exponent vectors for these two will be 110 and 011 the sum vector of these two numbers is not zero and hence the multiple of 24 and 15 is not a square. Secondly the reasoning to having one more vector than the size of the factor is due to a linear algebra concept known as Linear dependence. Linear dependence tells us that when the number of vectors(rows) exceed the number of dimensions (columns), the sum of a subset of the vectors must be equal to zero. Now finding the subset of vectors that equal to zero can be computationally difficult if the matrix became large enough (if you simply try all the combinations ), however there is a technique within Linear Algebra called Gaussian Elimination that can greatly decrease the complexity of finding the zero subset (discussed more in the implementation section). Thus by ensuring that the amount of smooth numbers collected exceeds the factor base guarantees that we obtain a square within the resulting matrix. Obtaining a factor from the square is not guaranteed however, as half of the possible squares will yield an uninteresting solution. So even with the convenience of the matrix there is some luck involved.
-	
-	
 	\section{Quadratic Sieve}
 	
 	Quadratic Sieve method is actually built upon previous factorization method. It is a optimization of Dixon's Factorization Method. So, to learn what is Quadratic Sieve, we have to understand Dixon's Method first, which is also related to Fermat's Factorization and Kraitchik's Factorization Method. Here, we will briefly introduce these three factorization methods.
@@ -264,13 +252,13 @@
 	\\\\
 	Definition: The legendre symbol of a and p where p is an odd prime is defined as 
 	\\\\
-	\[
-	\frac{a}{p} = \left\{\begin{array}{lr}
-	1, & \textmd{If a is a quadratic residue mod p and a$\not\equiv$ 0$\left(mod p\right)$}\\
-	-1, & \textmd{If a is a quadratic non-residue mod p}\\
-	0, & \textmd{If $a\equiv 0\left(p\right)$}\\
-	\end{array}\right\}
-	\]
+	$$
+	\frac{a}{p} = \begin{cases}
+	1, & \textmd{If a is a quadratic residue mod p and a$\not\equiv$ 0 $\pmod{p}$}\\
+	-1, & \textmd{If a is a quadratic non-residue $\pmod{p}$}\\
+	0, & \textmd{If $a\equiv 0 \pmod{p}$}\\
+	\end{cases}
+	$$
 	\\\\Additionally we will introduce the Law of Quadratic Reciprocity as defined by Gauss:
 	\\\\Definition: If p and q are distinct odd primes then:
 	\\$\left(\frac{p}{q}\right) = \left(\frac{q}{p}\right)$ if $q\equiv 1(mod 4)$ or $\left(-\frac{q}{p}\right)$ if $q\equiv 3(mod 4)$
