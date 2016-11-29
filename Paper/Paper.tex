@@ -264,16 +264,16 @@
 	\\\\
 	Definition: The legendre symbol of a and p where p is an odd prime is defined as 
 	\\\\
-	\[
-	\frac{a}{p} = \left\{\begin{array}{lr}
-	1, & \textmd{If a is a quadratic residue mod p and a$\not\equiv$ 0$\left(mod p\right)$}\\
-	-1, & \textmd{If a is a quadratic non-residue mod p}\\
-	0, & \textmd{If $a\equiv 0\left(p\right)$}\\
-	\end{array}\right\}
-	\]
+	$$
+	\frac{a}{p} = \begin{cases}
+	1, & \textmd{If a is a quadratic residue mod p and a$\not\equiv$ 0$\pmod{p}$}\\
+	-1, & \textmd{If a is a quadratic non-residue $\pmod{p}$}\\
+	0, & \textmd{If $a\equiv 0 \pmod{p}$}\\
+	\end{cases}
+	$$
 	\\\\Additionally we will introduce the Law of Quadratic Reciprocity as defined by Gauss:
 	\\\\Definition: If p and q are distinct odd primes then:
-	\\$\left(\frac{p}{q}\right) = \left(\frac{q}{p}\right)$ if $q\equiv 1(mod 4)$ or $\left(-\frac{q}{p}\right)$ if $q\equiv 3(mod 4)$
+	\\$\left(\frac{p}{q}\right) = \left(\frac{q}{p}\right)$ if $q\equiv 1(mod\ 4)$ or $\left(-\frac{q}{p}\right)$ if $q\equiv 3(mod\ 4)$
 	\\This can be restated as $\left(\frac{p}{q}\right)\left(\frac{q}{p}\right) = \left(-1\right)^{\frac{\left((p-1)(q-1)\right)}{4}}$
 	\\\\Furthermore, these supplementary properties proved to be useful:
 	\\(a)$\frac{1}{p} = 1$
