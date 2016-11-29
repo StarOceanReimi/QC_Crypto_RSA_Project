@@ -26,6 +26,8 @@
 
 \usepackage{graphicx} % support the \includegraphics command and options
 \usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathtools}
 
 \usepackage{scrextend}
 \changefontsizes[16pt]{13pt}
@@ -356,21 +358,85 @@ After collecting all the data, the client will sent it back to sever. And sever 
 \\ We retrieve the file from sever, and parse it line by line. Here we met a problem that still confused us that is even though we collect data in different range , we find duplicates relations. This problem force us to collect more relations than we need. It could be a bug of our code. So, we need check duplication first.
 After that since each line in file correspond to a relation, we need to differentiate full or partial relations. if it is full relation we just save $x$ in a list and all the prime factors of $Q(x)$ in a dictionary, prime factor as key, and exponent as value.(why we save this will be explained in \textit{Calculating Factors}). Since we have the odd exponent factors information of the relation, it is very simple to use it building a exponent vector and save it in matrix. if it is partial relation, we save it a dictionary first, and use the leftover as a key. until we find another partial relation have the same leftover, we pop out it from the dictionary, and combine two relation together as following. First, we multiply $x_1$ and $x_2$ as $x$, then, merge the two prime factor dictionaries. Finally, we xor two exponent vectors and save it in matrix.
 
-Since we did not use the meataxe, we need introduce our matrix implmentation. The reason why we were not using meataxe is that it is not very well documented, and sometimes it does not work as we expected. We are afraid of spending too many time on it. And another reason is our number is not insanely large, it just 40000x40000 matrix. 
+Since we did not use the meataxe, we need introduce our matrix implementation. The reason why we were not using meataxe is that it is not very well documented, and sometimes it does not work as we expected. We are afraid of spending too many time on it. And another reason is our number is not insanely large, it just 40000x40000 matrix. 
 
-And the reason why it is hard to manipulate large matrix is our ram not big enough to save it. Let us do a simple calculation, 40000x40000=1600000000 elements. If we use a integer to represent each element that will cost 1600000000*4=6400000000 bytes $\approx$ 6Gb ram. This is too memory comsuming. However, since the matrix is over $\mathcal{F}_2$, we can use binary representation for each element it will only cost 6Gb/32 $\approx$ 190Mb which is accpectable. 
+And the reason why it is hard to manipulate large matrix is our ram not big enough to save it. Let us do a simple calculation, 40000x40000=1600000000 elements. If we use a integer to represent each element that will cost 1600000000*4=6400000000 bytes $\approx$ 6Gb ram. This is too memory consuming. However, since the matrix is over $\mathcal{F}_2$, we can use binary representation for each element it will only cost 6Gb/32 $\approx$ 190Mb which is acceptable. 
 
-\item \textit{Finding Null Space:}
+Suppose we have a 4x10 matrix below, 
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+matrix data & file representation \\
+\hline
+10010001,01 & 91,40 \\
+\hline
+11010001,01 & d1,40 \\
+\hline
+00110001,01 & 31,40 \\
+\hline
+00010100,10 & 14,80 \\
+\hline
+\end{tabular}
+\end{table}
 
-\lipsum[1-2]
+First, we make a very simple header, which only has two integers that specific the row number and the column number. Then, we use 1 byte to represent 8 bits, and if the matrix's column size mod 8 is not 0, we are padding zeros after each row. For example 01 becomes 01000000 which is 40 in hex. This is for sake of simplicity of implementation. And finally, we just save each row linearly.
 
-\item \textit{Calculating Factors:}
+To access certain rows, say the 8th row, we have our initial position pointer $s$, and we calculate many bytes in each row by row\_length = (column+padding)/8, and the start position of 8th row is 8*row\_length+$s$. 
 
-\lipsum[3-4]
+To access certain column, say the 6th column, we calculate this column in which byte by 6/8=0, this means 6th column belongs to the first byte, then, take the byte and right shift 6 position and do a ``and'' operation with 1 which means ignore other bits except for the last bit.
+
+\item \textit{Finding Null Space:} \itemgap
+
+We use Gaussian elimination to find the null space. The reason why we can use Gaussian elimination to find null space, is because any elementary row operation can be seen as a matrix transformation. For example.
+
+An elementary row operation $M\xrightarrow{R1\rightarrow R1+2\times R2}M^\prime$
+$$
+\begin{bmatrix}
+ 1 & 2 & 3 \\
+ 1 & 1 & 2 \\
+ 2 & 2 & 4
+\end{bmatrix}\xrightarrow{R1\rightarrow R1+2\times R2}
+\begin{bmatrix}
+ 3 & 4 & 7 \\
+ 1 & 1 & 2 \\
+ 2 & 2 & 4
+\end{bmatrix}
+$$
+
+can be represented as $EM=M^\prime$
+
+$$
+\begin{bmatrix}
+ 1 & 2 & 0 \\
+ 0 & 1 & 0 \\
+ 0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+ 1 & 2 & 3 \\
+ 1 & 1 & 2 \\
+ 2 & 2 & 4
+\end{bmatrix} \rightarrow
+\begin{bmatrix}
+ 3 & 4 & 7 \\
+ 1 & 1 & 2 \\
+ 2 & 2 & 4
+\end{bmatrix}
+$$
+
+So, if we reduce $M$ to its reduced echelon form $M^\prime$ by Gaussian Elimination, means that $\exists E=\prod_{i=1}^k{E_i}\ s.t.\ EM \rightarrow M^\prime$, where $E_i$ is the elementary row operation. We also know at the bottom of reduced echelon form always have all zero rows, and that is the null space. 
+
+Our approach is to records all the elementary operation by using a identity matrix $I$ since $EI=E$.
+
+\item \textit{Calculating Factors:} \itemgap
+
+First, we will going to explain why finding null space is equal to find the sum of rows equal to zero. It is easy only if you notice that and none of the resources we read explained this. It is just because the matrix production is for each row multiply a coefficient add rows together. And we are working over $\mathbb{F}_2$, the multiplier 0 means not using this row, 1 means using this row. And this is the reason why we are checking each element of the vector in null space, if we found a 1, we find the corresponding row in matrix and get related $x$ and all the prime factors of $Q(x)$. 
+
+Recall that in \textit{Building Exponent Matrix} Section, we said we will explain why we save all the prime factors of $Q(x)$ instead of just saving $Q(x)$ itself. The reason is that if we multiply these $Q(x)$ , we get an insanely large number, we do not know any good algorithm to find the square root of it, we tried newton's square root approximation, which did not help us much. We can not get a accurate number. Therefore, we saved all the prime factor and their exponents. And then, we only need to half of the exponent and multiply them together we get the $\sqrt{\prod Q(x)}$. 
+
+After we got $\sqrt{\prod Q(x)}$, our final answer is $gcd\left(\prod Q(x) \pm \prod x, N\right)$, if we are lucky not all relation we've found are trivial, we have one factor of N.
 
 \end{enumerate}
-
-\subsection {Results of Experiments}
 
 \pagebreak
 \begin{thebibliography}{99}

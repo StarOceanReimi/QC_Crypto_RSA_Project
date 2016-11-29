@@ -237,7 +237,7 @@ public class LargeGF2Matrix implements AutoCloseable {
         boolean[] marker = new boolean[R];
         int onePercent = C/100;
         for(int c=0; c<C; c++) {
-            if(onePercent!=0 && c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
+//            if(onePercent!=0 && c % onePercent == 0) System.out.printf("calculate matrix: %d percent \n", c/onePercent);
             LinkedList<Integer> rows = getLeftMostOneRows(c, marker);
             if(rows.isEmpty()) continue;
             int pivot = rows.poll();
@@ -266,19 +266,19 @@ public class LargeGF2Matrix implements AutoCloseable {
     }
     
     public static void main(String[] args) throws IOException {
-//        try (LargeGF2Matrix matrix = new LargeGF2Matrix(10, 10, "./testM")) {
-//            matrix.rowAdd(0, new int[]{1,0,0,1,0,0,0,1,0,1});
-//            matrix.rowAdd(1, new int[]{1,0,0,1,0,0,0,1,0,1});
-//            matrix.rowAdd(2, new int[]{1,1,0,1,0,0,0,1,0,1});
-//            matrix.rowAdd(3, new int[]{0,0,1,1,0,0,0,1,0,1});
-//            matrix.rowAdd(4, new int[]{1,0,0,1,0,0,0,1,1,1});
-//            matrix.rowAdd(5, new int[]{1,0,0,0,0,0,0,1,1,0});
-//            matrix.rowAdd(6, new int[]{0,0,0,1,0,1,0,0,1,0});
-//            matrix.rowAdd(7, new int[]{0,0,0,1,0,0,1,0,0,1});
-//            matrix.rowAdd(8, new int[]{0,0,1,0,0,1,0,0,0,0});
-//            matrix.rowAdd(9, new int[]{0,0,0,1,0,0,0,1,0,0});
-//            matrix.toMeatAxeBinaryFile("./testMeataxe");
-//        }
+        try (LargeGF2Matrix matrix = new LargeGF2Matrix(10, 10, "./testM")) {
+            matrix.rowAdd(0, new int[]{1,0,0,1,0,0,0,1,0,1});
+            matrix.rowAdd(1, new int[]{1,0,0,1,0,0,0,1,0,1});
+            matrix.rowAdd(2, new int[]{1,1,0,1,0,0,0,1,0,1});
+            matrix.rowAdd(3, new int[]{0,0,1,1,0,0,0,1,0,1});
+            matrix.rowAdd(4, new int[]{1,0,0,1,0,0,0,1,1,1});
+            matrix.rowAdd(5, new int[]{1,0,0,0,0,0,0,1,1,0});
+            matrix.rowAdd(6, new int[]{0,0,0,1,0,1,0,0,1,0});
+            matrix.rowAdd(7, new int[]{0,0,0,1,0,0,1,0,0,1});
+            matrix.rowAdd(8, new int[]{0,0,1,0,0,1,0,0,0,0});
+            matrix.rowAdd(9, new int[]{0,0,0,1,0,0,0,1,0,0});
+            matrix.hexPrint();
+        }
 //        LargeGF2Matrix.fromMeataxe("./testMeataxe", "testtest").gf2Print();
     }
     

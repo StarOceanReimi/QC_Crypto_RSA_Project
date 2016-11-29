@@ -22,6 +22,7 @@ import static cracking.algorithms.Primes.RandomPrimeGenerator.ODD_FUNC;
 import static cracking.algorithms.Primes.findClosePrime;
 import static cracking.algorithms.Primes.millerRabinTest;
 import cracking.cluster.SmoothInfo;
+import cracking.utils.Util;
 import static cracking.utils.Util.error;
 import static cracking.utils.Util.mustPositive;
 import java.io.File;
@@ -37,9 +38,11 @@ import static java.math.BigInteger.ZERO;
 import static java.math.BigInteger.valueOf;
 import java.util.Arrays;
 import static java.util.Arrays.stream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Vector;
 import static java.util.stream.Collectors.toSet;
 import java.util.stream.IntStream;
 
@@ -268,31 +271,39 @@ public class QuadraticSieve implements Runnable {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         
 //        BigInteger N1 = Main.TARGET; //new BigInteger("6275815110957813119593022531213");
-        BigInteger N1 = new BigInteger("489293762578746481445307920902864380533");
-//        BigInteger N1 = new BigInteger("6275815110957813119593022531213"); //new BigInteger("13290059");
-        int B = 150_000;
-        QuadraticSieve sieve = new QuadraticSieve(N1, B, 80_000_000);
+//        BigInteger N1 = new BigInteger("489293762578746481445307920902864380533");
+        
+        Primes.RandomPrimeGenerator randomGen = new Primes.RandomPrimeGenerator();
+        BigInteger b1 = randomGen.gen(6).next();
+        BigInteger b2 = randomGen.gen(7).next();
+        BigInteger N1 = b1.multiply(b2);
+        System.out.println(N1);
+        int B = 100;
+        int M = 500;
+        QuadraticSieve sieve = new QuadraticSieve(N1, B, M);
 //        System.out.println(Arrays.toString(Factorization.fastFactorBase(B, N1)));
         Set<SmoothInfo> relations = new HashSet<>();
         sieve.setBSmoothRef(relations);
         sieve.run();
+        
         File file = new File("./testRelation");
         if(file.exists()) file.delete();
         file.createNewFile();
         PrintStream ps = new PrintStream(file);
         relations.forEach(ps::println);
         System.out.printf("%d/%d\n", relations.size(), sieve.factorBase.length);
+        
         if(relations.size() < sieve.factorBase.length) {
             System.err.printf("%d/%d, not enough smooth!\n", relations.size(), sieve.factorBase.length);
             System.exit(1);
         }
-        String path = "./sample.txt";
         SmoothNumberFileParser parser = new SmoothNumberFileParser(file.getAbsolutePath(), B, N1);
+        parser.getExpMatrix().gf2Print();
+//        parser.getExpMatrix().nullSpace();
+        System.out.println(parser.calculateFactor());
+        
 //        System.out.println("---expMatrix");
 //        parser.getExpMatrix().gf2Print();
-        
-        LargeGF2Matrix matrix = parser.getExpMatrix();
-        System.out.println(parser.calculateFactor(N1, matrix.nullSpace()));
         
 //        System.out.println("---identity");
 //        new LargeGF2Matrix("./temp1").gf2Print();

@@ -16,9 +16,11 @@ import static cracking.algorithms.MathOp.modInverse;
 import cracking.algorithms.Primes;
 import cracking.cluster.SmoothInfo;
 import static cracking.utils.Util.error;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
@@ -47,7 +49,7 @@ public class SmoothNumberFileParser {
     
     private static final BiFunction<BigInteger, BigInteger, BigInteger> Qx = (x, N)->x.pow(2).subtract(N);
 
-    private RandomAccessFile file;
+    private BufferedReader file;
     private int[] fb;
     private BigInteger N;
     private HashSet<BigInteger> relationDupChecker;
@@ -63,7 +65,7 @@ public class SmoothNumberFileParser {
     }
     
     public SmoothNumberFileParser(String filePath, int B, BigInteger N) throws FileNotFoundException, IOException {
-        file = new RandomAccessFile(filePath, "r");
+        file = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
         relations = new ArrayList<>();
         factors = new ArrayList<>();
         relationDupChecker = new HashSet();
@@ -105,14 +107,13 @@ public class SmoothNumberFileParser {
     }
     
     private void parse() throws IOException {
-        long len;
         try {
-            len = file.length();
+            String line = null;
             int i = 0;
             int rows = expMatrix.getRows();
-            while(file.getFilePointer() < len) {
+            while((line = file.readLine()) != null) {
                 if(i >= rows) break;
-                SmoothInfo info = SmoothInfo.fromString(file.readLine());
+                SmoothInfo info = SmoothInfo.fromString(line);
                 if(info.getLeftover() == null) {
                     if(relationDupChecker.contains(info.getX())) {
                         continue;
@@ -211,7 +212,11 @@ public class SmoothNumberFileParser {
         return power;
     }
     
-    public List<BigInteger> calculateFactor(BigInteger N, int[][] nullSpace) {
+    public List<BigInteger> calculateFactor() throws IOException {
+        return calculateFactor(expMatrix.nullSpace());
+    }
+    
+    public List<BigInteger> calculateFactor(int[][] nullSpace) {
         BigInteger factorOne = ONE;
         LinkedList results = new LinkedList<>();
         System.out.println("nullSpace size: " + nullSpace.length);
@@ -222,6 +227,7 @@ public class SmoothNumberFileParser {
             for(int j=0; j<relations.size(); j++) {
                 if(nullSpace[i][j] == 1) {
                     BigInteger x = relations.get(j);
+                    System.out.println(x);
                     addPower(fMap, factors.get(j));
                     prodX = prodX.multiply(x);
                 }
@@ -286,7 +292,7 @@ public class SmoothNumberFileParser {
 //        int[][] nullSpace = parser.expMatrix.nullSpace();
 //        saveMatrix(nullSpace, "nullSpace");
 //        System.out.println("calculating...");
-//        System.out.println(parser.calculateFactor(Main.TARGET, nullSpace));
+//        System.out.println(parser.calculateFactor(nullSpace));
 //        System.out.println("Done");
         
         BigInteger p = new BigInteger("9457663801784055781292440587131633");
