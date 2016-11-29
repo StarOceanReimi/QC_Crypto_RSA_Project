@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.9.7)  29 NOV 2016 02:10
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.9.7)  29 NOV 2016 03:06
 entering extended mode
 **Paper.tex
 (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.tex
@@ -718,173 +718,183 @@ LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <6.5> not available
 
 LaTeX Font Warning: Font shape `OT1/cmss/bx/n' in size <15.59996> not available
 
-(Font)              size <14.4> substituted on input line 91.
+(Font)              size <14.4> substituted on input line 98.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <15.59996> not available
-(Font)              size <14.4> substituted on input line 91.
+(Font)              size <14.4> substituted on input line 98.
 
 [1
 
 {C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <13> not available
-(Font)              size <12> substituted on input line 120.
+(Font)              size <12> substituted on input line 124.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/bx/n' in size <13> not available
-(Font)              size <12> substituted on input line 120.
+(Font)              size <12> substituted on input line 124.
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 120.
+(Font)              size <12> substituted on input line 124.
 
 [2]
-Overfull \hbox (1.20319pt too wide) in paragraph at lines 156--160
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/it' in size <13> not available
+(Font)              size <12> substituted on input line 142.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--145
+
+ []
+
+[3]
+Overfull \hbox (1.20319pt too wide) in paragraph at lines 172--176
 \OT1/cmr/m/n/12 com-pos-ite num-ber. So, we keep fac-tor-ing 613054310726032886
 18094388843632583770222669888 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 161--172
+Underfull \hbox (badness 10000) in paragraph at lines 177--188
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 161--172
+Underfull \hbox (badness 10000) in paragraph at lines 177--188
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 161--172
-
- []
-
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 178--183
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 178--183
+Underfull \hbox (badness 10000) in paragraph at lines 177--188
 
  []
 
 [4]
-Underfull \hbox (badness 10000) in paragraph at lines 185--188
+Underfull \hbox (badness 10000) in paragraph at lines 194--199
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 194--199
 
  []
 
 [5]
-Underfull \hbox (badness 10000) in paragraph at lines 191--194
+Underfull \hbox (badness 10000) in paragraph at lines 201--204
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 207--210
 
  []
 
 [6] [7]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 235.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 251.
 
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omscmr.fd"
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <13> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 235.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 251.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 235.
+(Font)              size <12> substituted on input line 251.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--267
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
  []
 
-[8] [9] [10] [11]
 
-LaTeX Font Warning: Font shape `OT1/cmr/m/it' in size <13> not available
-(Font)              size <12> substituted on input line 326.
+Underfull \hbox (badness 10000) in paragraph at lines 240--283
 
+ []
 
-Overfull \hbox (5.05441pt too wide) in paragraph at lines 326--328
+[8] [9] [10] [11] [12]
+Overfull \hbox (5.05441pt too wide) in paragraph at lines 342--344
 \OT1/cmr/m/n/12 We read a lot of re-sources and most of them sug-gests a value 
 be-tween $[] []$
  []
 
-[12] [13] [14] [15] [16] [17]
+[13] [14] [15] [16] [17] [18]
 (C:\Users\Li\QC_Crypto_RSA_Project\Paper\Paper.aux)
 
 LaTeX Font Warning: Size substitutions with differences
@@ -892,13 +902,13 @@ LaTeX Font Warning: Size substitutions with differences
 
  ) 
 Here is how much of TeX's memory you used:
- 6245 strings out of 493921
- 92969 string characters out of 3144886
- 296444 words of memory out of 3000000
- 9437 multiletter control sequences out of 15000+200000
+ 6246 strings out of 493921
+ 92985 string characters out of 3144886
+ 299444 words of memory out of 3000000
+ 9438 multiletter control sequences out of 15000+200000
  16602 words of font info for 62 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 50i,12n,54p,2597b,283s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 50i,12n,54p,2597b,281s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C
 :/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/
@@ -915,9 +925,9 @@ eX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX
 9/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
 onts/type1/public/amsfonts/cm/cmti12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
 ts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Paper.pdf (17 pages, 255917 bytes).
+Output written on Paper.pdf (18 pages, 262852 bytes).
 PDF statistics:
- 121 PDF objects out of 1000 (max. 8388607)
+ 124 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

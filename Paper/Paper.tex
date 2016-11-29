@@ -88,53 +88,69 @@ And the cipher text, 19705178523446373241\\4263214556420972406776330386397873104
 
 \indent This is all the information afforded to us to solve the problem of recovering the message. Now we will discuss potential attacks against RSA and the pitfalls of many of them given the information provided.
 
+In this paper, we will assume Alice is the message sender and Bob is the message receiver who receives messages from Alice. Eve is the malicious devil attacker to try to intercept and decrypt the message. And d represents the private key.
+
+\section{Attacks on Misused RSA}
+	Since factoring the large number, N, is a hard problem, our objective in this section is to decrypt the encrypted message without directly factoring N.
+	Unfortunately, most of these special attacks are based on misuse of RSA.
+	So, if the numbers, structures and implementation of RSA are designed well and used properly, these kinds of attacks are not applicable against RSA.
+
 \subsection{ Common Modulus Attack}
 		Assume the same common modulus N is used by all the users under a system, so each user i gets a unique public key pair $<N,e_i>$ and a unique private key pair $<N,d_i>$ from the central system.
-		Now, Alice is sending an encrypted message C = $M^{e_{Alice}}$ mod N to Bob (Bob has to know either factors of N or to do the same thing with Eva). 
+		Now, Alice is sending an encrypted message C $\equiv$ $M^{e_{Alice}}$ mod N to Bob. 
 		However, another user Eve can also get Alice's original message by using her own keys, ${e_{Eve}}$ and ${d_{Eve}}$, to factor common modulus N. There are many ways to factor N if we know e and d.
-		For example, we can guess $\phi(n)$  from ed = 1 (mod $\phi(n)$). Since ed -1 = k$\phi(n)$ = k$2^x$r (because $\phi(n)$ must be an even number, $\phi(n)$ can be expressed in powers of 2 times an odd number with a certain integer k),
-		we can get correct $\phi(n)$ in $\log_2(N)$.
-		Or if we are lucky enough that N = pq, $\phi(n)$ = (p-1)(q-1) = pq - (p+q) +1 = n - (p+q) +1. Then q = (n- $\phi(n)$ +1)-p. By Substituting q into N =pq, N = p(n- $\phi(n)$ +1)-p), which is equal to $p^2$ - p(n-$/phi(n)$+1)+n =0.
-		Now we can factor N by solving this quadratic equation.
+		For example, we can guess $\phi(N)$  from ed $\equiv$ 1 (mod $\phi(N)$). Since ed -1 = k$\phi(N)$ = k$2^x$r (because $\phi(N)$ must be an even number, $\phi(N)$ can be expressed in powers of 2 times an odd number with a certain integer k),
+		we can guess correct $\phi(N)$ in $\log_2(ed-1)$.
+		And if we are lucky enough that N = pq with p and q are primes, $\phi(N)$ = (p-1)(q-1) = pq - (p+q) +1 = N - (p+q) +1. Then q = (N- $\phi(N)$ +1)-p. By Substituting q into N =pq, N = p(N- $\phi(N)$ +1)-p), which is equal to $p^2$ - p(N-$\phi(N)$+1)+N =0.
+		Now we can factor N by solving this quadratic equation with guessed $\phi(N)$.
 		
-		After Eve knows the factors of N, she can compute $\phi(N)$ and compute ${d_{Alice}}$ ${e_{Alice}}$ = 1 mod $\phi(N)$ to find ${d_{Alice}}$ by Euclidean algorithm (since ${e_{Alice}}$ is public information).
+		After Eve knows the factors of N, she can compute $\phi(N)$ and compute ${d_{Alice}}$ ${e_{Alice}}$ $\equiv$ 1 mod $\phi(N)$ to find ${d_{Alice}}$ by Euclidean algorithm (since ${e_{Alice}}$ is public information).
 		Then Eve can recover Alice's M = $C^{d_{Alice}}$ mod N.
 		Therefore, common modulus N is not secure.
 
 		However, we are only given one public key $<N,e>$ and there are no other users involving in our case. So, this attack does not apply to our case. 
-\subsection{Blinding Attack on RSA signature}
-		Assume Alice has a public key pair $<N,e>$ and a private key pair $<N,d>$. Eve asks for Alice to sign a random message M' (M' = $r^eM$ with r picked by Eve randomly and M is the targeted high secret message).
-		Then, by the fact that signature S' = $M'^d$ mod N and S = s'/r, Eve can recover M by computing $S'^e/r^e$ since $S^e$ = $(S')^e/r^e$ = $(M')^ed / r^e$ = $M'/r^e$ = M mod N.
-		
-		Our problem doesn't involve in digital signature.
+
 \subsection{Small private Exponent Attack}
-		
-		1. d has to be large enough to be secure (drawback: large d would take more computation time and a large storage space for smart cards)
-		
-		2. d can be recovered in linear time if d is small
-		it does not apply to our case because we don't have information about d so that it would be inefficient to apply this attack.
+        The decryption time of the RSA mechanism is tied directly to the time it takes to do the exponentiation of $ M^{ed} $. The time it takes is linear in $log_{2}d $. So utilizing a small private exponent can greatly improve the speed of the RSA mechanism. However, there exists an attack that
+works for any pair (e,d) where $d$ is below $ \frac{1}{3}N^{\frac{1}{4}} $ based on a theorem by M.Weiner [4].
+This theorem utilizes continued fractions to show that d can be approximated in linear time when it is small enough for the computations to remain feasible. 
+
+The issue with this attack in relation to our question remains the lack of any information regarding d, so it would be inefficient to apply this attack.
+
 
 \subsection{ Small public Exponent Attack}
-		Sometimes it is possible that we use small small public exponent in order to reduce encryption time. However, it is not secure and we show several methods to break RSA by having small public exponent as following.
+		Sometimes it is possible that we use small public exponent in order to reduce encryption time. However, it is not secure and we will show several methods to break RSA by having small public exponent as following.
 
 \subsubsection{Hastad's Broadcast Attack}
-		Assume Alice wants to send a message to many users (k of them). It is possible that Alice is lazy to compute $M^(e_i)$ according to each user, so she may choose the same e for all users.
+		Assume Alice wants to send a message to many users (k of them). It is possible that Alice is lazy to compute $M^{e_i}$ according to each user, so she may choose the same e for all users.
 		Then She first encrypts the message M according to a user's public key pair $<N_i, e>$ by $M^e$ (mod $N_i$) = $C_i$ and sends the cipher text $C_i$ to the corresponding user i. 
 		If Eve can intercept k cipher text, she can recover the encrypted message as following.
 		She first take congruence of each user's cipher text to get $(M_i)^k$ by $C_i$ = $(M_i)^k$ (mod $N_i$). Then she applies the Chinese Remainder Theorem to each $C_i$, which gives C' = $M^k$ (mod ($N_1$)*($N_2$)*...*($N_k$)).
-		Since M is less than all $N_i$, $M^k$ < ($N_1$)*($N_2$)*...*($N_k$) is satisfied, which means C' = $M^k$. So, Eve can recover M by taking k root of C'.
+		Since M is less than all $N_i$, $M^k$ $<$ ($N_1$)*($N_2$)*...*($N_k$) is satisfied, it means C' = $M^k$. So, Eve can recover M by taking k root of C'.
 		This attack is efficient only when e is the same for all users and e is small.
 		
 		It does not apply to our case because it has to send message to many people. In our case, Alice only send message to Bob so we only have one public key pair $<N, e>$. Thus, we cannot recover M by using Chinese Remainder Theorem.
 		
 \subsubsection{Franklin-Reiter Related Message Attack}
+		The Franklin-Reiter related message attack is an attack that involves a situation where recipients send a series of messages where $M_1 = f(M_2)$ with $M_1M_2 \in \mathbb{Z}^{*}_N[x] $. These Messages are encrypted with the same modulus. Now given the $C_1$ and $C_2$ along with the public key (N,e) $M_1$ and $M_2$ can be recovered in quadratic time in log(N). A specific proof is given in the "20 years of \dots RSA" [4]. This attack is only computationally feasible with small public exponents.
 		
-		it does not apply to our case because it has to send related messages using same modulus N. In our case, we only intercept one message.
+		This attack once again cannot be used for our problem for the reason of only being given one M, though perhaps it could be possible to construct an M such that $ M_2 = f(M_1) $. It however was not the line of attack we ultimately went with.
+
+\subsubsection{Partial Key Exposure}
+A partial key exposure attack involves a situation where if an attacker can expose around a quarter of the bits of the private key, he can construct the rest of d providing the public exponent is small (small meaning $e <\sqrt[]{N}$ where N and e are the public RSA key). This attack was developed when the above statement was discovered by Boneh,Durfee and Frankel. There is involved in this attack which I will outline below (quoted from "20 years \dots RSA" [4].)
+\\\\
+\textbf{Theorem (BDF): }\textit{Let (N,d) be an RSA private key in which N is n bits long. Given the $\left\lceil n/4 \right\rceil$ least significant bits of d. Marvin can reconstruct d in time linear in $elog_2e$}
+\\\\
+The proof of this relies on a second theorem from Coppersmith which we will not be outlining at this time. This attack is actually interesting do to a statement that it may be possible to get the RSA system to leak a portion of the significant bits of the private key and with a few equations be able to approximate the private key. We ultimately did not pursue this line of attack due to fears of spending too much time on a potentially fruitless line of attack. 
+
+
 	
 
 \subsection{implementation attacks}
-	it does not apply to our case because it needs to measure the time it takes for decryption. In our case, we do not have such information.
-		
+The implementation attacks involve attacks against applications of RSA rather than the RSA mechanism itself. These
+attacks involve timing attacks, attacks involving computer glitches and one involving the an RSA message padded using
+the public key cryptography standard 1. These attacks are incompatible with our problem to a much higher degree than
+the other attacks so we won't go into to details about them.
 \section{Factoring Attacks Against RSA}
 \subsection{Special Factoring Methods}
 		The efficiency of this type of methods usually depends on the size of the first prime factor or some special form of N. If the first prime factor is small (N is less than 100 bits) or N can be expressed in some special forms, these methods can find the first prime factor fast.
@@ -436,6 +452,18 @@ Recall that in \textit{Building Exponent Matrix} Section, we said we will explai
 
 After we got $\sqrt{\prod Q(x)}$, our final answer is $gcd\left(\prod Q(x) \pm \prod x, N\right)$, if we are lucky not all relation we've found are trivial, we have one factor of N.
 
+\end{enumerate}
+
+\section {Decoding the message}
+
+Once we got the factors of N, we use Euler-totient function calculates the $\varphi(N)$, and then we can calculate the private key $d$ by find the mod inverse of $e \mod{\varphi(N)}$ thorough extend euclidean gcd algorithm. After we got $d$ we can recover the message just by taking $(m^e)^d \pmod{n}$. 
+
+Then, we got a message encoded as 1121225152171520201541591920182520182511292020125\\2051445181451919. Since, we know it is English and the encoding method already, we use three methods to recover it to English very quickly. 
+\renewcommand\labelenumi{\arabic{enumi}.}
+\begin{enumerate}
+\item We use a English dictionary, and encodes the words exactly the same way as the message did. And we only searching for the longer words(at least 4 letters). And we extract the matching part, which could shrink the length of the message. In our case, we use this method found the word ``tenderness''.
+
+\item We wrote a program to calculate all the possible combinations. The idea is using backtrack algorithm to build a tree. Then, saving all the leaves in the tree. 
 \end{enumerate}
 
 \pagebreak
